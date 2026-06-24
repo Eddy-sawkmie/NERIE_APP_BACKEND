@@ -1,0 +1,107 @@
+.sleek-card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    background: #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Sleek top accent line instead of a heavy block header */
+.sleek-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 30px;
+    background: linear-gradient(90deg, #0d6efd, #0dcaf0);
+}
+
+.sleek-title {
+    color: #2b3445;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.sleek-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    margin-bottom: 0.4rem;
+    display: block;
+}
+
+/* Custom Input Wrapper for a seamless icon integration */
+.sleek-input-group {
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 0.75rem;
+    border: 1px solid #e9ecef;
+    padding: 0.35rem 0.5rem;
+    transition: all 0.25s ease;
+}
+
+.sleek-input-group:focus-within {
+    background: #ffffff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+}
+
+.sleek-icon {
+    width: 35px;
+    text-align: center;
+    color: #adb5bd;
+    font-size: 1rem;
+}
+
+.sleek-select {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-weight: 500;
+    color: #495057;
+    padding-left: 0;
+    cursor: pointer;
+}
+
+.sleek-select:focus {
+    outline: none;
+}
+
+/* Pill-shaped buttons with hover lift */
+.btn-sleek {
+    border-radius: 50rem;
+    font-weight: 600;
+    padding: 0.6rem 1.75rem;
+    letter-spacing: 0.3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.9rem;
+}
+
+.btn-sleek-primary {
+    background: #0d6efd;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+}
+
+.btn-sleek-primary:hover {
+    background: #0b5ed7;
+    color: white;
+    box-shadow: 0 6px 16px rgba(13, 110, 253, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-sleek-light {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #495057;
+}
+
+.btn-sleek-light:hover {
+    background: #e9ecef;
+    color: #212529;
+    transform: translateY(-2px);
+}

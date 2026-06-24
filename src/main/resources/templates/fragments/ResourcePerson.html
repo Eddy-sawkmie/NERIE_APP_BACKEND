@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+>
+<div layout:fragment="statics">
+    <script th:inline="javascript">
+        const API = {
+            saveResourcePerson: [[@{/resource-persons/save}]],
+            getQualificationSubject: [[@{/qualification-subjects/get-subjects}]],
+            checkIfEmailIsAvailable: [[@{/resource-persons/is-email-available}]],
+            listQualification: [[@{/qualifications/list}]]
+        };
+    </script>
+
+    <script th:src="@{/js/ResourcePerson.js}"></script>
+
+    <script th:inline="javascript">
+        const BASE = [[@{/}]];
+
+        function redirect(path) {
+            window.location.href = BASE + path;
+        }
+    </script>
+    <script th:src="@{/lily/js/customajax.js}"></script>
+</div>
+
+<div layout:fragment="form">
+    <div class="container py-5">
+
+        <div class="card border-0 modern-card mb-5">
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-user-tie me-3 fs-5"></i> Resource Person Details
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <form name="mtresourcepersonfn" id="mtresourcepersonfid" role="form" autocomplete="off">
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="rpname" class="form-label-modern">Name of the Resource Person <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-user"></i></span>
+                                <input name="rpname" id="rpname" class="form-control modern-input border-start-0 ps-2 alphabets" required="true" maxlength="100" placeholder="Enter Full Name" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rpemailid" class="form-label-modern">Email Id <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
+                                <input name="rpslno" id="rpslno" class="form-control" hidden="true" />
+                                <input name="rpemailid" id="rpemailid" type="email" class="form-control modern-input border-start-0 ps-2" required="true" maxlength="50" placeholder="Enter Email ID"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="rpqualificationcategory" class="form-label-modern">Qualification Category <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-layer-group"></i></span>
+                                <select id="rpqualificationcategory" class="form-select modern-input border-start-0 ps-2 select2-search" name="rpqualificationcategory" required="true">
+                                    <option value="-1">Select</option>
+                                    <option th:each="qc : ${qualificationcategorylist}" th:value="${qc.qualificationcategorycode}" th:text="${qc.qualificationcategoryname}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rpqualification" class="form-label-modern">Qualification <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-graduation-cap"></i></span>
+                                <select id="rpqualification" class="form-select modern-input border-start-0 ps-2 select2-search" name="rpqualification" required="true">
+                                    <option value="-1">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" id="qclist">
+                        <div class="col-md-12">
+                            <label for="qcinput" class="form-label-modern">Enter Qualification <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-pen"></i></span>
+                                <input id="qcinput" class="form-control modern-input border-start-0 ps-2" name="qcinput" placeholder="Specify Qualification"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="qualificationsubjectcode" class="form-label-modern">Specialized Subject</label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book-open"></i></span>
+                                <select name="qualificationsubjectcode" id="qualificationsubjectcode" class="form-select modern-input border-start-0 ps-2 select2-search">
+                                    <option value="0">Not Applicable</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rpspecialization" class="form-label-modern">Any Other Specialization</label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-star"></i></span>
+                                <input name="rpspecialization" id="rpspecialization" class="form-control modern-input border-start-0 ps-2" maxlength="100" placeholder="Enter Specialization"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="designationcodess" class="form-label-modern">Designation <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-briefcase"></i></span>
+                                <select id="designationcodess" class="form-select selectpicker modern-input border-start-0 ps-2 select2-search" data-live-search="true" name="designationcodess" required="true">
+                                    <option value="-1">Select</option>
+                                    <option th:each="d : ${designationlist}" th:value="${d.designationcode}" th:text="${d.designationname}"></option>
+                                    <option value="others">Others</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6" id="dlist">
+                            <label for="dinput" class="form-label-modern">Enter Designation <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-id-badge"></i></span>
+                                <input id="dinput" class="form-control modern-input border-start-0 ps-2" name="dinput" placeholder="Specify Designation"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4" >
+                        <div class="col-md-12">
+                            <label for="rpinstitutename" class="form-label-modern">Name of Institute <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-university"></i></span>
+                                <input name="rpinstitutename" id="rpinstitutename" class="form-control modern-input border-start-0 ps-2" required="true" maxlength="100" placeholder="Enter Institute Name"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="rpofficeaddress" class="form-label-modern">Office Address <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-building"></i></span>
+                                <input name="rpofficeaddress" id="rpofficeaddress" class="form-control modern-input border-start-0 ps-2" required="true" maxlength="100" placeholder="Enter Office Address"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rpresidentialaddress" class="form-label-modern">Residential Address <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-home"></i></span>
+                                <input name="rpresidentialaddress" id="rpresidentialaddress" class="form-control modern-input border-start-0 ps-2" required="true" maxlength="100" placeholder="Enter Residential Address"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="rpofficephone" class="form-label-modern">Office Telephone No. (With STD code)</label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-phone"></i></span>
+                                <input name="rpofficephone" id="rpofficephone" class="form-control modern-input border-start-0 ps-2 numberspl" maxlength="12" placeholder="e.g. 011-2345678"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rpresidencephone" class="form-label-modern">Residential Telephone No. (With STD code)</label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-phone-alt"></i></span>
+                                <input name="rpresidencephone" id="rpresidencephone" class="form-control modern-input border-start-0 ps-2 numberspl" maxlength="12" placeholder="e.g. 011-8765432"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="rpmobileno" class="form-label-modern">Mobile No. <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-mobile-alt"></i></span>
+                                <input name="rpmobileno" id="rpmobileno" class="form-control modern-input border-start-0 ps-2 numbers" required="true" maxlength="10" placeholder="10 Digit Mobile No"/>
+                            </div>
+                            <small id="msg1" class="text-danger d-block mt-1"></small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rpfax" class="form-label-modern">Fax No.</label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-fax"></i></span>
+                                <input name="rpfax" id="rpfax" class="form-control modern-input border-start-0 ps-2 numberspl" maxlength="12" placeholder="Enter Fax No"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 pt-4 border-top">
+                        <button type="button" class="btn btn-light border btn-modern px-4" id="resetButton">
+                            <i class="fas fa-redo me-2"></i> Reset
+                        </button>
+                        <button id="submit" type="submit" name="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                            <i class="fas fa-save me-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card border-0 modern-card mb-4">
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-list me-3 fs-5"></i> Registered Resource Persons
+                </h4>
+            </div>
+
+            <div class="card-body p-4">
+                <div class="table-responsive table-wrapper mt-2">
+                    <table class="table modern-table align-middle mb-0 w-100" id="usertable">
+                        <thead>
+                        <tr>
+                            <th class="text-center" style="width: 5%;">Sl No.</th>
+                            <th style="width: 15%;">Name</th>
+                            <th style="width: 15%;">Email ID</th>
+                            <th style="width: 15%;">Qualification</th>
+                            <th style="width: 10%;">Designation</th>
+                            <th style="width: 10%;">Institute Name</th>
+                            <th style="width: 15%;">Address</th>
+                            <th style="width: 10%;">Contact</th>
+                            <th class="text-center noExport" style="width: 5%;">Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="v, s : ${mtresourceList}">
+                            <td class="text-center fw-semibold text-muted" th:text="${s.index + 1}"></td>
+                            <td><span class="fw-bold text-dark d-block" th:text="${v.rpname}"></span></td>
+                            <td th:text="${v.rpemailid}"></td>
+                            <td>
+                                <span class="fw-semibold text-dark" th:text="${v.qualificationcode.qualificationname}"></span>
+                                <br>
+                                <small class="text-muted" th:text="'(' + ${v.rpspecialization} + ')'"></small>
+                            </td>
+                            <td><span class="badge bg-light text-dark border" th:text="${v.designationcode.designationname}"></span></td>
+                            <td th:text="${v.rpinstitutename}"></td>
+                            <td>
+                                <small class="fw-bold d-block">Office:</small>
+                                <span class="text-muted small" th:if="${#strings.length(v.rpofficeaddress) > 10}">
+                                        <span class="less" th:text="${#strings.substring(v.rpofficeaddress, 0, 10)} + '...'"></span>
+                                        <span class="more display-none" th:text="${v.rpofficeaddress}"></span>
+                                    </span>
+                                <span class="text-muted small" th:unless="${#strings.length(v.rpofficeaddress) > 10}" th:text="${v.rpofficeaddress}"></span>
+
+                                <small class="fw-bold d-block mt-1">Residential:</small>
+                                <span class="text-muted small" th:if="${#strings.length(v.rpresidentialaddress) > 10}">
+                                        <span class="less" th:text="${#strings.substring(v.rpresidentialaddress,0,10)} + '...'"></span>
+                                        <span class="more display-none" th:text="${v.rpresidentialaddress}"></span>
+                                        <br><a href="#more" class="showmore text-primary text-decoration-none">show more</a>
+                                    </span>
+                                <span class="text-muted small" th:unless="${#strings.length(v.rpresidentialaddress) > 10}" th:text="${v.rpresidentialaddress}"></span>
+                            </td>
+                            <td>
+                                <small class="d-block"><i class="fas fa-mobile-alt text-muted me-1"></i> <span th:text="${v.rpmobileno}"></span></small>
+                                <small class="d-block mt-1" th:if="${v.rpofficephone != ''}"><i class="fas fa-phone text-muted me-1"></i> <span th:text="${v.rpofficephone}"></span></small>
+                                <small class="d-block mt-1" th:if="${v.rpresidencephone != ''}"><i class="fas fa-home text-muted me-1"></i> <span th:text="${v.rpresidencephone}"></span></small>
+                                <small class="d-block mt-1" th:if="${v.rpfax != ''}"><i class="fas fa-fax text-muted me-1"></i> <span th:text="${v.rpfax}"></span></small>
+                            </td>
+                            <td class="text-center white-space-nowrap"
+                                th:if="${currentuserofficecode != null and v.moffices.officecode != null and currentuserofficecode == v.moffices.officecode}">
+
+                                <button class="clickme danger11 btn btn-sm btn-primary btn-modern"
+                                        th:data-rpslno="${v.rpslno}"
+                                        th:data-rpemailid="${v.rpemailid}"
+                                        th:data-rpname="${v.rpname}"
+                                        th:data-designationcode="${v.designationcode?.designationcode}"
+                                        th:data-qualificationcode="${v.qualificationcode?.qualificationcode}"
+                                        th:data-rpspecialization="${v.rpspecialization}"
+                                        th:data-rpinstitutename="${v.rpinstitutename}"
+                                        th:data-rpresidentialaddress="${v.rpresidentialaddress}"
+                                        th:data-rpofficephone="${v.rpofficephone}"
+                                        th:data-rpresidencephone="${v.rpresidencephone}"
+                                        th:data-rpmobileno="${v.rpmobileno}"
+                                        th:data-rpfax="${v.rpfax}"
+                                        th:data-rpofficeaddress="${v.rpofficeaddress}"
+                                        th:data-qualificationcategorycode="${v.qualificationcode?.mqualificationcategories?.qualificationcategorycode}"
+                                        th:data-qualificationsubjectcode="${v.mqualificationsubjects?.qualificationsubjectcode}"
+                                        th:id="'editBtn_' + ${v.rpslno}">
+
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </button>
+
+                            </td>
+
+                            <td class="text-center white-space-nowrap"
+                                th:unless="${currentuserofficecode != null and v.moffices.officecode != null and currentuserofficecode == v.moffices.officecode}">
+
+                                <span class="text-muted small">
+                                    Resource Person details can only be edited in the office they were registered
+                                </span>
+
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</html>

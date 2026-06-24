@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://thymeleaf.org"
+      layout:decorate="~{${layoutPath}}">
+<head>
+    <div layout:fragment="static-files">
+        <script th:inline="javascript">
+            const BASE = [[@{/}]];
+            function redirect(path) {
+                window.location.href = BASE + path;
+            }
+        </script>
+        <script th:src="@{/lily/js/customajax.js}"></script>
+
+        <script th:inline="javascript">
+            const API = {
+                listFinancialYear: [[@{/program/financial-year/list}]],
+                listPhases: [[@{/phases/list}]],
+                saveProgramMaterial: [[@{/program-materials/save}]],
+                listProgramMaterial: [[@{/program-materials/list}]],
+                viewProgramMaterial: [[@{/program-materials/view-file}]],
+                deleteProgramMaterial: [[@{/program-materials/delete}]]
+            };
+        </script>
+        <script th:src="@{/js/uploadProgramMaterial.js}"></script>
+    </div>
+
+    <title layout:fragment="title">Upload Program Material</title>
+</head>
+
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-book me-3 fs-5"></i> Upload Program Materials
+                </h4>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <form name="tcoursematerialfn1" id="tcoursematerialf" role="form" autocomplete="off">
+                    <div class="row mb-4 bg-light p-4 rounded border">
+
+                        <!-- Financial Year -->
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <label for="financialyear" class="form-label-modern">
+                                Financial Year <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </span>
+                                <select name="financialyear" id="financialyear"
+                                        class="form-select modern-input border-start-0 ps-2"
+                                        required="true">
+                                    <option value="">Select</option>
+                                    <option th:each="o : ${fylist}" th:value="${o[4]}" th:text="${o[1]}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Program Name -->
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <label for="programs" class="form-label-modern">
+                                Program Name <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </span>
+                                <select name="programcode" id="programs"
+                                        class="form-select modern-input border-start-0 ps-2 select2-search"
+                                        required="true">
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Phase -->
+                        <div class="col-md-4">
+                            <label for="phaseno" class="form-label-modern">
+                                Phase No <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="fas fa-layer-group"></i>
+                                </span>
+                                <select id="phaseno" name="phaseid"
+                                        class="form-select modern-input border-start-0 ps-2"
+                                        required="true">
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="uploadbtn">
+                    <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+                        <h5 class="fw-bold text-secondary mb-0"><i class="fas fa-file-alt me-2"></i> Uploaded Materials</h5>
+                        <button type="button" class="btn btn-success btn-modern shadow-sm px-4" id="addft" name="addft" data-bs-toggle="modal" data-bs-target="#modalsubj-modal">
+                            <i class="fas fa-upload me-2"></i> Upload new Material
+                        </button>
+                    </div>
+
+                    <div class="table-responsive table-wrapper rounded" id="tablediv">
+                        <table class="table modern-table align-middle mb-0 w-100" id="programmaterialtable">
+                            <thead>
+                            <tr>
+                                <th style="width: 10%;">Sl. No.</th>
+                                <th>Material Description</th>
+                                <th style="width: 20%;">Upload Date</th>
+                                <th style="width: 15%;">File</th>
+                                <th style="width: 15%;">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalsubj-modal" tabindex="-1" aria-labelledby="modalsubj-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="modalsubj-modal-label">
+                        <i class="fas fa-cloud-upload-alt me-2"></i> Upload New Program Material
+                    </h5>
+                    <button type="button" class="btn-close resetformbtn" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4 p-md-5">
+                    <form name="tprogrammaterialform" id="tprogrammaterialform" role="form" autocomplete="off" enctype="multipart/form-data">
+
+                        <div class="row mb-4 align-items-center">
+                            <div class="col-md-4">
+                                <label for="reportormaterial" class="form-label-modern mb-0">Report/Material <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="col-md-8">
+                                <input id="phaseid" name="phaseid" class="form-control" hidden="true" />
+                                <select id="reportormaterial" name="reportormaterial" class="form-select modern-input shadow-sm" required="true">
+                                    <option value="">Select</option>
+                                    <option value="M">Material</option>
+                                    <option value="R">Report</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="materialdesc" class="form-label-modern mb-0">About Material/Report  <span class="text-danger">*</span><small class="text-muted d-block">(200 words)</small></label>
+                            </div>
+                            <div class="col-md-8">
+                                <textarea id="materialdesc" name="materialdesc" class="form-control modern-input shadow-sm" required="true" maxlength="200" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4 align-items-center">
+                            <div class="col-md-4">
+                                <label for="file1" class="form-label-modern mb-0">Upload File  <span class="text-danger">*</span><small class="text-muted d-block">(pdf/jpg/jpeg only)</small></label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="file" name="file1" id="file1" class="form-control modern-input shadow-sm" required="true" onchange="checkmaterialdoctype()"/>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 pt-4 mt-4 border-top">
+                            <button type="button" class="btn btn-light border btn-modern px-4 resetformbtn" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </button>
+                            <button id="submit" type="submit" name="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                                <i class="fas fa-save me-2"></i> Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

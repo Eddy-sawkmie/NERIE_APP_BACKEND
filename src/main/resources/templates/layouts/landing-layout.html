@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+>
+<head>
+    <title>NERIE</title>
+    <th:block layout:replace="~{fragments/metas :: meta}"></th:block>
+    <link th:href="@{/css/header.css}" rel="stylesheet">
+    <link th:href="@{/css/footer.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <div layout:fragment="styles"></div>
+</head>
+
+<body class="d-flex flex-column min-vh-90">
+
+<!-- ============================================================
+     HEADER — Deep navy top bar + frosted white navbar
+     ============================================================ -->
+<header class="header landing-header">
+    <div class="header-top">
+        <div class="container" style="max-width: 1400px !important;">
+            <div class="top-left d-flex align-items-center">
+                <input id="sysdate" type="hidden" th:value="${sysdate}" />
+                <input id="timeZoneOffset" type="hidden" th:value="${timeZoneOffset}" />
+                <span class="mr-3"><i class="fa-regular fa-clock"></i> <span id="servtime" class="time-text">--:--</span></span>
+                <span><i class="fa-regular fa-calendar-days"></i> <span id="servdate" class="date-text">--/--/----</span></span>
+            </div>
+            <div class="top-center">
+                <span>Government of India &nbsp;|&nbsp; Ministry Of Education</span>
+            </div>
+            <div class="top-right">
+                <a href="#main-content">Skip to main content</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation w-100">
+        <div class="header-container">
+            <nav class="navbar navbar-expand-lg p-0">
+
+                <!-- Brand: logo + titles -->
+                <a class="navbar-brand nd-navbar-brand" th:href="@{/index}">
+                    <img th:src="@{/tempscripts/images/ncertlogo.png}"
+                         class="nd-navbar-logo"
+                         alt="NCERT Logo">
+                    <div class="nd-navbar-titles">
+                        <span class="nd-navbar-title-en">NATIONAL COUNCIL OF EDUCATIONAL RESEARCH &amp; TRAINING</span>
+                        <span class="nd-navbar-title-hi">राष्ट्रीय शैक्षिक अनुसंधान और प्रशिक्षण परिषद</span>
+                    </div>
+                </a>
+
+                <!-- Toggler — sits naturally at end on mobile -->
+                <button class="navbar-toggler custom-toggler ms-auto" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#ndNavLinks"
+                        aria-controls="ndNavLinks" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Nav links -->
+                <div class="collapse navbar-collapse" id="ndNavLinks">
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                        <li class="nav-item" id="navhome"
+                            th:classappend="${currentPage == 'home'} ? 'nd-active' : ''">
+                            <a class="nd-nav-link" th:href="@{/index}">Home</a>
+                        </li>
+
+                        <li class="nav-item" id="navaboutus"
+                            th:classappend="${currentPage == 'about'} ? 'nd-active' : ''">
+                            <a class="nd-nav-link" th:href="@{/about}">About Us</a>
+                        </li>
+
+                        <li class="nav-item" id="partcipant"
+                            th:classappend="${currentPage == 'participant'} ? 'nd-active' : ''">
+                            <a class="nd-nav-link" th:href="@{/participants/register}">Participant Registration</a>
+                        </li>
+
+                        <li class="nav-item" id="faculty"
+                            th:classappend="${currentPage == 'faculty'} ? 'nd-active' : ''">
+                            <a class="nd-nav-link" th:href="@{/faculties/research-list}">Faculty</a>
+                        </li>
+
+                        <!-- Divider — desktop only -->
+                        <li class="nd-nav-divider d-none d-lg-block" aria-hidden="true"></li>
+
+                        <!-- Login — mobile: direct link -->
+                        <li class="nav-item d-lg-none" id="login-mobile"
+                            th:classappend="${currentPage == 'login'} ? 'nd-active'">
+                            <a class="nd-nav-link" th:href="@{/login}">Login</a>
+                        </li>
+
+                        <!-- Login — desktop: modal trigger button -->
+                        <li class="d-none d-lg-flex align-items-center" id="login-desktop">
+                            <a class="nd-login-btn" href="#"
+                               data-bs-toggle="modal" data-bs-target="#loginModal">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+
+<!-- ============================================================
+     MAIN CONTENT — filled by child templates
+     ============================================================ -->
+<main id="main-content" class="flex-grow-1">
+    <div layout:fragment="content">
+        <pre>Your content goes here.</pre>
+    </div>
+</main>
+
+
+<!-- ============================================================
+     FOOTER — Dark slate
+     ============================================================ -->
+<footer class="nd-footer">
+    <div class="container nd-footer__container">
+        <div class="row justify-content-center">
+            <div class="col-12 text-center">
+                <p class="nd-footer__copy mb-0">
+                    &copy; <script>document.write(new Date().getFullYear())</script>,
+                    Designed, developed &amp; hosted by
+                    <a href="https://meg.nic.in/" target="_blank" class="nd-footer__nic-link">
+                        National Informatics Center, Meghalaya State Center, Shillong
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Login Modal Fragment -->
+<div th:replace="~{fragments/login-modal :: loginModal}"></div>
+
+<!-- Page-specific Scripts Fragment -->
+<div layout:fragment="scripts"></div>
+
+<!-- UX4G Accessibility Widget: Global in Landing Pages -->
+<script th:src="@{/js/accessibility-widget.js}" defer></script>
+
+<!-- Server Date & Time: Global in Landing Pages -->
+<script th:src="@{/js/serverDateTime.js}"></script>
+
+</body>
+</html>

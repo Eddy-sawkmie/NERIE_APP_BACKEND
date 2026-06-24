@@ -1,0 +1,49 @@
+/*Audit Trail*/
+
+.titlecss {
+  font-weight: bold;
+  color: #006699;
+  text-align: center;
+  margin: 0;
+  padding-top: 20px;
+}
+
+.fs-14 {
+  font-size: 14px;
+}
+
+.center-sans-serif {
+  text-align: center;
+  font-family: sans-serif;
+}
+
+.dt-buttons .btn {
+  padding: .25rem .5rem;
+  font-size: .875rem;
+  line-height: 1.5;
+  border-radius: .2rem;
+}
+
+.btn-custom-search {
+  background-color: #28b8d9;
+  border-color: #28b8d9;
+  color: #fff;
+}
+
+.btn-custom-search:hover {
+  color: #fff;
+  background-color: #23a6c5;
+  border-color: #2199b5;
+}
+
+.btn-custom-clear {
+  background-color: #e0e0e0;
+  color: #000;
+  border: 1px solid #ccc;
+}
+
+.btn-custom-clear:hover {
+  background-color: #cacaca;
+  color: #000;
+  border-color: #ccc;
+}

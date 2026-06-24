@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layouts/local-admin-layout}"
+>
+<head>
+    <title layout:fragment="title">Home</title>
+
+    <div layout:fragment="static-files">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link th:href="@{/css/dashboard.css}" rel="stylesheet">
+        <link rel="stylesheet" th:href="@{/css/home.css}">
+        <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+        <style>
+            body {
+                font-family: 'Public Sans', sans-serif;
+                background-color: #f8f6f6;
+                color: #0f172a;
+            }
+
+            /* Modal FY Sidebar Styling */
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 6px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 4px;
+            }
+            .fy-sidebar {
+                width: 220px;
+                border-right:
+                1px solid #e2e8f0;
+            }
+            .fy-filter-btn {
+                border: 2px solid transparent;
+                transition: all 0.2s ease;
+            }
+            .fy-filter-btn.active {
+                border-color: #10b981 !important;
+                background: #f0fdf4 !important;
+            }
+            @media (max-width: 768px) {
+                .fy-sidebar {
+                    width: 100%;
+                    border-right: none;
+                    border-bottom: 1px solid #e2e8f0;
+                }
+            }
+            /* Hide scrollbar for the Financial Year sidebar only */
+            .fy-sidebar .overflow-auto {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .fy-sidebar .overflow-auto::-webkit-scrollbar {
+                display: none;
+            }
+        </style>
+    </div>
+</head>
+
+<body>
+
+<div id="loader"><div class="spinner"></div></div>
+
+<main layout:fragment="content">
+    <div class="dashboard-container">
+        <div class="dashboard-container-card">
+            <input type="hidden" id="userRoleHidden" th:value="${user.userrole}">
+
+            <div class="container-fluid py-4 py-lg-5" style="max-width: 1280px;">
+                <header class="profile-header d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-start gap-4">
+                    <div class="d-flex flex-column flex-md-row align-items-center gap-3 gap-md-4 text-center text-md-start">
+                        <div class="p-1 rounded-circle shadow-sm" style="background: linear-gradient(to bottom right, #0ea5e9, #04f096);">
+                            <div class="bg-white p-1 rounded-circle overflow-hidden" style="width: 6rem; height: 6rem;">
+                                <img th:if="${profilepic != null}" id="previewfile1" th:src="'data:image/jpg;base64,' + ${profilepic}" class="w-100 h-100 rounded-circle object-fit-cover"/>
+                                <img th:unless="${profilepic != null}" id="previewfile1" th:src="@{/tempscripts/images/defaultprofile.jpg}" class="w-100 h-100 rounded-circle object-fit-cover"/>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column justify-content-center py-1">
+                            <span class="text-secondary-custom fw-bolder text-uppercase mb-1" style="font-size: 0.85rem; letter-spacing: 0.05em;">Welcome Back</span>
+                            <h1 class="display-6 fw-bold mb-0 text-dark" th:text="${user.username}">Welcome, User</h1>
+                            <div class="text-muted mt-2 d-flex flex-wrap justify-content-center justify-content-md-start align-items-center gap-2 small">
+                                <span class="d-flex align-items-center gap-1">
+                                    <span class="material-symbols-outlined fs-6">workspace_premium</span>
+                                    <th:block th:switch="${user.userrole}">
+                                        <th:block th:case="'A'">
+                                            <span th:if="${user.isfaculty == '0'}">LOCAL ADMIN</span>
+                                            <span th:if="${user.isfaculty == '1'}">FACULTY</span>
+                                        </th:block>
+                                    </th:block>
+                                </span>
+                                <span th:if="${user.emailid}" class="d-flex align-items-center gap-1 border-start-md ps-md-2">
+                                    <i class="fas fa-envelope"></i> <span th:text="${user.emailid}">email@example.com</span>
+                                </span>
+                                        <span th:if="${user.usermobile}" class="d-flex align-items-center gap-1 border-start-md ps-md-2">
+                                    <i class="fas fa-phone-alt"></i> <span th:text="${user.usermobile}">1234567890</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="server-info-container text-center text-md-end">
+                        <div layout:replace="~{fragments/server-info :: date-time}"></div>
+                    </div>
+                </header>
+
+                <section class="mb-5 mt-5">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-pill bg-primary-custom" style="width: 6px; height: 28px;"></div>
+                            <h2 class="h4 fw-bold mb-0 text-dark">Recently Concluded Phases</h2>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(recentlycompletedphases)}">
+                        <div class="bg-white border p-5 rounded-4 text-center shadow-sm">
+                            <h4 class="text-muted mb-0 fw-normal">✨ No Recently Completed Phases!</h4>
+                        </div>
+                    </div>
+                    <div th:unless="${#lists.isEmpty(recentlycompletedphases)}" class="row g-4">
+                        <div th:each="a : ${recentlycompletedphases}" class="col-12 col-md-6 col-lg-6">
+                            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative transition-all hover-shadow-up concluded-card">
+                                <div class="card-accent-circle"></div>
+                                <div class="card-body p-4 d-flex flex-column z-1">
+                                    <div class="d-flex justify-content-between align-items-start mb-4">
+                                        <div class="p-2 rounded-3 text-secondary-custom" style="background-color: rgba(14,165,233,0.1);">
+                                            <span class="material-symbols-outlined">analytics</span>
+                                        </div>
+                                        <span class="badge rounded-pill px-3 py-2 text-uppercase fw-bold text-success" style="background-color: rgba(25, 135, 84, 0.1); letter-spacing: 0.05em;">
+                                            Phase <span th:text="${a[2]}"></span> Complete
+                                        </span>
+                                    </div>
+                                    <h3 class="h5 fw-bold text-dark mb-2" th:text="${a[0]}">Program Name</h3>
+                                    <p class="text-muted small mb-4 flex-grow-1 line-clamp-2" th:text="${a[3]}">Status/Detail text goes here.</p>
+                                    <div class="pt-3 border-top d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-2 text-muted small">
+                                            <span class="material-symbols-outlined fs-6">calendar_today</span>
+                                            <span class="fw-medium"><span th:text="${a[5]}"></span> - <span th:text="${a[4]}"></span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div class="rounded-pill bg-secondary" style="width: 6px; height: 28px;"></div>
+                        <h2 class="h4 fw-bold mb-0 text-dark">Program Overview</h2>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-12 col-sm-6 col-lg-3 b-customize">
+                            <div class="card bg-my-programs h-100 rounded-4 border-0 shadow-sm transition-all p-4 stat-card-blue" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalmylist-modal">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="icon-box d-flex align-items-center justify-content-center rounded-3 transition-all text-secondary-custom" style="width: 48px; height: 48px; background-color: rgba(14,165,233,0.1);">
+                                        <span class="material-symbols-outlined fs-3">menu_book</span>
+                                    </div>
+                                    <span class="text-white small fw-medium">Total</span>
+                                </div>
+                                <div class="fs-2 fw-bold text-white" th:text="${Myprogramsaccepted + Myprogramsrejected}">0</div>
+                                <div class="text-white small mt-1">My Programs</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-3">
+                            <div class="card bg-ongoing h-100 rounded-4 border-0 shadow-sm transition-all p-4 stat-card-orange" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalongoinglist-modal">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="icon-box d-flex align-items-center justify-content-center rounded-3 transition-all text-primary-custom" style="width: 48px; height: 48px; background-color: rgba(236,91,19,0.1);">
+                                        <span class="material-symbols-outlined fs-3">pending_actions</span>
+                                    </div>
+                                    <span class="text-white small fw-medium">Active</span>
+                                </div>
+                                <div class="fs-2 fw-bold text-white" th:text="${Ongoing}">0</div>
+                                <div class="text-white small mt-1">Ongoing Programs</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-3">
+                            <div class="card bg-upcoming h-100 rounded-4 border-0 shadow-sm transition-all p-4 stat-card-teal" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalupcominglist-modal">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="icon-box d-flex align-items-center justify-content-center rounded-3 transition-all" style="width: 48px; height: 48px; background-color: rgba(20,184,166,0.1); color: #14b8a6;">
+                                        <span class="material-symbols-outlined fs-3">event_upcoming</span>
+                                    </div>
+                                    <span class="text-white small fw-medium">Planned</span>
+                                </div>
+                                <div class="fs-2 fw-bold text-white" th:text="${Upcoming}">0</div>
+                                <div class="text-white small mt-1">Upcoming Programs</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-3">
+                            <div class="card bg-closed h-100 rounded-4 border-0 shadow-sm transition-all p-4 stat-card-slate" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalclosedlist-modal">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="icon-box d-flex align-items-center justify-content-center rounded-3 transition-all" style="width: 48px; height: 48px; background-color: #f1f5f9; color: #64748b;">
+                                        <span class="material-symbols-outlined fs-3">task_alt</span>
+                                    </div>
+                                    <span class="text-white small fw-medium">Archive</span>
+                                </div>
+                                <div class="fs-2 fw-bold text-white" th:text="${Closed}">0</div>
+                                <div class="text-white small mt-1">Closed Programs</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: none;">
+        <div th:fragment="fy-sidebar(modalId)" class="fy-sidebar bg-light p-3 flex-shrink-0 d-flex flex-column overflow-hidden">
+
+            <h3 class="fw-bold text-secondary text-uppercase mb-2 px-2 d-none d-md-block flex-shrink-0" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                Financial Year
+            </h3>
+
+            <div class="d-flex flex-row flex-md-column gap-2 overflow-auto custom-scrollbar pb-1 pb-md-0 flex-grow-1">
+                <button th:each="fy : ${fylist}"
+                        class="btn text-start position-relative p-2 p-md-3 rounded-3 bg-white shadow-sm fy-filter-btn transition-all flex-shrink-0"
+                        th:classappend="${fy[5] == 1} ? 'active border-success is-current-fy' : 'opacity-75 border-light'"
+                        th:data-fytext="${fy[1]}" th:data-fyvalue="${fy[4]}" th:data-target-modal="${modalId}">
+
+                    <div class="position-absolute rounded-circle bg-success active-dot"
+                         th:classappend="${fy[5] != 1} ? 'd-none' : ''"
+                         style="top: 12px; right: 12px; width: 8px; height: 8px;"></div>
+
+                    <span class="d-block fw-medium mb-1 fy-status-text status-label" style="font-size: 0.75rem;"
+                          th:classappend="${fy[5] == 1} ? 'text-success' : 'text-muted'"
+                          th:text="${fy[5] == 1 ? 'Current' : (fy[5] == 2 ? 'Upcoming' : 'Previous')}">Status</span>
+
+                    <span class="fs-6 fs-md-5 fw-bold fy-year-text"
+                          th:classappend="${fy[5] == 1} ? 'text-success' : 'text-dark'"
+                          th:text="${fy[1]}">2024-25</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalmylist-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen" style="max-width: 99vw;">
+            <div class="modal-content bg-white w-100 rounded-4 shadow-lg d-flex flex-column border overflow-hidden h-85vh p-0" style="height: 100%;">
+                <div class="d-flex align-items-center justify-content-between p-4 border-bottom bg-white sticky-top">
+                    <div>
+                        <h2 class="fs-4 fw-bold text-dark mb-0">My Programs (Accepted & Rejected)</h2>
+                        <p class="small text-muted mt-1 mb-0">Browse programs assigned to you by financial year.</p>
+                    </div>
+                    <button type="button" class="btn btn-light rounded-circle p-2 d-flex text-muted border-0" data-bs-dismiss="modal"><span class="material-symbols-outlined">close</span></button>
+                </div>
+                <div class="d-flex flex-grow-1 overflow-hidden">
+                    <div class="d-flex flex-column flex-md-row flex-grow-1 overflow-hidden w-100">
+                        <div th:replace="~{::fy-sidebar('my-programs')}"></div>
+                        <div class="flex-grow-1 overflow-auto custom-scrollbar p-3 p-md-4" style="background-color: var(--bg-light, #f8f9fa);">
+                            <div class="d-flex align-items-center gap-2 small text-muted px-3 py-2 rounded-3 border mb-4" style="background-color: #f1f5f9; border-color: #e2e8f0; width: max-content;">
+                                <span class="material-symbols-outlined text-secondary" style="font-size: 1rem;">calendar_month</span>
+                                <span>Showing My Programs for <span class="fw-bold text-dark modal-fy-display">FY</span></span>
+                            </div>
+
+                            <h5 class="fw-bold text-success mb-3" id="accepted-heading">Accepted Programs</h5>
+                            <div class="row g-3 mb-5" id="my-accepted-container"></div>
+
+                            <h5 class="fw-bold text-danger mb-3" id="rejected-heading">Rejected Programs</h5>
+                            <div class="row g-3" id="my-rejected-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalongoinglist-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen" style="max-width: 99vw;">
+            <div class="modal-content bg-white w-100 rounded-4 shadow-lg d-flex flex-column border overflow-hidden h-85vh p-0" style="height: 100%;">
+                <div class="d-flex align-items-center justify-content-between p-4 border-bottom bg-white sticky-top">
+                    <div>
+                        <h2 class="fs-4 fw-bold text-dark mb-0">Ongoing Programs</h2>
+                        <p class="small text-muted mt-1 mb-0">Currently active programs for this financial year.</p>
+                    </div>
+                    <button type="button" class="btn btn-light rounded-circle p-2 d-flex text-muted border-0" data-bs-dismiss="modal"><span class="material-symbols-outlined">close</span></button>
+                </div>
+                <div class="d-flex flex-grow-1 overflow-hidden">
+                    <div class="d-none">
+                        <button th:each="fy : ${fylist}" class="fy-filter-btn" th:classappend="${fy[5] == 1} ? 'is-current-fy' : ''" th:data-fytext="${fy[1]}" th:data-fyvalue="${fy[4]}" data-target-modal="ongoing"></button>
+                    </div>
+
+                    <div class="flex-grow-1 overflow-auto custom-scrollbar p-3 p-md-4" style="background-color: var(--bg-light, #f8f9fa);">
+                        <div class="d-flex align-items-center gap-2 small text-muted px-3 py-2 rounded-3 border mb-4" style="background-color: #fff7ed; border-color: #ffedd5; width: max-content;">
+                            <span class="material-symbols-outlined text-warning" style="font-size: 1rem;">calendar_month</span>
+                            <span>Showing Ongoing Programs for <span class="fw-bold text-dark modal-fy-display">FY</span></span>
+                        </div>
+                        <div class="row g-3" id="ongoing-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalupcominglist-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen" style="max-width: 99vw;">
+            <div class="modal-content bg-white w-100 rounded-4 shadow-lg d-flex flex-column border overflow-hidden h-85vh p-0" style="height: 100%;">
+                <div class="d-flex align-items-center justify-content-between p-4 border-bottom bg-white sticky-top">
+                    <div>
+                        <h2 class="fs-4 fw-bold text-dark mb-0">Upcoming Programs</h2>
+                        <p class="small text-muted mt-1 mb-0">Planned programs for this financial year.</p>
+                    </div>
+                    <button type="button" class="btn btn-light rounded-circle p-2 d-flex text-muted border-0" data-bs-dismiss="modal"><span class="material-symbols-outlined">close</span></button>
+                </div>
+                <div class="d-flex flex-grow-1 overflow-hidden">
+                    <div class="d-none">
+                        <button th:each="fy : ${fylist}" class="fy-filter-btn" th:classappend="${fy[5] == 1} ? 'is-current-fy' : ''" th:data-fytext="${fy[1]}" th:data-fyvalue="${fy[4]}" data-target-modal="upcoming"></button>
+                    </div>
+
+                    <div class="flex-grow-1 overflow-auto custom-scrollbar p-3 p-md-4" style="background-color: var(--bg-light, #f8f9fa);">
+                        <div class="d-flex align-items-center gap-2 small text-muted px-3 py-2 rounded-3 border mb-4" style="background-color: #f0fdf4; border-color: #dcfce7; width: max-content;">
+                            <span class="material-symbols-outlined text-success" style="font-size: 1rem;">calendar_month</span>
+                            <span>Showing Upcoming Programs for <span class="fw-bold text-dark modal-fy-display">FY</span></span>
+                        </div>
+                        <div class="row g-3" id="upcoming-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalclosedlist-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen" style="max-width: 99vw;">
+            <div class="modal-content bg-white w-100 rounded-4 shadow-lg d-flex flex-column border overflow-hidden h-85vh p-0" style="height: 100%;">
+                <div class="d-flex align-items-center justify-content-between p-4 border-bottom bg-white sticky-top">
+                    <div>
+                        <h2 class="fs-4 fw-bold text-dark mb-0">Closed Program List</h2>
+                        <p class="small text-muted mt-1 mb-0">Browse and manage closed educational programs by financial year.</p>
+                    </div>
+                    <button type="button" class="btn btn-light rounded-circle p-2 d-flex text-muted border-0" data-bs-dismiss="modal"><span class="material-symbols-outlined">close</span></button>
+                </div>
+                <div class="d-flex flex-grow-1 overflow-hidden">
+                    <div class="d-flex flex-column flex-md-row flex-grow-1 overflow-hidden w-100">
+                        <div th:replace="~{::fy-sidebar('closed')}"></div>
+                        <div class="flex-grow-1 overflow-auto custom-scrollbar p-3 p-md-4" style="background-color: var(--bg-light, #f8f9fa);">
+                            <div class="d-flex align-items-center gap-2 small text-muted px-3 py-2 rounded-3 border mb-4" style="background-color: #f1f5f9; border-color: #e2e8f0; width: max-content;">
+                                <span class="material-symbols-outlined text-secondary" style="font-size: 1rem;">calendar_month</span>
+                                <span>Showing closed programs for <span class="fw-bold text-dark modal-fy-display">FY</span></span>
+                            </div>
+                            <div class="row g-3" id="closed-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modal-fullscreen-xl" id="MyProgramDetailsModal" tabindex="-1" role="dialog" aria-labelledby="programDetailsTitle" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="programDetailsTitle">Program Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="phaseListBody">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-12 mb-2 bg-dark mb-2">
+                                <h5 id="officeNameDetailsModal" class="text-white mb-0 py-2"></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program ID: <span class="programIDDetailsModal" id="programID"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Status: <span id="programStatusDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Category: <span id="programCategoryDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <h6 id="programTitleDetailsModal"></h6><br>
+                                <h6 id="programDescDetailsModal"></h6>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-sm-12">
+                                <h5>Phases in <span class="programID" id="programID2"></span></h5>
+                            </div>
+                            <div class="col-sm-12">
+                                <table id="phaselisttable" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Phase No.</th>
+                                        <th>Phase Description</th>
+                                        <th>Date</th>
+                                        <th>Venues</th>
+                                        <th>Resource Persons</th>
+                                        <th>Program Coordinators</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="phaseListDetailsModal">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <a id="printBTNDetailsModal" target="_blank" class="btn btn-warning">Get Printout</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modal-fullscreen-xl" id="PhaseMoreDetailsModal" tabindex="-1" role="dialog" aria-labelledby="PhaseMoreDetailsModal" aria-hidden="true" style="z-index: 1065;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="activityprogramDetailsTitle"><span id="PhaseMoreDetailsprogramname"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="PhaseMoreDetailsListBody">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-12 mb-2 bg-dark mb-2">
+                                <h5 id="PhaseMoreDetailsofficeNameDetailsModal" class="text-white mb-0 py-2"></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program ID: <span class="PhaseMoreDetailsprogramIDDetailsModal" id="PhaseMoreDetailsprogramID"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Status: <span id="PhaseMoreDetailsprogramStatusDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Category: <span id="PhaseMoreDetailsprogramCategoryDetailsModal"></span></h5>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-md-6"><h6>Focus Areas:</h6><p id="PhaseMoreDetailsFocusAreas"></p></div>
+                            <div class="col-md-6"><h6>Budget Proposed:</h6><p id="PhaseMoreDetailsBudgetProposed"></p></div>
+                            <div class="col-md-6"><h6>Target Group:</h6><p id="PhaseMoreDetailsTargetGroup"></p></div>
+                            <div class="col-md-6"><h6>Stage:</h6><p id="PhaseMoreDetailsStage"></p></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-12 mb-3"><h6>Objectives:</h6><div class="scrollable-text" id="PhaseMoreDetailsObjectives"></div></div>
+                            <div class="col-12 mb-3"><h6>Methodology:</h6><div class="scrollable-text" id="PhaseMoreDetailsMethodology"></div></div>
+                            <div class="col-12 mb-3"><h6>Tools:</h6><div class="scrollable-text" id="PhaseMoreDetailsTools"></div></div>
+                            <div class="col-12 mb-3"><h6>KP Indicators:</h6><div class="scrollable-text" id="PhaseMoreDetailsKPIndicators"></div></div>
+                            <div class="col-12 mb-3"><h6>Outcomes:</h6><div class="scrollable-text" id="PhaseMoreDetailsOutcomes"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <a id="printBTNDetailsModal" target="_blank" class="btn btn-warning">Get Printout</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modal-fullscreen-xl" id="ActivitiesModal" tabindex="-1" role="dialog" aria-labelledby="ActivitiesModal" aria-hidden="true" style="z-index: 1065;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="activityprogramDetailsTitle">Activities in <span id="activityprogramname"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="ActivityListBody">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-12 mb-2 bg-dark mb-2">
+                                <h5 id="activityofficeNameDetailsModal" class="text-white mb-0 py-2"></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program ID: <span class="activityprogramIDDetailsModal" id="activityprogramID"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Status: <span id="activityprogramStatusDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Category: <span id="activityprogramCategoryDetailsModal"></span></h5>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-sm-12"><h5>Activities</h5></div>
+                            <div class="col-sm-12">
+                                <table id="activitylistlisttable" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>SL No.</th>
+                                        <th>Activity Name</th>
+                                        <th>Activity Description</th>
+                                        <th>Date</th>
+                                        <th>Expenditure</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="activityListDetailsModal">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <a id="printBTNDetailsModal" target="_blank" class="btn btn-warning">Get Printout</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            getMyProgramsAcceptedAdminByFy: [[@{/program/getMyprogramsacceptedAdminByFy}]],
+            getMyProgramsRejectedAdminByFy: [[@{/program/getMyprogramsrejectedAdminByFy}]],
+            getOngoingAdminByFy: [[@{/program/getOngoingAdminByFy}]],
+            getUpcomingAdminByFy: [[@{/program/getUpcomingAdminByFy}]],
+            getClosedAdminByFy: [[@{/program/getClosedAdminByFy}]],
+            getMyProgramsAcceptedCoorByFy: [[@{/program/getMyprogramsacceptedCoorByFy}]],
+            getMyProgramsRejectedCoorByFy: [[@{/program/getMyprogramsrejectedCoorByFy}]],
+            getOngoingCoorByFy: [[@{/program/getOngoingCoorByFy}]],
+            getUpcomingCoorByFy: [[@{/program/getUpcomingCoorByFy}]],
+            getClosedCoorByFy: [[@{/program/getClosedCoorByFy}]],
+            printProgramDetails: [[@{/reports/printProgramDetails}]]
+        };
+    </script>
+    <script th:src="@{/js/dashboard.js}"></script>
+    <script th:src="@{/js/serverDateTime.js}"></script>
+    <script th:src="@{/js/home.js}"></script>
+    <script type="text/javascript">
+        const CURRENT_USER_ROLE = document.getElementById('userRoleHidden') ? document.getElementById('userRoleHidden').value : 'A';
+    </script>
+</th:block>
+</body>
+</html>

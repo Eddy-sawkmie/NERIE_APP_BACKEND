@@ -1,0 +1,110 @@
+/* --- PRINT STYLES --- */
+@media print {
+  @page { margin: 0.5cm; }
+
+  html, body, .min-vh-100, #wrapper {
+    height: auto !important;
+    min-height: 0 !important;
+    display: block !important;
+    overflow: visible !important;
+    font-size: 12px !important;
+  }
+
+  /* Compact spacing for print */
+  .container { padding-top: 0 !important; padding-bottom: 0 !important; }
+  .card-body { padding: 0.75rem !important; }
+  .modern-card-header { padding: 0.75rem 1rem !important; }
+  .mb-4 { margin-bottom: 0.75rem !important; }
+  .mb-3 { margin-bottom: 0.5rem !important; }
+  p { margin-bottom: 0.25rem !important; }
+  hr { margin: 0.5rem 0 !important; }
+  .blockquote { padding: 0.5rem !important; margin-bottom: 0.5rem !important; }
+
+  /* Prevent cards breaking across pages */
+  .card {
+    page-break-inside: avoid;
+    border: 1px solid #dee2e6 !important;
+    box-shadow: none !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* HIDE NAVIGATION, FOOTER, BUTTONS, & HAMBURGER */
+  nav,
+  .footer-bs,
+  .no-print,
+  #main-nav,
+  #dynamicmenu,
+  #hamburger-btn,
+  #menu-toggle,
+  .menu-toggle,
+  .navbar-toggler,
+  button[id*="toggle"]
+  {
+    display: none !important;
+  }
+
+  /* STYLE THE HEADER FOR PRINT (NCERT Logo) */
+  header.new-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding-bottom: 10px !important;
+    border-bottom: 2px solid #333;
+  }
+
+  /* Force Header Text Black */
+  header.new-header *, .gov-title-hi, .gov-title-en, .main-title, .sub-title {
+    color: black !important;
+    text-shadow: none !important;
+  }
+
+  /* CONTENT LAYOUT */
+  main, #content, .container, .container-fluid {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background-color: white !important;
+  }
+
+  /* BOOTSTRAP GRID FIXES */
+  .col-lg-8 {
+    width: 60% !important;
+    float: left;
+  }
+  .col-lg-4 {
+    width: 40% !important;
+    float: left;
+  }
+  .row {
+    display: flex;
+    flex-wrap: nowrap;
+    page-break-inside: avoid;
+  }
+
+  /* CLEAN UP CARDS */
+  .card .badge-soft-info{
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 10px !important;
+    page-break-inside: avoid;
+  }
+
+  .badge, .btn, .blockquote {
+      border: none !important;
+  }
+
+  /* Force background colors (for badges) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #printable-content {
+    display: block !important;
+    margin-top: 15px !important;
+  }
+}

@@ -1,0 +1,641 @@
+/*Upload Assignment*/
+/* Styles from JSP style block 3 (General page styling) */
+.dataTables_length, .dt-buttons {
+  float: left;
+  margin-right: 10px;
+}
+.dataTables_wrapper .dt-buttons {
+  float:right;
+  text-align:center;
+  color: #0000cc;
+}
+.dataTables_length{
+  margin-left: 10px;
+  float: left;
+}
+.dataTables_filter {
+  padding-top: 2px;
+  margin-left: 100px; /* This might need adjustment based on layout */
+  float: left;
+}
+.clickme {
+  background-color: #5c70db;
+  padding: 2px 6px;
+  text-decoration:none;
+  font-weight:bold;
+  font-size: 13px;
+  border-radius:5px;
+  cursor:pointer;
+}
+.danger11 {
+  background-color:#23C1DF;
+  color: #FFFFFF;
+}
+.danger11:hover {
+  background-color:#52E2FD;
+  color: #FFFFFF;
+}
+.titlecss{
+  font-weight: bold;
+  color:#006699;
+  text-align: center;
+  margin: 0;
+  padding-top: 20px;
+}
+.box-shadow-grey {
+  background-color: white;
+  box-shadow: 2px 2px 2px 2px grey;
+}
+.bold{
+  font-weight: bold
+}
+.center-sans-serif{
+  text-align: center;
+  font-family: sans-serif;
+}
+.bgcolor {
+  background-color:#f5f5f5;
+}
+.fs-14{
+  font-size: 14px;
+}
+.fs-12{
+  font-size: 12px;
+}
+.span{ /* Generic class name, used for * character color */
+  color: #ff0033;
+  font-size: 20px; /* This might be too large for an asterisk, original had it */
+}
+.r-15-t-8{
+  right: 15px;
+  top: 8px;
+}
+.f-right{
+  float: right;
+}
+.w-s-nowrap{
+  white-space: nowrap;
+}
+.m-w-50{ max-width: 50%; }
+.m-w-35{ max-width: 35%; }
+.m-w-70{ max-width: 70%; }
+.w-10{ width: 10%; }
+.w-30{ width: 30%; }
+.w-20{ width: 20%; }
+.w-1{ width: 1%; }
+.w-25{ width: 25%; }
+.w-15{ width: 15%; }
+.margin-0{ margin: 0; }
+.sans-serif-green{
+  color: #0c6e0f;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: sans-serif;
+}
+.display-none{ display:none; }
+.red{ /* Generic class name, used for header text color */
+  color: #fff;
+}
+
+.edit-button{
+  border-style:none;
+  background-color: transparent;
+  padding: 0;
+  color: #dc3545; /* Match text-danger color */
+  cursor: pointer;
+}
+.edit-button:hover {
+  text-decoration: underline;
+}
+
+
+
+/*View Submitted Assignment*/
+.bar1, .bar2, .bar3 {
+    width: 25px;
+    height: 3px;
+    background-color: #fff; /* Assuming header is dark, as in example */
+    margin: 5px 0;
+    transition: 0.4s;
+}
+.change .bar1 {
+    -webkit-transform: rotate(-45deg) translate(-5px, 5px);
+    transform: rotate(-45deg) translate(-5px, 5px);
+}
+.change .bar2 {opacity: 0;}
+.change .bar3 {
+    -webkit-transform: rotate(45deg) translate(-5px, -7px);
+    transform: rotate(45deg) translate(-5px, -7px);
+}
+
+/* Styles from JSP style block 2 (Tabs) */
+.tab{ font-family: 'Nunito', sans-serif; }
+.tab .nav-tabs{
+    background-color: transparent;
+    border: none;
+}
+.tab .nav-tabs li a{
+    color: #222;
+    background: transparent;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 15px 15px 10px;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease 0s;
+}
+.tab .nav-tabs li:last-child a{ margin-right: 0; }
+.tab .nav-tabs li a:hover,
+.tab .nav-tabs li.active a{
+    color: #222;
+    background: #fff;
+    border: none;
+}
+.tab .nav-tabs li.active a{ color: #6CBF1C; }
+.tab .nav-tabs li a:before,
+.tab .nav-tabs li a:after{
+    content: "";
+    background-color: #d1d1d1;
+    height: 7px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    transition: all 0.5s ease 0s;
+}
+.tab .nav-tabs li a:after{
+    background-color: #6CBF1C;
+    height: 100%;
+    opacity: 0;
+}
+.tab .nav-tabs li.active a:before,
+.tab .nav-tabs li a:hover:before{
+    height: 100%;
+    opacity: 0;
+}
+.tab .nav-tabs li.active a:after,
+.tab .nav-tabs li a:hover:after{
+    height: 7px;
+    opacity: 1;
+}
+.tab .tab-content{
+    color: #555;
+    background: #fff;
+    font-size: 15px;
+    letter-spacing: 1px;
+    line-height: 23px;
+    padding: 20px;
+}
+.tab .tab-content h3{
+    color: #222;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 7px 0;
+}
+.nav-pills .nav-link.active {
+    background-color: #64b1c4!important; /* Original was #4fb069, then #64b1c4 */
+    color: #ffffff !important;
+}
+@media only screen and (max-width: 479px){
+    .tab .nav-tabs li{ width: 100%; }
+    .tab .nav-tabs li a{ margin: 0 0 10px; }
+    .tab .tab-content h3{ font-size: 18px; }
+}
+
+/* Styles from JSP style block 3 (DataTable and General Utilities) */
+.dataTables_length, .dt-buttons {
+    float: left;
+    margin-right: 10px;
+}
+.dataTables_wrapper .dt-buttons {
+    float:right;
+    text-align:center;
+    color: #0000cc;
+}
+.dataTables_length{
+    margin-left: 10px;
+    float: left;
+}
+.dataTables_filter {
+    padding-top: 2px;
+    margin-left: 100px; /* Might need adjustment based on layout */
+    float: left;
+}
+.clickme {
+    background-color: #5c70db;
+    padding: 2px 6px;
+    text-decoration:none;
+    font-weight:bold;
+    font-size: 13px;
+    border-radius:5px;
+    cursor:pointer;
+}
+.danger11 {
+    background-color:#23C1DF;
+    color: #FFFFFF;
+}
+.danger11:hover {
+    background-color:#52E2FD;
+    color: #FFFFFF;
+}
+.titlecss{
+    font-weight: bold;
+    color:#006699;
+    text-align: center;
+    margin: 0;
+    padding-top: 20px;
+}
+.center-sans-serif{
+    text-align: center;
+    font-family: sans-serif;
+}
+.bgcolor {
+    background-color:#f5f5f5;
+}
+
+.span{ /* Generic class, careful if used elsewhere with different meaning */
+    color: #ff0033;
+    font-size: 20px;
+}
+.r-15-t-8{
+    right: 15px;
+    top: 8px;
+}
+.f-right{
+    float: right;
+}
+.w-s-nowrap{
+    white-space: nowrap;
+}
+.m-w-50{ max-width: 50%; }
+.m-w-35{ max-width: 35%; }
+.m-w-70{ max-width: 70%; }
+.w-10{ width: 10%; }
+.w-30{ width: 30%; }
+.w-20{ width: 20%; }
+.w-1{ width: 1%; }
+.w-25{ width: 25%; }
+.w-15{ width: 15%; }
+.w-100{ width: 100%; }
+.w-60{ width: 60%; }
+.margin-0{ margin: 0; }
+.sans-serif-green{
+    color: #0c6e0f;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: sans-serif;
+}
+.display-none{ display:none; }
+.box-shadow-grey {
+    background-color: white;
+    box-shadow: 2px 2px 2px 2px grey;
+}
+.bold{
+    font-weight: bold
+}
+
+
+/*View Student Feedbacl*/
+.bar1, .bar2, .bar3 {
+  width: 25px;
+  height: 3px;
+  background-color: #fff; /* Assuming this was for a menu toggle button, check if relevant in new layout */
+  margin: 5px 0;
+  transition: 0.4s;
+}
+
+.change .bar1 {
+  -webkit-transform: rotate(-45deg) translate(-5px, 5px);
+  transform: rotate(-45deg) translate(-5px, 5px);
+}
+
+.change .bar2 {opacity: 0;}
+
+.change .bar3 {
+  -webkit-transform: rotate(45deg) translate(-5px, -7px);
+  transform: rotate(45deg) translate(-5px, -7px);
+}
+.tab{ font-family: 'Nunito', sans-serif; }
+.tab .nav-tabs{
+  background-color: transparent;
+  border: none;
+}
+.tab .nav-tabs li a{
+  color: #222;
+  background: transparent;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 15px 15px 10px;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease 0s;
+}
+.tab .nav-tabs li:last-child a{ margin-right: 0; }
+.tab .nav-tabs li a:hover,
+.tab .nav-tabs li.active a{
+  color: #222;
+  background: #fff;
+  border: none;
+}
+.tab .nav-tabs li.active a{ color: #6CBF1C; }
+.tab .nav-tabs li a:before,
+.tab .nav-tabs li a:after{
+  content: "";
+  background-color: #d1d1d1;
+  height: 7px;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  transition: all 0.5s ease 0s;
+}
+.tab .nav-tabs li a:after{
+  background-color: #6CBF1C;
+  height: 100%;
+  opacity: 0;
+}
+.tab .nav-tabs li.active a:before,
+.tab .nav-tabs li a:hover:before{
+  height: 100%;
+  opacity: 0;
+}
+.tab .nav-tabs li.active a:after,
+.tab .nav-tabs li a:hover:after{
+  height: 7px;
+  opacity: 1;
+}
+.tab .tab-content{
+  color: #555;
+  background: #fff;
+  font-size: 15px;
+  letter-spacing: 1px;
+  line-height: 23px;
+  padding: 20px;
+}
+.tab .tab-content h3{
+  color: #222;
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 7px 0;
+}
+.nav-pills .nav-link.active {
+  background-color: #64b1c4!important;
+  color: #ffffff !important;
+}
+@media only screen and (max-width: 479px){
+  .tab .nav-tabs li{ width: 100%; }
+  .tab .nav-tabs li a{ margin: 0 0 10px; }
+  .tab .tab-content h3{ font-size: 18px; }
+}
+
+.dataTables_length, .dt-buttons {
+  float: left;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.dataTables_wrapper .dt-buttons {
+  float:right;
+  text-align:center;
+  color: #0000cc;
+}
+.dataTables_length{
+  margin-left: 10px;
+  float: left;
+}
+.dataTables_filter {
+  padding-top: 2px;
+  /* margin-left: 100px; Remove this to allow default or more responsive positioning */
+  float: left; /* Or adjust as needed for your layout */
+}
+.clickme {
+  background-color: #5c70db;
+  padding: 2px 6px;
+  text-decoration:none;
+  font-weight:bold;
+  font-size: 13px;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.danger11 {
+  background-color:#23C1DF;
+  color: #FFFFFF;
+}
+
+.danger11:hover {
+  background-color:#52E2FD;
+  color: #FFFFFF;
+}
+
+.titlecss{
+  font-weight: bold;
+  color:#006699;
+  text-align: center;
+  margin: 0;
+  padding-top: 20px;
+
+}
+.err {
+  color: tomato;
+}
+.box-shadow-grey {
+  background-color: white;
+  box-shadow: 2px 2px 2px 2px grey;
+}
+.bold{
+  font-weight: bold
+}
+.center-sans-serif{
+  text-align: center;
+  font-family: sans-serif;
+}
+.bgcolor {
+  background-color:#f5f5f5;
+}
+.fs-14{
+  font-size: 14px;
+}
+.fs-12{
+  font-size: 12px;
+}
+.span{ /* Renamed from 'span' to avoid conflict with HTML element if used as class */
+  color: #ff0033;
+  font-size: 20px;
+}
+.r-15-t-8{
+  right: 15px;
+  top: 8px;
+}
+.f-right{
+  float: right;
+}
+.w-s-nowrap{
+  white-space: nowrap;
+}
+.m-w-50{
+  max-width: 50%;
+}
+.m-w-35{
+  max-width: 35%;
+}
+.m-w-70{
+  max-width: 70%;
+}
+.w-10{
+  width: 10%;
+}
+.w-30{
+  width: 30%;
+}
+.w-20{
+  width: 20%;
+}
+.w-1{
+  width: 1%;
+}
+.w-25{
+  width: 25%;
+}
+.w-15{
+  width: 15%;
+}
+.w-100{
+  width: 100%;
+}
+.w-60{
+  width: 60%;
+}
+.margin-0{
+  margin: 0;
+}
+.sans-serif-green{
+  color: #0c6e0f;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: sans-serif;
+}
+.display-none{
+  display:none;
+}
+
+/*Create Academic Subject*/
+.titlecss{
+    font-weight: bold;
+    color:#006699;
+    text-align: center;
+    margin: 0;
+    padding-top: 20px;
+}
+.box-shadow-grey {
+    background-color: white;
+    box-shadow: 2px 2px 2px 2px grey;
+}
+.margin-0{
+    margin: 0;
+}
+.span{
+    color: #ff0033;
+    font-size: 20px;
+}
+.r-15-t-8{
+    right: 15px;
+    top: 8px;
+}
+.mw-50{
+    max-width: 50%;
+}
+
+/* ====== */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    /*background-color: #2196F3;*/
+    background-color: #60c1cb;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+.pill {
+    border-radius: 15px;
+    background-color: #d1d1d1;
+    color: #000;
+    padding: 7px;
+    margin: 0px 7px;
+}
+
+
+/*Create Academic Course*/

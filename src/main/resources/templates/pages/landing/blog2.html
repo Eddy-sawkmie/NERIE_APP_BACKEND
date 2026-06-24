@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/landing-layout}"
+>
+<head>
+    <title>NERIE</title>
+    <th:block layout:fragment="styles">
+        <link rel="stylesheet" th:href="@{/css/blogs.css}">
+    </th:block>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div layout:replace="~{fragments/lilypreloader :: preloader}"></div>
+
+    <!-- ── Hero ── -->
+    <section class="bl-hero">
+          <img th:src="@{/lily/images/aboutus/ncert_building.jpg}"
+             alt="NCERT Building" class="bl-hero__bg">
+        <div class="bl-hero__overlay"></div>
+        <div class="container bl-hero__content">
+            <nav class="bl-breadcrumb" aria-label="breadcrumb">
+                <a th:href="@{/about}" class="bl-breadcrumb__home">NCERT Constituent Units</a>
+                <span class="bl-breadcrumb__sep">/</span>
+                <span class="bl-breadcrumb__current">NERIE</span>
+            </nav>
+            <h1 class="bl-hero__title">NERIE, Shillong</h1>
+            <p class="bl-hero__sub">North-East Regional Institute of Education · Umiam-Ri-Bhoi, Meghalaya – 793103</p>
+        </div>
+    </section>
+
+    <!-- ── Main content ── -->
+    <div class="bl-page">
+        <div class="container">
+            <div class="bl-layout">
+
+                <!-- Left: article -->
+                <article class="bl-article">
+
+                    <div class="bl-article__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/NERIE- Umiam_lq.jpg}"
+                             alt="NERIE Campus" class="bl-article__img">
+                    </div>
+
+                    <div class="bl-article__body">
+                        <h2 class="bl-article__title">North-East Regional Institute of Education (NERIE)</h2>
+                        <div class="bl-title-rule"></div>
+
+                        <p class="bl-article__text">
+                            The North East Regional Institute of Education (NERIE) stands amidst the natural
+                            grandeur in Umiam village, about 20 km from Shillong city. Like other constituent
+                            units of the National Council of Educational Research and Training (NCERT), New Delhi,
+                            this Regional Institute of Education caters to the educational needs of the eight
+                            states of the North East — Assam, Arunachal Pradesh, Manipur, Meghalaya, Mizoram,
+                            Nagaland, Sikkim and Tripura.
+                        </p>
+
+                        <p class="bl-article__text">
+                            The Institute continued to function as a field office for about ten years. In 2005,
+                            the post of Principal along with 24 faculty posts were advertised and filled by NCERT,
+                            New Delhi. As the Institute's human resource grew, it was shifted in May 2012 from
+                            Shillong to its permanent campus in Nongsder village, Umiam.
+                        </p>
+
+                        <!-- Objectives list -->
+                        <h4 class="bl-article__subhead">Objectives of the Institute</h4>
+
+                        <ul class="bl-objective-list">
+                            <li class="bl-objective-list__item">
+                                <span class="bl-objective-list__num">I</span>
+                                <div>
+                                    <strong>Research</strong> — To undertake, aid, promote and coordinate research
+                                    in all branches of education. The Institute carries out an average of eight
+                                    research programmes per year.
+                                </div>
+                            </li>
+                            <li class="bl-objective-list__item">
+                                <span class="bl-objective-list__num">II</span>
+                                <div>
+                                    <strong>Pre-service Training</strong> — To conduct pre-service training courses
+                                    in the region. A milestone was reached in 2015 when the two-year B.Ed course
+                                    was launched.
+                                </div>
+                            </li>
+                            <li class="bl-objective-list__item">
+                                <span class="bl-objective-list__num">III</span>
+                                <div>
+                                    <strong>In-service Training</strong> — To organise in-service training programmes
+                                    based on the educational needs of the eight states. On average, 20–25 training
+                                    programmes are conducted per academic session.
+                                </div>
+                            </li>
+                            <li class="bl-objective-list__item">
+                                <span class="bl-objective-list__num">IV</span>
+                                <div>
+                                    <strong>Educational Materials</strong> — To develop educational materials and
+                                    learning resources for both students and teachers. About ten such programmes
+                                    are conducted every year.
+                                </div>
+                            </li>
+                            <li class="bl-objective-list__item">
+                                <span class="bl-objective-list__num">V</span>
+                                <div>
+                                    <strong>Extension Services</strong> — To organise extension services through
+                                    seminars and conferences at regional and national level, making the Institute
+                                    a learning space for recent trends in school and teacher education.
+                                </div>
+                            </li>
+                            <li class="bl-objective-list__item">
+                                <span class="bl-objective-list__num">VI</span>
+                                <div>
+                                    <strong>Flagship Programmes</strong> — To provide leadership in training,
+                                    development and research on MoE flagship programmes including Sarva Shiksha
+                                    Abhiyan, Rashtriya Madhyamik Shiksha Abhiyan and the newly launched Samagra
+                                    Shiksha Abhiyan.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </article>
+
+                <!-- Right: info sidebar -->
+                <aside class="bl-sidebar">
+                    <div class="bl-info-card">
+                        <h3 class="bl-info-card__heading">Institute Details</h3>
+
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-user-tie"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Principal</span>
+                                <span class="bl-info-row__value">Prof. Bidyadhar Barthakur</span>
+                            </div>
+                        </div>
+
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-university"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Institute</span>
+                                <span class="bl-info-row__value">North East Regional Institute of Education (NERIE)</span>
+                            </div>
+                        </div>
+
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-sitemap"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Parent Organisation</span>
+                                <span class="bl-info-row__value">National Council of Educational Research and Training</span>
+                            </div>
+                        </div>
+
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-map-marker-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Address</span>
+                                <span class="bl-info-row__value">Umiam-Ri-Bhoi, Meghalaya – 793103</span>
+                            </div>
+                        </div>
+
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-globe-asia"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Region Served</span>
+                                <span class="bl-info-row__value">Assam, Arunachal Pradesh, Manipur, Meghalaya, Mizoram, Nagaland, Sikkim &amp; Tripura</span>
+                            </div>
+                        </div>
+
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-external-link-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Website</span>
+                                <a href="http://nerie.nic.in/" target="_blank" class="bl-info-row__link">
+                                    nerie.nic.in
+                                </a>
+                            </div>
+                        </div>
+
+                        <a th:href="@{/about}" class="bl-back-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Units
+                        </a>
+                    </div>
+                </aside>
+
+            </div><!-- /.bl-layout -->
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

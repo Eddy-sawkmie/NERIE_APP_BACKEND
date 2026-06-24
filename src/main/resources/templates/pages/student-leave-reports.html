@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title>Student Leave Report</title>
+
+    <th:block layout:fragment="static-files">
+        <!--        <link rel="stylesheet" th:href="@{/css/coordinatorFaculty.css}" />-->
+    </th:block>
+</head>
+<body>
+
+
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
+<!-- Main Content Area -->
+<main layout:fragment="content">
+    <br>
+    <div class="container">
+        <div class="card box-shadow-grey" >
+            <div class="card-title titlecss" ><h4><i class="fa fa-book"> Student Leave Report</i></h4></div>
+            <hr>
+            <div class="card-body margin-0">
+                <div class="container bold">
+                    <form method="POST" name="listrepname" id="listrepid" role="form" autocomplete="off">
+                        <div class="form-group row">
+                            <div class="col-md-1 col-form-label"></div>
+                            <div class="col-md-3 col-form-label">
+                                <label for="finyear">Financial Year:<span class="red">*</span></label>
+                            </div>
+                            <div class="col-md-5">
+                                <select name="finyear" id="finyear" class="form-control">
+                                    <option value="">Select</option>
+                                    <option value="ALL">All</option>
+                                    <option th:each="o : ${fylist}" th:value="${o[0]}" th:text="${o[1]}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-1 col-form-label"></div>
+                            <div class="col-md-3 col-form-label">
+                                <label for="course">Course:<span class="red">*</span></label>
+                            </div>
+                            <div class="col-md-5">
+                                <select name="course" id="course" class="form-control">
+                                    <option value="">Select</option>
+                                    <option value="ALL">All</option>
+                                    <option th:each="o : ${programlist}"
+                                            th:value="${o.coursecode}"
+                                            th:attr="data-isshortterm=${o.isshortterm}"
+                                            th:text="${o.coursename}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-1 col-form-label"></div>
+                            <div class="col-md-3 col-form-label">
+                                <label for="semester-phase">Semester/Phase:<span class="red">*</span></label>
+                            </div>
+                            <div class="col-md-5">
+                                <select id="semester-phase" name="semester-phase" class="form-control" required>
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-1 col-form-label"></div>
+                            <div class="col-md-3 col-form-label">
+                                <label for="approvedstatus">Status:<span class="red">*</span></label>
+                            </div>
+                            <div class="col-md-5">
+                                <select name="approvedstatus" id="approvedstatus" class="form-control">
+                                    <option value="">Select</option>
+                                    <option value="ALL">All</option>
+                                    <option value="APPROVED">Approved</option>
+                                    <option value="NOTAPPROVED">Not Approved</option>
+                                </select>
+                            </div>
+                        </div>
+                        <center>
+                            <input type="button" name="submit" value="SUBMIT" class="btn btn-info submitbtn" data-function="getlistreportfunc"/>
+                        </center>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="card mt-4 mb-4 box-shadow-grey">
+            <div class="card-title titlecss">
+                <h4 class="m-3"><i class="fa fa-list">  <span id="tableTitleType">All</span> Leave Applications</i></h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered center-sans-serif" id="leavelist" >
+                        <thead class="fs-14">
+                        <tr>
+                            <th class="w-20" >Approval Status</th>
+                            <th class="w-20" >Student Information</th>
+                            <th class="w-20" >Application Submission Date</th>
+                            <th class="w-10" >Leave Station</th>
+                            <th class="w-20" >Leave From</th>
+                            <th class="w-20" >Leave To</th>
+                            <th class="w-15" >Reason for Leave</th>
+                            <th class="w-15 noExport" >View Application </th>
+                        </tr>
+                        </thead>
+                        <tbody class="fs-12" th:if="${leavelist != null}">
+                        <tr th:each="v : ${leavelist}">
+                            <td>
+                                <span th:if="${v.isapproved == '1'}" class="text-success">Approved!</span>
+                                <th:block th:if="${v.isapproved == '0'}">
+                                    <span class="text-danger">Not Approved</span><br/>
+                                    <span class="text-primary" th:if="${v.rejectionreason != null && !#strings.isEmpty(v.rejectionreason)}" th:text="'Reason: ' + ${v.rejectionreason}"></span>
+                                </th:block>
+                                <span th:if="${v.isapproved == null || #strings.isEmpty(v.isapproved)}" class="text-danger">No Action Taken Yet!</span>
+                            </td>
+                            <td th:text="${v.studentid.fname + (v.studentid.mname != null && !#strings.isEmpty(v.studentid.mname) ? ' ' + v.studentid.mname : '') + ' ' + v.studentid.lname + ' (' + v.studentid.rollno + ')'}"></td>
+                            <td th:text="${v.applicationdate != null ? #dates.format(v.applicationdate, 'dd-MM-yyyy') : ''}"></td>
+                            <td th:text="${v.leavestation}"></td>
+                            <td th:text="${v.requestedfrom != null ? #dates.format(v.requestedfrom, 'dd-MM-yyyy') : ''}"></td>
+                            <td th:text="${v.requestedto != null ? #dates.format(v.requestedto, 'dd-MM-yyyy') : ''}"></td>
+                            <td th:text="${v.reasonforleave}"></td>
+                            <td>
+                                <a th:href="@{/student-leaves/view-leave-application-details(aid=${v.studentleaveid}, origin='report')}"
+                                   class="btn btn-sm btn-primary mb-1 mb-sm-0 mr-sm-1">View</a>
+                            </td>                        </tr>
+                        <tr th:if="${#lists.isEmpty(leavelist)}">
+                            <td colspan="8" class="text-center">No leave applications found.</td>
+                        </tr>
+                        </tbody>
+                        <tbody class="fs-12" th:unless="${leavelist != null}">
+                        <tr>
+                            <td colspan="8" class="text-center">Loading leave applications or an error occurred.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <!-- API Endpoints-->
+    <script th:inline="javascript">
+        const API = {
+            getSemestersBasedOnCourse: [[@{/semesters/getSemestersBasedOnCourse}]],
+            getPhasesBasedOnCourse: [[@{/short-term-phases/getPhasesBasedOnCourse}]],
+            reportStudentLeaveList: [[@{/student-leaves/ReportStudentLeaveList}]],
+            viewLeaveApplicationDetails: [[@{/student-leaves/view-leave-application-details}]]
+        };
+    </script>
+    <script th:src="@{/js/studentLeaveReports.js}"></script>
+</th:block>
+</body>
+</html>

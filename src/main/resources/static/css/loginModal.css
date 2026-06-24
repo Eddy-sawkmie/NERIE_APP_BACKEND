@@ -1,0 +1,261 @@
+/* ========================================== */
+/*           LOGIN MODAL STYLES               */
+/* ========================================== */
+
+/* Ensure modal backdrop is properly layered */
+.modal-backdrop {
+    z-index: 1040 !important;
+}
+
+/* Modal Container Structure */
+#loginModal {
+    z-index: 1050;
+}
+
+#loginModal .modal-content {
+    border-radius: 15px;
+    overflow: hidden;
+    border: none;
+}
+
+/* --- Modal Header --- */
+#loginModal .modal-header {
+    background-color: #182b45;
+    color: #fff;
+}
+
+#loginModal .modal-title {
+    font-weight: bold;
+    color: white;
+    width: 100%;
+    text-align: center;
+}
+
+#loginModal .close {
+    color: white;
+}
+
+/* --- Modal Body --- */
+#loginModal .modal-body {
+    padding: 1.5rem;
+}
+
+/* Form Labels */
+#loginModal .font-weight-bold {
+    font-weight: 700 !important;
+}
+
+/* ========================================== */
+/*           INPUT GROUPS (HEIGHT FIX)        */
+/* ========================================== */
+
+/* Force height of 50px for inputs and addon buttons */
+#loginModal .input-group .form-control,
+#loginModal .input-group .input-group-text {
+    height: 50px;
+    display: flex;
+    align-items: center; /* Vertically center icons/text */
+}
+
+/* Password Toggle Icon */
+#loginModal .toggle-modal-password {
+    cursor: pointer;
+}
+
+/* Feedback Message */
+#loginModal #modal-form-feedback {
+    min-height: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* ========================================== */
+/*           CAPTCHA SPECIFIC STYLES          */
+/* ========================================== */
+
+#loginModal .captcha-wrapper {
+    display: flex;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    align-items: center;
+    overflow: hidden;
+    width: 100%;
+    max-width: 280px; /* Prevents stretching on wider screens */
+    margin-bottom: 0.5rem;
+}
+
+#loginModal .captcha-image-container {
+    flex-grow: 1;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+}
+
+#loginModal #modalCaptchaImage {
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+    display: block;
+}
+
+#loginModal .captcha-refresh-container {
+    padding: 0 15px;
+    border-left: 1px solid #ced4da;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+}
+
+#loginModal #modalRefreshCaptcha {
+    cursor: pointer;
+}
+
+#loginModal .captcha-refresh-icon {
+    width: 25px;
+    height: 25px;
+}
+
+#loginModal #modalUserCaptcha {
+    height: 50px; /* Also fix height for captcha input */
+}
+
+#loginModal .captcha-error-message {
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    font-size: 0.875rem;
+    padding-top: 20px;
+    padding-bottom: 5px;
+    display: none; /* Hidden by default */
+    min-height: 0;
+    transition: opacity 0.3s ease;
+}
+
+#loginModal .captcha-error-message.show {
+    display: block;
+    min-height: 1.5em;
+}
+
+/* Style for general feedback message */
+#loginModal #modal-form-feedback {
+    min-height: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 1rem;
+    transition: opacity 0.3s ease;
+}
+
+/* ========================================== */
+/*           LOGIN BUTTON STYLES              */
+/* ========================================== */
+
+#loginModal .form-group.text-center {
+    margin-bottom: 0;
+}
+
+.custom-close-btn {
+    border: none;
+    background: none;
+    font-size: 1.75rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    color: #fff;
+    transition: color 0.2s ease;
+}
+
+.custom-close-btn:hover {
+    color: #ABE6FF;
+    text-decoration: none;
+}
+
+/* Ensure the header layout handles the button correctly */
+#loginModal .modal-header {
+    background-color: #182b45;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Primary Login Button Style */
+#loginModal .btn-login-primary {
+    color: white;
+    background-color: #182b45 !important;
+    border-color: #ABE6FF !important;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+/* Hover Effect */
+#loginModal .btn-login-primary:hover {
+    /* background-color: #89d9ff !important; */
+    border-color: #89d9ff !important;
+    /* color: #0e0e3a; */
+}
+
+/* Focus State (Accessibility) */
+#loginModal .btn-login-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(171, 230, 255, 0.5);
+    outline: none;
+}
+
+
+/* Target the dialog for width and height - DO NOT use display: block on content */
+#loginModal .modal-dialog {
+    max-width: 500px;
+    width: 90%;
+    margin-right: auto;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - var(--bs-modal-margin) * 2);
+}
+
+/* Fix the content height */
+#loginModal .modal-content {
+    height: auto !important;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Smooth visibility handling */
+#loginModal.modal.fade {
+    transition: opacity 0.15s linear;
+}
+
+/* Ensure the backdrop and modal don't flicker on the Home Page */
+#loginModal {
+    padding-right: 0 !important;
+}
+
+.forgot-password-container {
+    text-align: center;
+    padding-top: 20px;
+    position: relative;
+    z-index: 10;
+}
+
+.forgot-password-link {
+    color: #1e1e4b;
+    font-size: 0.9rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.forgot-password-link:hover {
+    color: #89d9ff;
+    text-decoration: none;
+}

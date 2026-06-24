@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/coordinator-faculty-layout}">
+<head>
+    <title layout:fragment="title">Daily Feedback List</title>
+    <div layout:fragment="static-files"></div>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-3 px-4 border-0">
+                <div class="d-flex align-items-start">
+                    <div class="mt-1">
+                        <i class="fas fa-book me-3 fs-4"></i>
+                    </div>
+                    <h5 class="mb-1 fw-bold">Daily Feedback List</h5>
+                </div>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <div class="fs-5 text-dark mb-2" th:text="${program.programcode.programname}"></div>
+                            <div class="d-flex align-items-start">
+                                <span class="badge bg-light text-primary border px-2 py-1 me-2 mt-1 fw-medium shadow-none">Phase</span>
+                                <span class="text-secondary lh-base" th:text="${program.phasedescription}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4 align-items-end">
+                    <div class="col-md-6">
+                        <label for="programtimetablecode" class="form-label fw-bold text-dark">Select Subject</label>
+                        <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book-open"></i></span>
+                            <select id="programtimetablecode" class="form-select border-start-0 ps-2">
+                                <option value="">-- Select Subject --</option>
+                                <option th:each="v : ${subjectslist}"
+                                        th:value="${v.programtimetablecode}"
+                                        th:text="${v.subject}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-primary btn-modern w-100 shadow-sm getlist">
+                            <i class="fas fa-search me-2"></i> Get List
+                        </button>
+                    </div>
+                </div>
+
+                <hr class="mb-4 text-muted">
+
+                <div class="table-responsive table-wrapper mt-2">
+                    <table class="table modern-table align-middle mb-0 w-100" id="approveprogram">
+                        <thead>
+                        <tr>
+                            <th style="width: 10%;" class="text-center">Sl No.</th>
+                            <th style="width: 60%;">Feedback</th>
+                            <th style="width: 30%;">User</th>
+                        </tr>
+                        </thead>
+                        <tbody id="feedbackslist">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalattendance-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark"><i class="fas fa-list-alt me-2 text-primary"></i> Attendance Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row p-3 w-100" id="tabledivattendance">
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            listDailyFeedback: [[@{/participant/feedback/daily-feedback/get}]]
+        };
+    </script>
+    <script th:src="@{/js/listDailyFeedback.js}"></script>
+</th:block>
+</body>
+</html>

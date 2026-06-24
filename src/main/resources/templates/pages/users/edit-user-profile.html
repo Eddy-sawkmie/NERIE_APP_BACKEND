@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{${layoutPath}}">
+<head>
+    <title layout:fragment="title">Edit Profile</title>
+    <th:block layout:fragment="static-files">
+        <style>
+            .profile-avatar-container {
+                position: relative;
+                display: inline-block;
+                flex-shrink: 0;
+            }
+
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border: 4px solid #fff;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                border-radius: 50%;
+                background-color: #f8f9fa;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+        
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <div class="card border-0 modern-card">
+                    
+                    <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+                        <h4 class="mb-0 fw-bold d-flex align-items-center">
+                            <i class="fas fa-user-edit me-3 fs-5"></i> Edit Profile
+                        </h4>
+                    </div>
+                    
+                    <div class="card-body p-4 p-md-5">
+                        <form method="POST"
+                              th:object="${userlogin}"
+                              name="userloginfn"
+                              id="userloginfid"
+                              role="form"
+                              autocomplete="off"
+                              enctype="multipart/form-data">
+
+                            <input type="hidden" th:field="*{usercode}" id="usercode"/>
+
+                            <div class="row g-4">
+                                
+                                <div class="col-md-6">
+                                    <label for="userid" class="form-label-modern">User Id <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-id-badge"></i></span>
+                                        <input type="text" th:field="*{userid}" id="userid" class="form-control modern-input border-start-0 ps-0" required readonly/>
+                                    </div>
+                                    <small th:if="${#fields.hasErrors('userid')}" th:errors="*{userid}" class="text-danger mt-1 d-block"></small>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="username" class="form-label-modern">Full Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-user"></i></span>
+                                        <input type="text" th:field="*{username}" id="username" class="form-control modern-input border-start-0 ps-0" required maxlength="100" placeholder="Enter your full name"/>
+                                    </div>
+                                    <small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger mt-1 d-block"></small>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="usermobile" class="form-label-modern">Mobile No. <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-phone-alt"></i></span>
+                                        <input type="text" th:field="*{usermobile}" id="usermobile" class="form-control modern-input border-start-0 ps-0 numbers" required maxlength="10" pattern="\d{10}" placeholder="10-digit number"/>
+                                    </div>
+                                    <small th:if="${#fields.hasErrors('usermobile')}" th:errors="*{usermobile}" class="text-danger mt-1 d-block"></small>
+                                    <small id="msg1" class="text-danger mt-1 d-block fw-semibold"></small>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="emailid" class="form-label-modern">E-mail ID <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
+                                        <input type="email" th:field="*{emailid}" id="emailid" class="form-control modern-input border-start-0 ps-0" required maxlength="50" placeholder="name@example.com"/>
+                                    </div>
+                                    <small th:if="${#fields.hasErrors('emailid')}" th:errors="*{emailid}" class="text-danger mt-1 d-block"></small>
+                                </div>
+
+                                <div class="col-12 mt-4">
+                                    <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-4 p-4 bg-light rounded-3 border border-dashed">
+                                        
+                                        <div class="profile-avatar-container text-center">
+                                            <th:block th:switch="${profilepic != null and profilepic != ''}">
+                                                <img th:case="true"
+                                                     id="previewfile1"
+                                                     class="profile-avatar"
+                                                     th:src="'data:image/jpeg;base64,' + ${profilepic}"
+                                                     alt="Profile Photo"/>
+                                                <img th:case="false"
+                                                     id="previewfile1"
+                                                     class="profile-avatar"
+                                                     th:src="@{/tempscripts/images/defaultprofile.jpg}"
+                                                     alt="Default Profile Photo"/>
+                                            </th:block>
+                                        </div>
+                                        
+                                        <div class="flex-grow-1">
+                                            <label for="file1" class="form-label-modern mb-2">Update Profile Photo</label>
+                                            <input type="file" name="file1" id="file1" class="form-control modern-input bg-white" accept=".jpg,.jpeg,.png"/>
+                                            <p class="text-muted small mt-2 mb-0"><i class="fas fa-info-circle me-1"></i>Accepted formats: JPG, JPEG, PNG (Max size: 500KB)</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-12 text-end mt-4 pt-3 border-top">
+                                    <button id="submit" type="submit" name="submit" class="btn btn-primary btn-modern px-5">
+                                        <i class="fas fa-save me-2"></i> Save Changes
+                                    </button>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-light border-0">
+                        <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                        </div>
+                    <div class="modal-footer border-top-0 pt-0">
+                        <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            updateProfile: [[@{/users/profile/update}]],
+            checkEmail: [[@{/users/profile/check-email}]]
+        };
+        // Pass inline variables to JS scope
+        const initialProfilePicBase64 = [[${profilepic}]];
+        const defaultProfilePicUrl = /*[[@{/tempscripts/images/defaultprofile.jpg}]]*/ '/tempscripts/images/defaultprofile.jpg';
+    </script>
+    <script th:src="@{/js/updateUserProfile.js}"></script>
+</th:block>
+</body>
+</html>

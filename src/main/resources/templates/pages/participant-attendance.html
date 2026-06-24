@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title layout:fragment="title">Participant Attendance</title>
+
+    <div layout:fragment="static-files">
+        <link rel="stylesheet" th:href="@{/css/participantAttendance.css}" />
+        <script th:inline="javascript">
+            const API = {
+                listPhases: [[@{/phases/list}]],
+                listProgramDetails: [[@{/program-details/list}]],
+                getProgramTimeTable: [[@{/timetable/program-timetable}]],
+                saveParticipantAttendance: [[@{/participant/attendance/save}]],
+                listSessionParticipant: [[@{/applications/session-participants/list}]]
+            };
+        </script>
+        <script th:src="@{/js/participantAttendance.js}"></script>
+    </div>
+</head>
+
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+
+        <!-- Main Card -->
+        <div class="card border-0 modern-card mb-4">
+
+            <!-- Modern Header -->
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-user-check me-3 fs-5"></i> Participant Attendance
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+
+                <!-- Filter Form -->
+                <form id="tparticipantattendanceid" role="form" autocomplete="off">
+                    <div class="row">
+                        <!-- Program Select -->
+                        <div class="col-md-6 mb-4">
+                            <label for="programs" class="form-label-modern">Program <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-graduation-cap"></i></span>
+                                <select id="programs" class="form-control form-select modern-input border-start-0 ps-2 select2-search" required="true">
+                                    <option value="">Select Program</option>
+                                    <option th:each="p : ${programlistP}" th:value="${p[0]}" th:title="${p[1]}" th:text="${p[1]}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Phase Select -->
+                        <div class="col-md-6 mb-4">
+                            <label for="phaseno" class="form-label-modern">Phase No <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-layer-group"></i></span>
+                                <select name="phaseid" id="phaseno" class="form-control form-select modern-input border-start-0 ps-2" required="true">
+                                    <option value="">Select Phase</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Day Select -->
+                        <div class="col-md-6 mb-4">
+                            <label for="programday" class="form-label-modern">Day <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-calendar-day"></i></span>
+                                <select name="programday" id="programday" class="form-control form-select modern-input border-start-0 ps-2" required="true">
+                                    <option value="">Select Day</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Session Select -->
+                        <div class="col-md-6 mb-4">
+                            <label for="timings" class="form-label-modern">Session <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-clock"></i></span>
+                                <select name="programtimetablecode" id="timings" class="form-control form-select modern-input border-start-0 ps-2" required="true">
+                                    <option value="">Select Session</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table Section (Hidden by default, toggled by JS) -->
+                    <div class="table-responsive table-wrapper mt-4 d-none" id="tablediv">
+                        <table class="table modern-table align-middle mb-0 w-100" id="participantatt">
+                            <thead>
+                            <tr>
+                                <th class="text-center" style="width: 5%;">Sl No.</th>
+                                <th style="width: 20%;">Application Code</th>
+                                <th style="width: 55%;">Participant Name</th>
+                                <th class="text-center noExport" style="width: 20%;">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-center gap-3 mt-5 pt-4 border-top">
+                        <input id="submit" type="submit" name="submit" value="SUBMIT" class="btn btn-primary btn-modern px-5 shadow-sm" />
+                        <input type="button" value="CANCEL" id="cancel" class="btn btn-light border btn-modern px-5" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal (Matched Style) -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

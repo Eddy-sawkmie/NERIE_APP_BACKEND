@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layouts/landing-layout}">
+<head>
+    <title>Home</title>
+    <div layout:fragment="styles">
+        <link th:href="@{/css/landingHome.css}" rel="stylesheet">
+        <style>
+            /* nd-hero slide visibility — handled here so it works alongside lily/script.js */
+            .nd-hero__slide {
+                display: none;
+                animation: ndFadeIn 0.5s ease;
+            }
+            .nd-hero__slide--active {
+                display: block;
+            }
+            @keyframes ndFadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to   { opacity: 1; transform: translateY(0); }
+            }
+
+            /* Program links inside hero */
+            .nd-hero__program-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0.6rem;
+                margin-bottom: 1.75rem;
+                max-height: 220px;
+                overflow-y: auto;
+                padding-right: 4px;
+            }
+            .nd-hero__program-list::-webkit-scrollbar { width: 4px; }
+            .nd-hero__program-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+
+            .nd-hero__program-link {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.6rem;
+                color: #e2e8f0;
+                text-decoration: none;
+                font-size: 0.9rem;
+                line-height: 1.5;
+                transition: color 0.2s;
+            }
+            .nd-hero__program-link:hover { color: #ffffff; text-decoration: none; }
+
+            .nd-hero__link-icon {
+                margin-top: 4px;
+                font-size: 0.7rem;
+                color: #93c5fd;
+                flex-shrink: 0;
+            }
+
+            .nd-hero__empty {
+                color: #94a3b8;
+                font-style: italic;
+                font-size: 0.9rem;
+            }
+
+            .nd-hero__actions { margin-top: 0.5rem; }
+
+            .text-dark-blue{
+                color:#031e3d
+            }
+
+            /* Hide scrollbar for the Financial Year sidebar only */
+            .fy-sidebar .overflow-auto {
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+            }
+
+            .fy-sidebar .overflow-auto::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, and Opera */
+            }
+        </style>
+    </div>
+</head>
+<body>
+
+<!-- Main Content Area -->
+<div layout:fragment="content">
+    <div layout:replace="~{fragments/lilypreloader :: preloader}"></div>
+
+    <!-- =========================================================
+         HERO SECTION — New Design (nd-hero)
+         Background image + dark overlay + sliding program info
+         ========================================================= -->
+    <section class="nd-hero">
+        <img th:src="@{/lily/images/about/nerie_front_view.jpg}"
+             alt="NCERT Campus"
+             class="nd-hero__bg">
+        <div class="nd-hero__overlay"></div>
+
+        <div class="nd-hero__content">
+            <div class="container">
+
+                <!-- Slide 1: Ongoing Programs -->
+                <div class="nd-hero__slide nd-hero__slide--active" id="heroSlide0">
+                    <div class="nd-hero__body">
+                        <span class="nd-hero__badge">Currently Running</span>
+                        <h2 class="nd-hero__title"
+                            data-animation-out="fadeOutRight" data-delay-out="5"
+                            data-duration-in=".3" data-animation-in="fadeInLeft" data-delay-in=".1">
+                            Ongoing Programs
+                        </h2>
+                        <div class="nd-hero__program-list"
+                             data-animation-out="fadeOutRight" data-delay-out="5"
+                             data-duration-in=".3" data-animation-in="fadeInLeft" data-delay-in=".4">
+                            <th:block th:each="st : ${ongoingprogramlist}">
+                                <a class="nd-hero__program-link"
+                                   th:id="${st[0]}"
+                                   th:href="@{/reports/publicReport(phaseid=${st[0]})}"
+                                   target="_blank">
+                                    <i class="fa fa-arrow-right nd-hero__link-icon" aria-hidden="true"></i>
+                                    <span><span th:text="${st[11]}"></span>: <span th:text="${st[2]}"></span>
+                                    &mdash; started on <span th:text="${st[9]}"></span>
+                                    at <span th:text="${st[10]}"></span></span>
+                                </a>
+                            </th:block>
+                            <th:block th:if="${#lists.isEmpty(ongoingprogramlist)}">
+                                <p class="nd-hero__empty">No Details Available Yet!</p>
+                            </th:block>
+                        </div>
+                        <th:block th:if="${#lists.size(ongoingprogramlist) > 2}">
+                            <div class="nd-hero__actions">
+                                <a href="#" class="nd-btn nd-btn--primary moreongoingbtn"
+                                   title="Click here to View more Ongoing Programs"
+                                   data-bs-toggle="modal" data-bs-target="#modalmorelist-modal"
+                                   data-animation-out="fadeOutRight" data-delay-out="5"
+                                   data-duration-in=".3" data-animation-in="fadeInLeft" data-delay-in=".7"
+                                   data-function="getmoreongoingfunc">
+                                    View More <i class="fas fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Upcoming Programs -->
+                <div class="nd-hero__slide" id="heroSlide1">
+                    <div class="nd-hero__body">
+                        <span class="nd-hero__badge">Scheduled</span>
+                        <h2 class="nd-hero__title"
+                            data-animation-out="fadeOutUp" data-delay-out="5"
+                            data-duration-in=".3" data-animation-in="fadeInDown" data-delay-in=".1">
+                            Upcoming Programs
+                        </h2>
+                        <div class="nd-hero__program-list"
+                             data-animation-out="fadeOutUp" data-delay-out="5"
+                             data-duration-in=".3" data-animation-in="fadeInDown" data-delay-in=".4">
+                            <th:block th:each="u : ${upcomingprogramlist}">
+                                <a class="nd-hero__program-link"
+                                   th:id="${u[0]}"
+                                   th:href="@{/reports/publicReport(phaseid=${u[0]})}"
+                                   target="_blank">
+                                    <i class="fa fa-arrow-right nd-hero__link-icon" aria-hidden="true"></i>
+                                    <span>
+                                        <span th:text="${u[11]}"></span>: <span th:text="${u[2]}"></span>
+                                        <span th:if="${u[9] != null and u[9] != 'No dates finalized yet!'}">
+                                            &mdash; starting from <span th:text="${u[9]}"></span>
+                                        </span>
+                                        <span th:unless="${u[9] != null and u[9] != 'No dates finalized yet!'}">
+                                            (<span th:text="${u[9]}"></span>)
+                                        </span>
+                                        at <span th:text="${u[10]}"></span>
+                                    </span>
+                                </a>
+                            </th:block>
+                            <th:block th:if="${#lists.isEmpty(upcomingprogramlist)}">
+                                <p class="nd-hero__empty">No Details Available Yet!</p>
+                            </th:block>
+                        </div>
+                        <th:block th:if="${#lists.size(upcomingprogramlist) > 2}">
+                            <div class="nd-hero__actions">
+                                <a href="#" class="nd-btn nd-btn--primary upcomingProgramsBtn"
+                                   title="Click here to View more Upcoming Programs"
+                                   data-bs-toggle="modal" data-bs-target="#modalmorelist-modal"
+                                   data-animation-out="fadeOutUp" data-delay-out="5"
+                                   data-duration-in=".3" data-animation-in="fadeInDown" data-delay-in=".7"
+                                   data-function="getmoreupcomingfunc">
+                                    View More <i class="fas fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Completed Programs -->
+                <div class="nd-hero__slide" id="heroSlide2">
+                    <div class="nd-hero__body">
+                        <span class="nd-hero__badge">Archived</span>
+                        <h2 class="nd-hero__title"
+                            data-animation-out="fadeOutDown" data-delay-out="5"
+                            data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".1">
+                            Completed Programs
+                        </h2>
+                        <div class="nd-hero__program-list"
+                             data-animation-out="fadeOutDown" data-delay-out="5"
+                             data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".4">
+                            <th:block th:each="c : ${completedprogramlist}">
+                                <a class="nd-hero__program-link"
+                                   th:id="${c[0]}"
+                                   th:href="@{/reports/publicReport(phaseid=${c[0]})}"
+                                   target="_blank">
+                                    <i class="fa fa-arrow-right nd-hero__link-icon" aria-hidden="true"></i>
+                                    <span><span th:text="${c[11]}"></span>: <span th:text="${c[2]}"></span>
+                                    &mdash; starting from <span th:text="${c[9]}"></span>
+                                    at <span th:text="${c[10]}"></span></span>
+                                </a>
+                            </th:block>
+                            <th:block th:if="${#lists.isEmpty(completedprogramlist)}">
+                                <p class="nd-hero__empty">No Completed Programs</p>
+                            </th:block>
+                        </div>
+                        <th:block th:if="${#lists.size(completedprogramlist) > 2}">
+                            <div class="nd-hero__actions">
+                                <a href="#" class="nd-btn nd-btn--primary view-more-completed"
+                                   title="Click here to View more Completed Programs"
+                                   data-bs-toggle="modal" data-bs-target="#modalmorelist-modal"
+                                   data-animation-out="fadeOutDown" data-delay-out="5"
+                                   data-duration-in=".3" data-animation-in="zoomIn" data-delay-in=".7">
+                                    View More <i class="fas fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+
+            </div><!-- /.container -->
+        </div><!-- /.nd-hero__content -->
+
+        <!-- Slide dots (JS-controlled) -->
+        <div class="nd-hero__dots" id="heroDots">
+            <span class="nd-hero__dot nd-hero__dot--active" data-slide="0"></span>
+            <span class="nd-hero__dot" data-slide="1"></span>
+            <span class="nd-hero__dot" data-slide="2"></span>
+        </div>
+
+        <!-- Slide arrows -->
+        <div class="nd-hero__arrows d-none d-md-flex">
+            <button class="nd-hero__arrow" id="heroPrev" aria-label="Previous slide">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="nd-hero__arrow" id="heroNext" aria-label="Next slide">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- =========================================================
+         PROGRAMS STATS CARDS — New Design (nd-card)
+         ========================================================= -->
+    <section class="nd-programs">
+        <div class="container nd-programs__container">
+
+            <div class="nd-programs__heading text-center">
+                <h3 class="nd-programs__title">Our Programs</h3>
+                <div class="nd-programs__rule"></div>
+                <!-- <p class="nd-programs__subtitle">
+                    Tracking our commitment to educational excellence through comprehensive
+                    program management and academic outreach.
+                </p> -->
+            </div>
+
+            <div class="row nd-programs__row">
+
+                <!-- Ongoing -->
+                <div class="col-lg-4 col-sm-6 mb-4">
+                    <div class="nd-card nd-card--orange"
+                         style="cursor: pointer;"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalongoinglist-modal">
+                        <div class="nd-card__top">
+                            <div class="nd-card__icon-wrap nd-card__icon-wrap--orange">
+                                <i class="fas fa-play-circle nd-card__icon"></i>
+                            </div>
+                        </div>
+                        <!-- <p class="nd-card__label">Current Active</p> -->
+                        <h5 class="nd-card__name">Ongoing Programs</h5>
+                        <div class="nd-card__stat">
+                            <span class="nd-card__count" th:text="${countongoing}">0</span>
+                            <span class="nd-card__unit">Total Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming -->
+                <div class="col-lg-4 col-sm-6 mb-4">
+                    <div class="nd-card nd-card--blue"
+                         style="cursor: pointer;"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalupcominglist-modal">
+                        <div class="nd-card__top">
+                            <div class="nd-card__icon-wrap nd-card__icon-wrap--blue">
+                                <i class="fas fa-clock nd-card__icon"></i>
+                            </div>
+                        </div>
+                        <!-- <p class="nd-card__label">Scheduled</p> -->
+                        <h5 class="nd-card__name">Upcoming Programs</h5>
+                        <div class="nd-card__stat">
+                            <span class="nd-card__count" th:text="${countupcoming}">0</span>
+                            <span class="nd-card__unit">Total Scheduled</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Completed -->
+                <div class="col-lg-4 col-sm-6 mb-4">
+                    <div class="nd-card nd-card--green"
+                         style="cursor: pointer;"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalclosedlist-modal">
+                        <div class="nd-card__top">
+                            <div class="nd-card__icon-wrap nd-card__icon-wrap--green">
+                                <i class="fas fa-check-circle nd-card__icon"></i>
+                            </div>
+                        </div>
+                        <!-- <p class="nd-card__label">Archived</p> -->
+                        <h5 class="nd-card__name">Completed Programs</h5>
+                        <div class="nd-card__stat">
+                            <span class="nd-card__count" th:text="${countcompleted}">0</span>
+                            <span class="nd-card__unit">Successfully Finished</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /.row -->
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <!-- Modal More List -->
+    <div class="modal fade" id="modalmorelist-modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header text-center d-block p-5 border-bottom-0 position-relative">
+                    <h5 class="modal-title"><u><span id="titlespan" style="font-weight: bold"></span></u></h5>
+                    <button type="button" class="btn-modal-close position-absolute" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="programlistdiv" style="text-justify: inter-word"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ONGOING LIST MODAL -->
+    <div class="modal fade" id="modalongoinglist-modal" tabindex="-1" aria-labelledby="ongoingProgramsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 95vw;">
+        <div class="modal-content bg-white w-100 rounded-4 shadow-lg d-flex flex-column border overflow-hidden p-0" style="height: 85vh;">
+
+            <div class="d-flex align-items-center justify-content-between p-4 border-bottom bg-white sticky-top" style="z-index: 10;">
+                <div>
+                    <h2 class="fs-4 font-display fw-bold text-primary-custom mb-0" id="ongoingProgramsLabel">Ongoing Programs</h2>
+                    <p class="small text-muted mt-1 mb-0">Browse and manage currently active educational programs.</p>
+                </div>
+                <button type="button" class="btn btn-light rounded-circle p-2 d-flex text-muted border-0" data-bs-dismiss="modal" aria-label="Close">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="d-flex flex-grow-1 overflow-hidden">
+                <div class="flex-grow-1 overflow-auto custom-scrollbar p-4 w-100" style="background-color: var(--bg-light, #f8f9fa);">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center gap-2 small text-muted px-3 py-2 rounded-3 border" style="background-color: #ecfdf5; border-color: #a7f3d0;">
+                            <span class="text-dark">Showing all <span class="fw-bold">Ongoing</span> programs</span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+
+                        <div th:if="${#lists.isEmpty(Ongoing)}" class="col-12 text-center py-5">
+                            <p class="text-muted fw-bold">There are no ongoing programs available.</p>
+                        </div>
+
+                        <div th:each="a : ${Ongoing}" class="col-12 col-md-6 col-lg-4">
+                            <div class="bg-white rounded-3 border shadow-sm p-4 d-flex flex-column justify-content-between h-100">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <span class="badge text-dark-blue bg-primary bg-opacity-10 rounded-pill px-2 py-1 fw-medium" th:text="${a[1] != null ? a[1] : 'N/A'}">Program ID</span>
+                                        <span class="text-success fw-bold" style="font-size: 0.75rem;">
+                                            Active
+                                        </span>
+                                    </div>
+                                    <h4 class="font-display fw-bold fs-5 text-dark mb-2 lh-sm" th:text="${a[2]}">Program Name</h4>
+                                    <p class="small text-muted line-clamp-2 mb-4" th:text="${a[3]}">Program Description</p>
+                                </div>
+                                <div class="pt-3 border-top d-flex justify-content-end">
+                                    <button class="btn bg-success text-white small fw-medium d-flex align-items-center gap-2 px-3 py-2 ongoingbtn"
+                                            th:id="'viewOngoingBtn' + ${a[0]}"
+                                            th:data-program-code="${a[0]}">
+                                        <span>View Details</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    <!-- UPCOMING LIST MODAL -->
+    <div class="modal fade" id="modalupcominglist-modal" tabindex="-1" aria-labelledby="upcomingProgramsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 95vw;">
+        <div class="modal-content bg-white w-100 rounded-4 shadow-lg d-flex flex-column border overflow-hidden p-0" style="height: 85vh;">
+
+            <div class="d-flex align-items-center justify-content-between p-4 border-bottom bg-white sticky-top" style="z-index: 10;">
+                <div>
+                    <h2 class="fs-4 font-display fw-bold text-primary-custom mb-0" id="upcomingProgramsLabel">Upcoming Programs</h2>
+                    <p class="small text-muted mt-1 mb-0">Browse and manage scheduled educational programs.</p>
+                </div>
+                <button type="button" class="btn btn-light rounded-circle p-2 d-flex text-muted border-0" data-bs-dismiss="modal" aria-label="Close">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+
+            <div class="d-flex flex-grow-1 overflow-hidden">
+                <div class="flex-grow-1 overflow-auto custom-scrollbar p-4 w-100" style="background-color: var(--bg-light, #f8f9fa);">
+
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center gap-2 small text-muted px-3 py-2 rounded-3 border" style="background-color: #fefce8; border-color: #fef08a;">
+                            <span class="text-dark">Showing all <span class="fw-bold">Upcoming</span> programs</span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div th:if="${#lists.isEmpty(Upcoming)}" class="col-12 text-center py-5">
+                            <p class="text-muted fw-bold">There are no upcoming programs available.</p>
+                        </div>
+                        <div th:each="a : ${Upcoming}" class="col-12 col-md-6 col-lg-4">
+                            <div class="bg-white rounded-3 border shadow-sm p-4 d-flex flex-column justify-content-between h-100">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <span class="badge text-dark-blue bg-primary bg-opacity-10 rounded-pill px-2 py-1 fw-bold" th:text="${a[1] != null ? a[1] : 'N/A'}">Program ID</span>
+                                        <span class="text-warning fw-bold" style="font-size: 0.75rem;">
+                                            Upcoming
+                                        </span>
+                                    </div>
+                                    <h4 class="font-display fw-bold fs-5 text-dark mb-2 lh-sm" th:text="${a[2]}">Program Name</h4>
+                                    <p class="small text-muted line-clamp-2 mb-4" th:text="${a[3]}">Program Description</p>
+                                </div>
+                                <div class="pt-3 border-top d-flex justify-content-end">
+                                    <button class="btn bg-success text-white small fw-medium d-flex align-items-center gap-2 px-3 py-2 upcomingbtn"
+                                            th:id="'viewUpcomingBtn' + ${a[0]}"
+                                            th:data-program-code="${a[0]}">
+                                        <span>View Details</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    <!-- CLOSED LIST MODAL -->
+    <div class="modal fade" id="modalclosedlist-modal" tabindex="-1" aria-labelledby="completedProgramsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen" style="max-width: 99vw;">
+            <div class="modal-content bg-white w-100 rounded-4 shadow-lg d-flex flex-column border overflow-hidden h-85vh p-0" style="height: 85vh;">
+
+                <div class="d-flex align-items-center justify-content-between p-4 border-bottom bg-white sticky-top" style="z-index: 10;">
+                    <div>
+                        <h2 class="fs-4 font-display fw-bold text-primary-custom mb-0" id="completedProgramsLabel">Completed Program List</h2>
+                        <p class="small text-muted mt-1 mb-0">Browse and manage completed educational programs by financial year.</p>
+                    </div>
+                    <button type="button" class="btn btn-light rounded-circle p-2 d-flex text-muted border-0" data-bs-dismiss="modal" aria-label="Close">
+                        <span class="material-icons-round">close</span>
+                    </button>
+                </div>
+
+                <div class="d-flex flex-grow-1 overflow-hidden">
+
+                    <div class="d-flex flex-column flex-md-row flex-grow-1 overflow-hidden">
+                        <!-- Sidebar / Topbar Filter -->
+                        <aside class="fy-sidebar bg-light p-3 flex-shrink-0 d-flex flex-column overflow-hidden">
+
+                            <h3 class="fw-bold text-secondary text-uppercase mb-2 px-2 d-none d-md-block flex-shrink-0"
+                                style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                                Financial Year
+                            </h3>
+
+                            <div class="d-flex flex-row flex-md-column gap-2 overflow-auto custom-scrollbar pb-1 pb-md-0 flex-grow-1">
+
+                                <button th:each="fy : ${fylist}"
+                                        class="btn text-start position-relative p-2 p-md-3 rounded-3 bg-white shadow-sm fy-filter-btn transition-all flex-shrink-0"
+                                        th:classappend="${fy[5] == 1} ? 'active border-success border-2 shadow opacity-100 is-current-fy' : 'opacity-75 border-light'"
+                                        th:data-fytext="${fy[1]}"
+                                        th:data-fyvalue="${fy[4]}">
+
+                                    <div class="position-absolute rounded-circle bg-success active-dot"
+                                         th:classappend="${fy[5] != 1} ? 'd-none' : ''"
+                                         style="top: 12px; right: 12px; width: 8px; height: 8px;"></div>
+
+                                    <span class="d-block fw-medium mb-1 fy-status-text status-label" style="font-size: 0.75rem;"
+                                          th:classappend="${fy[5] == 1} ? 'text-success' : 'text-muted'"
+                                          th:text="${fy[5] == 1 ? 'Current' : (fy[5] == 2 ? 'Upcoming' : 'Previous')}">
+                                        Status
+                                    </span>
+
+                                    <span class="fs-6 fs-md-5 fw-bold fy-year-text"
+                                          th:classappend="${fy[5] == 1} ? 'text-success' : 'text-dark'"
+                                          th:text="${fy[1]}">
+                                        2024-25
+                                    </span>
+                                </button>
+                            </div>
+                        </aside>
+
+                        <!-- Main Content Area -->
+                        <div class="flex-grow-1 overflow-auto custom-scrollbar p-3 p-md-4" style="background-color: var(--bg-light, #f8f9fa);">
+
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="d-flex align-items-center gap-2 small text-muted px-3 py-2 rounded-3 border" style="background-color: #eff6ff; border-color: #dbeafe;">
+                                    <span class="material-icons-round text-primary-custom" style="font-size: 1rem;"></span>
+                                    <span>Showing programs for <span class="fw-bold text-primary-custom" id="current-fy-display" th:text="${fylist[0][1]}">FY</span></span>
+                                </div>
+                            </div>
+
+                            <div class="row g-3" id="program-cards-container">
+
+                                <div th:if="${#lists.isEmpty(Completed)}" class="col-12 text-center py-5">
+                                    <p class="text-muted fw-bold">There are no completed programs available for this financial year.</p>
+                                </div>
+
+                                <div th:each="a : ${Completed}" class="col-12 col-lg-6 program-card">
+                                    <div class="bg-white rounded-3 border shadow-sm p-4 d-flex flex-column justify-content-between h-100">
+                                        <div>
+                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                <span class="badge text-dark-blue bg-primary bg-opacity-10 rounded-pill px-2 py-1 fw-bold" th:text="${a[1] != null ? a[1] : 'N/A'}">Program ID</span>
+                                                <span class="text-muted" style="font-size: 0.75rem;">Completed</span>
+                                            </div>
+                                            <h4 class="font-display fw-bold fs-5 text-dark mb-2 lh-sm" th:text="${a[2]}">Program Name</h4>
+                                            <p class="small line-clamp-2 mb-4" th:text="${a[3]}">Program Description</p>
+                                        </div>
+                                        <div class="pt-3 border-top d-flex justify-content-end">
+                                            <button class="btn bg-success text-white small fw-medium d-flex align-items-center gap-2 px-3 py-2 closedbtn"
+                                                    th:data-program-code="${a[0]}">
+                                                <span>View Details</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Program Details Modal -->
+    <div class="modal fade modal-fullscreen-xl" id="MyProgramDetailsModal" tabindex="-1" role="dialog" aria-labelledby="programDetailsTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header position-relative">
+                    <h5 class="modal-title" id="programDetailsTitle">Program Details</h5>
+                    <button type="button" class="btn-modal-close position-absolute" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="phaseListBody">
+                    <!-- Body content populated by JS -->
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-12 mb-2 bg-dark mb-2">
+                                <h5 id="officeNameDetailsModal" class="text-white mb-0 py-2"></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program ID: <span class="programIDDetailsModal" id="programID"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Status: <span id="programStatusDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Category: <span id="programCategoryDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <h6 id="programTitleDetailsModal"></h6>
+                                </br><h6 id="programDescDetailsModal"></h6>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-sm-12">
+                                <h5>Phases in <span class="programID" id="programID2"></span></h5>
+                            </div>
+                            <div class="col-sm-12">
+                                <table id="phaselisttable" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Phase No.</th>
+                                        <th>Phase Description</th>
+                                        <th>Date</th>
+                                        <th>Venues</th>
+                                        <th>Resource Persons</th>
+                                        <th>Program Coordinators</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="phaseListDetailsModal">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHASE MORE DETAILS MODAL -->
+    <div class="modal fade modal-fullscreen-xl" id="PhaseMoreDetailsModal" tabindex="-1" role="dialog" aria-labelledby="PhaseMoreDetailsModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header position-relative">
+                    <h5 class="modal-title text-center" id="activityprogramDetailsTitle"><span id="PhaseMoreDetailsprogramname"></span></h5>
+                    <button type="button" class="btn-modal-close position-absolute" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="PhaseMoreDetailsListBody">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-12 mb-2 bg-dark mb-2">
+                                <h5 id="PhaseMoreDetailsofficeNameDetailsModal" class="text-white mb-0 py-2"></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program ID: <span class="PhaseMoreDetailsprogramIDDetailsModal" id="PhaseMoreDetailsprogramID"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Status: <span id="PhaseMoreDetailsprogramStatusDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Category: <span id="PhaseMoreDetailsprogramCategoryDetailsModal"></span></h5>
+                            </div>
+                        </div>
+                        <!-- Long Text Fields -->
+                        <div class="row mb-2">
+                            <div class="col-12 mb-3"><h6>Objectives:</h6><div class="scrollable-text" id="PhaseMoreDetailsObjectives"></div></div>
+                            <div class="col-12 mb-3"><h6>Methodology:</h6><div class="scrollable-text" id="PhaseMoreDetailsMethodology"></div></div>
+                            <div class="col-12 mb-3"><h6>Tools:</h6><div class="scrollable-text" id="PhaseMoreDetailsTools"></div></div>
+                            <div class="col-12 mb-3"><h6>KP Indicators:</h6><div class="scrollable-text" id="PhaseMoreDetailsKPIndicators"></div></div>
+                            <div class="col-12 mb-3"><h6>Outcomes:</h6><div class="scrollable-text" id="PhaseMoreDetailsOutcomes"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTIVITIES MODAL -->
+    <div class="modal fade modal-fullscreen-xl" id="ActivitiesModal" tabindex="-1" role="dialog" aria-labelledby="ActivitiesModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header position-relative">
+                    <h5 class="modal-title text-center" id="activityprogramDetailsTitle">Activities in <span id="activityprogramname"></span></h5>
+                    <button type="button" class="btn-modal-close position-absolute" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="ActivityListBody">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-12 mb-2 bg-dark mb-2">
+                                <h5 id="activityofficeNameDetailsModal" class="text-white mb-0 py-2"></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program ID: <span class="activityprogramIDDetailsModal" id="activityprogramID"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Status: <span id="activityprogramStatusDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5 class="">Program Category: <span id="activityprogramCategoryDetailsModal"></span></h5>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-sm-12">
+                                <table id="activitylistlisttable" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>SL No.</th>
+                                        <th>Activity Name</th>
+                                        <th>Activity Description</th>
+                                        <th>Date</th>
+                                        <th>Expenditure</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="activityListDetailsModal"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROGRAM MATERIALS MODAL -->
+    <div class="modal fade modal-fullscreen-xl" id="ProgramMaterialsModal" tabindex="-1" role="dialog" aria-labelledby="ProgramMaterialsModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header position-relative">
+                    <h5 class="modal-title text-center" id="activityprogramDetailsTitle">Program Materials</h5>
+                    <button type="button" class="btn-modal-close position-absolute" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="ActivityListBody">
+                    <div class="container-fluid">
+                        <div class="row mt-4">
+                            <div class="col-sm-12">
+                                <table id="programMaterialsListTable" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>SL No.</th>
+                                        <th>Material Description</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="programMaterialsTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script th:inline="javascript">
+        var getMoreOngoingProgramList = [[@{/program-details/getMoreOngoingProgramList}]];
+        var getMoreUpcomingProgramList = [[@{/program-details/getMoreUpcomingProgramList}]];
+        var getMoreCompletedProgramList = [[@{/program-details/getMoreCompletedProgramList}]];
+        var getAllProgramDetailsBasedOnProgramCode = [[@{/program-details/getAllProgramDetailsBasedOnProgramCode}]];
+        var getPhaseMoreDetailsBasedOnPhaseId = [[@{/phase-more-details/getPhaseMoreDetailsBasedOnPhaseId}]];
+        var getActivityBasedOnPhaseId = [[@{/activities/getActivityBasedOnPhaseId}]];
+        var getProgramMaterialsBasedOnPhaseId = [[@{/program-materials/list}]];
+    </script>
+    <script th:src="@{/js/serverDateTime.js}"></script>
+    <script th:src="@{/lily/js/script.js}"></script>
+    <script th:src="@{/js/landingHome.js}"></script>
+</div>
+</body>
+</html>

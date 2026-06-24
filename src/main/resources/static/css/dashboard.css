@@ -1,0 +1,224 @@
+:root {
+    --blue-text-color: #2F6D9D;
+    --shadow-color: rgb(0 0 0 / 10%);
+    --border-radius: 12px;
+}
+
+#b-homedb {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+/* --- Generic Stat Card Styles --- */
+.stat-card {
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    text-align: left;
+    height: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card .stat-icon {
+    font-size: 2.5em;
+}
+
+.stat-card .stat-info {
+    line-height: 1.3;
+}
+
+.stat-card .stat-info .stat-title {
+    font-size: 0.95em;
+    font-weight: 500;
+    margin: 0;
+}
+
+.stat-card .stat-info .stat-count {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+
+.stat-title-small {
+    font-size: 0.75rem;
+    margin: 0;
+    opacity: 0.85;
+}
+
+
+/* --- CARD STYLES FOR COORDINATOR / FACULTY DASHBOARD --- */
+.bg-my-programs, .bg-ongoing, .bg-upcoming, .bg-archived, .bg-total, .bg-completed, .bg-closed {
+    color: #fff;
+}
+
+.bg-my-programs .stat-icon, .bg-ongoing .stat-icon, .bg-upcoming .stat-icon, .bg-archived .stat-icon, .bg-total .stat-icon, .bg-completed .stat-icon, .bg-closed .stat-icon {
+    opacity: 0.9;
+}
+
+.bg-my-programs   { background-color: #2980b9; } /* Orange */
+.bg-ongoing       { background-color: #e67e22; } /* Teal */ 
+.bg-upcoming      { background-color: #16a085; } /* Yellow */
+.bg-archived      { background-color: #8e44ad; } /* Purple */
+.bg-total         { background-color: #27ae60; } /* Green */
+.bg-completed     { background-color: #2980b9; } /* Blue */
+.bg-closed        { background-color: #7f8c8d; } /* Grey */
+
+
+/* --- CARD STYLES FOR PRINCIPAL DASHBOARD --- */
+/* cards white text */
+.bg-department, .bg-faculty, .bg-student, .bg-alumni,
+.bg-coordinator, .bg-participant,
+.bg-completedp, .bg-closedp,
+.bg-completedp-prev, .bg-closedp-prev {
+    color: #fff;
+}
+
+/* Opacity settings for icons */
+.bg-department .stat-icon, .bg-faculty .stat-icon, .bg-student .stat-icon, .bg-alumni .stat-icon,
+.bg-coordinator .stat-icon, .bg-participant .stat-icon,
+.bg-completedp .stat-icon, .bg-closedp .stat-icon,
+.bg-completedp-prev .stat-icon, .bg-closedp-prev .stat-icon {
+    opacity: 0.9;
+}
+
+.bg-department    { background-color: #2980b9; } /* Blue */
+.bg-faculty       { background-color: #27ae60; } /* Green */
+.bg-student       { background-color: #f1c40f; } /* Yellow */
+.bg-alumni        { background-color: #8e44ad; } /* Purple */
+.bg-coordinator   { background-color: #e67e22; } /* Orange */
+.bg-participant   { background-color: #16a085; } /* Teal */
+
+/* Completed Programs */
+.bg-completedp      { background-color: #2980b9; } /* Standard Blue */
+.bg-completedp-prev { background-color: #154360; } /* Dark Blue - for Previous Year */
+
+/* Closed Programs */
+.bg-closedp         { background-color: #7f8c8d; } /* Standard Grey */
+.bg-closedp-prev    { background-color: #424949; } /* Dark Grey - for Previous Year */
+
+
+/* --- Layout Controls --- */
+.layout-controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 1rem 1rem 1rem;
+}
+.layout-controls .cursor-pointer i {
+    color: #6c757d;
+    font-size: 1.25rem;
+    transition: color 0.2s;
+}
+.layout-controls .cursor-pointer:hover i {
+    color: #343a40;
+}
+
+/* --- RECENTLY CONCLUDED STYLES --- */
+/* --- MODERN & COLORFUL STYLES --- */
+.recently-concluded-section {
+    /* Optional: a very subtle background to make the white cards pop */
+    background-color: #f8fafc; 
+    border-radius: 24px;
+}
+
+/* Vibrant Gradient Text for the Title */
+.recently-concluded-section .section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+}
+
+/* Floating, soft-shadow Cards */
+.concluded-program-card {
+    width: 100%;
+    max-width: 350px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px -10px rgba(79, 70, 229, 0.12);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+}
+
+/* Bouncy, colorful hover effect */
+.concluded-program-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px -10px rgba(236, 72, 153, 0.2);
+}
+
+/* Decorative colorful blur inside the top right of the card */
+.card-accent {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+    border-radius: 50%;
+    filter: blur(20px);
+    z-index: -1;
+    transition: all 0.3s ease;
+}
+
+.concluded-program-card:hover .card-accent {
+    transform: scale(1.2);
+    opacity: 0.8;
+}
+
+.program-name {
+    font-size: 1.25rem;
+    line-height: 1.4;
+}
+
+/* Empty State Styling */
+.empty-state-card {
+    background: linear-gradient(135deg, #fdf4ff 0%, #eff6ff 100%);
+    border: 1px dashed #cbd5e1;
+    max-width: 400px;
+}
+
+.concluded-cards-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+.concluded-program-card {
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    padding: 1.5rem;
+    flex: 1 1 350px;
+    max-width: 400px;
+    text-align: left;
+    border: 1px solid #e9ecef;
+}
+.concluded-program-card .program-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--blue-text-color);
+    margin: 0 0 0.5rem 0;
+}
+.concluded-program-card .phase-info {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin: 0 0 0.75rem 0;
+}
+.concluded-program-card .date-range {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin: 0;
+}

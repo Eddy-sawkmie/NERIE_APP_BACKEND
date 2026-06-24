@@ -1,0 +1,227 @@
+  <!DOCTYPE html>
+  <html
+  lang="en"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  xmlns:th="http://thymeleaf.org"
+  layout:decorate="~{layouts/admin-layout}"
+  >
+  <head>
+    <title>Audit Trail</title>
+    <div layout:fragment="static-files">
+      <link rel="stylesheet" type="text/css" th:href="@{/css/auditTrail.css}">
+      
+      <style>
+        .modern-card {
+          border-radius: 1rem;
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+          background: #ffffff;
+        }
+        
+        .modern-input {
+          border-radius: 0.5rem;
+          border: 1px solid #dee2e6;
+          padding: 0.6rem 1rem;
+          font-size: 0.95rem;
+          transition: all 0.2s ease-in-out;
+        }
+        
+        .modern-input, .modern-select {
+          border-radius: 0.5rem;
+          border: 1px solid #dee2e6;
+          padding: 0.6rem 2.25rem 0.6rem 1rem;
+          font-size: 0.95rem;
+          transition: all 0.2s ease-in-out;
+        }
+        
+        .modern-input:focus, .modern-select:focus {
+          border-color: #86b7fe;
+          box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        }
+        
+        .form-label-modern {
+          font-weight: 600;
+          color: #6c757d;
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        
+        .btn-modern {
+          border-radius: 0.5rem;
+          font-weight: 500;
+          transition: all 0.2s;
+        }
+        
+        /* Modern Table Styling */
+        .modern-table {
+          margin-bottom: 0;
+          border-collapse: separate;
+          border-spacing: 0;
+        }
+        
+        .modern-table thead th {
+          background-color: #f8f9fc;
+          color: #5c636a;
+          font-weight: 600;
+          text-transform: uppercase;
+          font-size: 0.75rem;
+          letter-spacing: 0.5px;
+          padding: 1rem;
+          border-bottom: 2px solid #e9ecef;
+          border-top: none;
+        }
+        
+        .modern-table tbody td {
+          padding: 1rem;
+          border-bottom: 1px solid #f1f3f5;
+          vertical-align: middle;
+          color: #495057;
+          font-size: 0.9rem;
+        }
+        
+        .modern-table tbody tr {
+          transition: all 0.2s ease-in-out;
+        }
+        
+        .modern-table tbody tr:hover {
+          background-color: #f8f9fa;
+        }
+        
+        .table-wrapper {
+          border: 1px solid #e9ecef;
+          border-radius: 0.75rem;
+          overflow: hidden;
+        }
+        
+        /* Modern Pagination */
+        .pagination .page-link {
+          border-radius: 0.4rem;
+          margin: 0 0.15rem;
+          border: none;
+          color: #495057;
+          font-weight: 500;
+        }
+        .pagination .page-item.active .page-link {
+          background-color: #0d6efd;
+          color: white;
+          box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+        }
+        .pagination .page-item.disabled .page-link {
+          background-color: transparent;
+          color: #adb5bd;
+        }
+      </style>
+    </div>
+  </head>
+  <body>
+    
+    <main layout:fragment="content">
+      <div class="container-fluid py-5 px-md-4">
+        
+        <div class="card border-0 modern-card mb-4">
+          
+          <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+            <h4 class="mb-0 fw-bold d-flex align-items-center">
+              <i class="fas fa-history me-3 fs-5"></i> System Audit Trail
+            </h4>
+          </div>
+          
+          <div class="card-body p-4 p-md-5">
+            <div id="message-container" class="mb-3"></div>
+            
+            <form th:action="@{/admin/audittrail}" method="get" class="mb-4">
+              <div class="row g-3 align-items-center justify-content-between bg-light p-3 rounded-3 border">
+                
+                <div class="col-12 col-md-auto d-flex flex-wrap align-items-center gap-3">
+                  <div class="d-flex align-items-center">
+                    <label for="pageSizeSelect" class="form-label-modern mb-0 me-2 text-nowrap">Show</label>
+                    <select id="pageSizeSelect" name="size" class="form-select modern-select py-1 w-auto" onchange="this.form.submit();">
+                      <option th:each="s : ${ {5, 10, 25, 50, 100} }" th:value="${s}" th:text="${s}" th:selected="${s == auditPage.size}"></option>
+                    </select>
+                    <span class="form-label-modern mb-0 ms-2 text-nowrap text-lowercase">entries</span>
+                  </div>
+                  
+                  <div id="export-buttons-container"></div>
+                </div>
+                
+                <div class="col-12 col-md-5 col-lg-4">
+                  <div class="input-group">
+                    <input type="text" id="search-input" name="keyword" class="form-control modern-input py-1" th:value="${keyword}" placeholder="Search logs...">
+                    <button type="submit" class="btn btn-primary btn-modern px-3" title="Search"><i class="fas fa-search"></i></button>
+                    <a th:href="@{/admin/audittrail(size=${auditPage.size})}" class="btn btn-secondary btn-modern px-3 bg-white" title="Clear Search"><i class="fas fa-times"></i></a>
+                  </div>
+                </div>
+                
+              </div>
+            </form>
+            
+            <div id="emptyTableMessage" style="display: none;">
+              <div class="text-center p-4 text-muted">
+                <i class="fas fa-search-minus fs-2 mb-3 d-block text-secondary opacity-50"></i>
+                <span th:if="${keyword != null and keyword != ''}" th:text="'No results found for search: &quot;' + ${keyword} + '&quot;'" class="fw-medium"></span>
+                <span th:unless="${keyword != null and keyword != ''}" class="fw-medium">No audit trail records found.</span>
+              </div>
+            </div>
+            
+            <div class="table-responsive table-wrapper shadow-sm mb-4">
+              <table class="table modern-table align-middle" id="audittable" style="width:100%">
+                <thead>
+                  <tr>
+                    <th style="width: 5%;" class="text-center">#</th>
+                    <th style="width: 15%;">User ID</th>
+                    <th style="width: 15%;">Action</th>
+                    <th style="width: 25%;">Page Accessed</th>
+                    <th style="width: 15%;">Browser / OS</th>
+                    <th style="width: 10%;">IP Address</th>
+                    <th style="width: 15%;">Date & Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="audit, stat : ${auditPage.content}">
+                    <td class="text-center fw-semibold text-muted" th:text="${auditPage.totalElements - (auditPage.number * auditPage.size) - stat.index}"></td>
+                    <td class="fw-bold text-dark" th:text="${audit.id.userid}"></td>
+                    <td><span class="badge bg-primary bg-opacity-10 text-primary border px-2 py-1" th:text="${audit.id.actiontaken}"></span></td>
+                    <td class="text-break text-primary small" th:text="${audit.id.pageurl}"></td>
+                    <td th:text="${audit.id.browser} + ' / ' + ${audit.id.os}"></td>
+                    <td><span class="font-monospace text-muted small" th:text="${audit.id.ipaddress}"></span></td>
+                    <td class="fw-medium" th:text="${#dates.format(audit.id.entrydate, 'dd-MMM-yyyy HH:mm:ss')}"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <div th:if="${auditPage.totalPages > 1}" class="d-flex justify-content-between align-items-center flex-wrap">
+              <div class="text-muted small mb-3 mb-md-0 fw-medium">
+                Showing page <span th:text="${auditPage.number + 1}"></span> of <span th:text="${auditPage.totalPages}"></span>
+              </div>
+              <nav aria-label="Audit pagination">
+                <ul class="pagination mb-0">
+                  <li class="page-item" th:classappend="${auditPage.first} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/audittrail(page=1, size=${auditPage.size}, keyword=${keyword})}"><i class="fas fa-angle-double-left"></i></a>
+                  </li>
+                  <li class="page-item" th:classappend="${auditPage.first} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/audittrail(page=${auditPage.number}, size=${auditPage.size}, keyword=${keyword})}"><i class="fas fa-angle-left"></i></a>
+                  </li>
+                  <li class="page-item" th:each="pageNumber : ${pageNumbers}" th:classappend="${pageNumber == auditPage.number + 1} ? 'active'">
+                    <a class="page-link" th:href="@{/admin/audittrail(page=${pageNumber}, size=${auditPage.size}, keyword=${keyword})}" th:text="${pageNumber}"></a>
+                  </li>
+                  <li class="page-item" th:classappend="${auditPage.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/audittrail(page=${auditPage.number + 2}, size=${auditPage.size}, keyword=${keyword})}"><i class="fas fa-angle-right"></i></a>
+                  </li>
+                  <li class="page-item" th:classappend="${auditPage.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/audittrail(page=${auditPage.totalPages}, size=${auditPage.size}, keyword=${keyword})}"><i class="fas fa-angle-double-right"></i></a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <th:block layout:fragment="scripts">
+    <script th:src="@{/js/auditTrail.js}"></script>
+  </th:block>
+</body>
+</html>

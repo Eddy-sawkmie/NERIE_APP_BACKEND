@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layouts/landing-layout}"
+>
+<head>
+    <title>Participant Registration</title>
+    <th:block layout:fragment="styles">
+        <link th:href="@{/css/participant-register.css}" rel="stylesheet">
+    </th:block>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div layout:replace="~{fragments/lilypreloader :: preloader}"></div>
+
+    <div class="pr-page">
+
+        <!-- ── Left decorative panel ── -->
+        <div class="pr-panel">
+            <div class="pr-panel__inner">
+                <div class="pr-panel__logo">
+                    <img th:src="@{/tempscripts/images/ncertlogo.png}" alt="NCERT Logo" class="pr-panel__logo-img">
+                </div>
+                <h2 class="pr-panel__heading">Join NCERT NERIE Academic Network</h2>
+                <p class="pr-panel__sub">Register to access training programs, research initiatives, and educational resources across India.</p>
+
+                <ul class="pr-panel__features">
+                    <li>
+                        <span class="pr-panel__feature-icon"><i class="fas fa-graduation-cap"></i></span>
+                        <span>Access ongoing &amp; upcoming programs</span>
+                    </li>
+                    <li>
+                        <span class="pr-panel__feature-icon"><i class="fas fa-file-alt"></i></span>
+                        <span>Download certificates &amp; reports</span>
+                    </li>
+                    <li>
+                        <span class="pr-panel__feature-icon"><i class="fas fa-users"></i></span>
+                        <span>Connect with faculty &amp; researchers</span>
+                    </li>
+                </ul>
+
+                <div class="pr-panel__deco-circle pr-panel__deco-circle--1"></div>
+                <div class="pr-panel__deco-circle pr-panel__deco-circle--2"></div>
+                <div class="pr-panel__deco-circle pr-panel__deco-circle--3"></div>
+            </div>
+        </div>
+
+        <!-- ── Right form panel ── -->
+        <div class="pr-form-wrap">
+            <div class="pr-form-card">
+
+                <div class="pr-form-card__header">
+                    <h3 class="pr-form-card__title">Create Account</h3>
+                    <p class="pr-form-card__subtitle">Fill in your details to register as a participant</p>
+                </div>
+
+                <form method="POST" name="mtuserloginfn" id="mtuserloginfid"
+                      role="form" autocomplete="off" th:object="${mtUserLogin}">
+
+                    <!-- Email -->
+                    <div class="pr-field">
+                        <label for="emailid" class="pr-label">
+                            E-mail ID <span class="pr-required">*</span>
+                        </label>
+                        <input th:field="*{emailid}" id="emailid" type="email"
+                               class="pr-input" required maxlength="50"
+                               placeholder="you@example.com"/>
+                        <small id="email-feedback" class="pr-feedback"></small>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="pr-field">
+                        <label for="userpassword" class="pr-label">
+                            Password <span class="pr-required">*</span>
+                        </label>
+                        <div class="pr-input-group">
+                            <input th:field="*{userpassword}" id="userpassword" type="password"
+                                   class="pr-input" required maxlength="512"
+                                   placeholder="Create a strong password"/>
+                            <button type="button" class="pr-eye-btn toggle-button" tabindex="-1" aria-label="Toggle password visibility">
+                                <i class="fas fa-eye pr-eye-icon"></i>
+                            </button>
+                        </div>
+                        <small id="password-feedback" class="pr-feedback"></small>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="pr-field">
+                        <label for="confirmpassword" class="pr-label">
+                            Confirm Password <span class="pr-required">*</span>
+                        </label>
+                        <div class="pr-input-group">
+                            <input id="confirmpassword" type="password"
+                                   class="pr-input" required maxlength="512"
+                                   placeholder="Repeat your password"/>
+                            <button type="button" class="pr-eye-btn toggle-button" tabindex="-1" aria-label="Toggle confirm password visibility">
+                                <i class="fas fa-eye pr-eye-icon"></i>
+                            </button>
+                        </div>
+                        <small id="confirm-password-feedback" class="pr-feedback"></small>
+                    </div>
+
+                    <!-- Name -->
+                    <div class="pr-field">
+                        <label for="username" class="pr-label">
+                            Full Name <span class="pr-required">*</span>
+                        </label>
+                        <input th:field="*{username}" id="username"
+                               class="pr-input alphabets" required maxlength="100"
+                               placeholder="Enter your full name"/>
+                        <small id="username-feedback" class="pr-feedback"></small>
+                    </div>
+
+                    <!-- Mobile -->
+                    <div class="pr-field">
+                        <label for="usermobile" class="pr-label">
+                            Mobile No. <span class="pr-required">*</span>
+                        </label>
+                        <input th:field="*{usermobile}" id="usermobile"
+                               class="pr-input numbers" required maxlength="10"
+                               placeholder="10-digit mobile number"/>
+                        <small id="usermobile-feedback" class="pr-feedback"></small>
+                    </div>
+
+                    <!-- Captcha -->
+                    <div class="pr-field">
+                        <label for="userCaptcha" class="pr-label">
+                            Captcha <span class="pr-required">*</span>
+                        </label>
+                        <div class="pr-captcha-wrap">
+                            <div class="pr-captcha-img-box">
+                                <img id="captchaImage"
+                                     th:src="${'data:image/jpg;base64,' + captchaPrincipal.realCaptcha}"
+                                     title="Click to reload captcha"
+                                     class="pr-captcha-img"/>
+                            </div>
+                            <button type="button" id="captchaReloadBtn" class="pr-captcha-refresh" title="Reload captcha">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <input id="hiddentCaptcha" type="hidden" th:field="${captchaPrincipal.hiddentCaptcha}" />
+                        <input type="text" name="captcha" id="userCaptcha"
+                               maxlength="6" placeholder="Enter the captcha above"
+                               class="pr-input mt-2" autocomplete="off" required/>
+                        <small id="captcha-feedback" class="pr-feedback pr-feedback--center captcha-error-message"></small>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="pr-submit-row">
+                        <input id="submit" type="submit" value="Create Account"
+                               class="pr-submit-btn btn-register-primary"/>
+                    </div>
+
+                    <!-- Forgot password -->
+                    <div class="pr-footer-link">
+                        <a th:href="@{/users/forget-password}" class="forgot-password-link">
+                            Already registered but forgot password?
+                            <strong>Reset it here</strong>
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div><!-- /.pr-page -->
+
+    <!-- Custom Notification Modal — structure unchanged, styles updated -->
+    <div id="customModal" class="custom-notification-overlay">
+        <div class="custom-notification-content">
+            <div class="custom-notification-header">
+                <h5 class="custom-notification-title" id="modalTitle">Notification</h5>
+                <button type="button" class="custom-notification-close-btn">×</button>
+            </div>
+            <div class="custom-notification-body">
+                <p id="modalMessageText"></p>
+            </div>
+            <div class="custom-notification-footer">
+                <button id="modalCancelBtn" class="btn btn-danger">Cancel</button>
+                <button id="modalConfirmBtn" class="btn btn-info">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        var register = [[@{/participants/register}]];
+        var checkEmail = [[@{/participants/check-existing-email}]];
+        var captchaReload = [[@{/captcha/reload-captcha}]];
+        var captchaValidate = [[@{/captcha/validate-captcha}]];
+        var login = [[@{/login}]];
+    </script>
+    <script th:src="@{/js/participant-register.js}"></script>
+</th:block>
+
+</body>
+</html>

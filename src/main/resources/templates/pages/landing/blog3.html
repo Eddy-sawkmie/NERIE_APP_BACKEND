@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/landing-layout}"
+>
+<head>
+    <title>RIE Ajmer</title>
+    <th:block layout:fragment="styles">
+        <link rel="stylesheet" th:href="@{/css/blogs.css}">
+    </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+    <div layout:replace="~{fragments/lilypreloader :: preloader}"></div>
+    
+    <section class="bl-hero">
+        <img th:src="@{/lily/images/aboutus/ncert_building.jpg}"
+             alt="NCERT Building" class="bl-hero__bg">
+        <div class="bl-hero__overlay"></div>
+        <div class="container bl-hero__content">
+            <nav class="bl-breadcrumb" aria-label="breadcrumb">
+                <a th:href="@{/about}" class="bl-breadcrumb__home">NCERT Constituent Units</a>
+                <span class="bl-breadcrumb__sep">/</span>
+                <span class="bl-breadcrumb__current">RIE Ajmer</span>
+            </nav>
+            <h1 class="bl-hero__title">RIE Ajmer</h1>
+            <p class="bl-hero__sub">Regional Institute of Education, Ajmer (NCERT), Rajasthan-305004</p>
+        </div>
+    </section>
+
+    <div class="bl-page">
+        <div class="container">
+            <div class="bl-layout">
+                <article class="bl-article">
+                    <div class="bl-article__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/RIE -Ajmer.jpg}"
+                             alt="RIE Ajmer" class="bl-article__img">
+                    </div>
+                    <div class="bl-article__body">
+                        <h2 class="bl-article__title">About RIE Ajmer</h2>
+                        <div class="bl-title-rule"></div>
+                        <p class="bl-article__text">
+                            Ajmer was set up in the year 1963. Later it was renamed as Regional Institute of Education (RIE), Ajmer in the year 1995. It looks after the educational interests of Northern Region comprising the states of Haryana, Himachal Pradesh, Jammu & Kashmir, Punjab, Rajasthan, Uttarakhand, Uttar Pradesh, the National Capital Territory of Delhi and the Union Territory of Chandigarh. Ajmer is well-known all over India as a historical and religious place of pilgrimage as well as an educational centre. It owes this reputation partly to the Regional Institute of Education (RIE).
+                        </p>
+                        <p class="bl-article__text">
+                            The Institute is situated six km. away from the Ajmer Railway Station in midst of idyllic surroundings with the historic Anasagar Lake in front and the Aravali hills all around. It is almost equidistant from the world famous Dargah of Khawaja Moinuddin Chisti beyond the lake and the holy place of Hindu pilgrimage, Pushkar, at the back. This Institute, with its spacious buildings, playgrounds, gardens, lawns and farm is spread over 110 acres. It is affiliated to the M.D.S. University, Ajmer and its courses are recognised by the NCTE, New Delhi. It is controlled and managed by the NCERT. The management committee, chaired by the Vice-Chancellor of the affiliating university performs the advisory role on matters of academic interest.
+                        </p>
+                    </div>
+                </article>
+
+                <aside class="bl-sidebar">
+                    <div class="bl-info-card">
+                        <h3 class="bl-info-card__heading">Institute Details</h3>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-user-tie"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Principal</span>
+                                <span class="bl-info-row__value">Prof. S.V. Sharma</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-university"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Institute</span>
+                                <span class="bl-info-row__value">Regional Institute of Education, Ajmer (NCERT)</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-sitemap"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Parent Organisation</span>
+                                <span class="bl-info-row__value">National Council of Educational Research and Training</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-map-marker-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Address</span>
+                                <span class="bl-info-row__value">Capt. D.P Choudhary Marg, Ajmer, Rajasthan-305004</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-external-link-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Website</span>
+                                <a href="https://www.rieajmer.raj.nic.in/" target="_blank" class="bl-info-row__link">
+                                    rieajmer.raj.nic.in
+                                </a>
+                            </div>
+                        </div>
+                        <a th:href="@{/about}" class="bl-back-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Units
+                        </a>
+                    </div>
+                </aside>
+            </div></div>
+    </div>
+</div>
+</body>
+</html>

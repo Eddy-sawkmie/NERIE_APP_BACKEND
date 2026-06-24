@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layouts/admin-layout}"
+>
+<head>
+    <title>Create Offices</title>
+    <div layout:fragment="static-files">
+    </div>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+        
+        <div class="card border-0 modern-card mb-4">
+            
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-building me-3 fs-5"></i> Manage Offices
+                </h4>
+                <button type="button" class="btn btn-light text-primary btn-modern fw-bold shadow-sm" id="addOfficeBtn" data-bs-toggle="modal" data-bs-target="#office-modal">
+                    <i class="fas fa-plus me-2"></i> Add New Office
+                </button>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                <div id="message-container" class="mb-3"></div>
+
+                <div id="emptyTableMessage" style="display: none;">
+                    <div class="text-center p-5 text-muted">
+                        <i class="fas fa-folder-open fs-2 mb-3 d-block"></i> No offices found.
+                    </div>
+                </div>
+                
+                <div class="table-responsive table-wrapper">
+                    <table class="table modern-table align-middle mb-0" id="officetable" style="width: 100%;">
+                        <thead>
+                        <tr>
+                            <th style="width: 5%;" class="text-center">#</th>
+                            <th style="width: 20%;">Office Name</th>
+                            <th style="width: 10%;">Short Name</th>
+                            <th style="width: 25%;">Address</th>
+                            <th style="width: 20%;">Contact Details</th>
+                            <th style="width: 10%;">Email ID</th>
+                            <th style="width: 10%;" class="text-center noExport">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="officeTableBody">
+                        <tr th:each="v, s : ${officelist}">
+                            <td class="text-center fw-semibold text-muted" th:text="${s.count}"></td>
+                            <td class="fw-bold text-dark" th:text="${v.officename}"></td>
+                            <td class="fw-bold text-dark text-center">
+                                <span class="badge bg-light text-dark border px-2 py-1" th:text="${v.officeshortname}"></span>
+                                <hr>
+                                Short Term Course Code:<span class="badge bg-light text-dark border px-2 py-1" th:text="${v.shorttermcoursecode}"></span>
+                                <hr>
+                                Long Term Course Code:<span class="badge bg-light text-dark border px-2 py-1" th:text="${v.longtermcoursecode}"></span>
+                            </td>
+                            <td class="small" th:text="${v.officeaddress} + (${v.mdistricts?.districtname != null ? ', ' + v.mdistricts.districtname : ''}) + (${v.mstates?.statename != null ? ', ' + v.mstates.statename : ''}) + (${v.officepincode != null ? '-' + v.officepincode : ''})"></td>
+                            <td class="small">
+                                <span class="d-block fw-semibold text-dark mb-1"><i class="fas fa-user-tie me-1 text-muted"></i> <th:block th:text="${v.contactpersonname}"></th:block></span>
+                                <span class="d-block" th:if="${v.mobileno != null}"><i class="fas fa-mobile-alt me-1 text-muted"></i> <th:block th:text="${v.mobileno}"></th:block></span>
+                                <span class="d-block" th:if="${v.landlineno != null and v.landlineno != ''}"><i class="fas fa-phone-alt me-1 text-muted"></i> <th:block th:text="${v.landlineno}"></th:block></span>
+                            </td>
+                            <td class="small" th:text="${v.emailid}"></td>
+                            <td class="text-center">
+                                <button type="button" class="clickme officebtn btn btn-primary btn-sm btn-modern"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#office-modal"
+                                        th:attr="data-officecode=${v.officecode},
+                                                 data-officename=${v.officename},
+                                                 data-officeshortname=${v.officeshortname},
+                                                 data-longtermcoursecode=${v.longtermcoursecode},
+                                                 data-shorttermcoursecode=${v.shorttermcoursecode},
+                                                 data-officeaddress=${v.officeaddress},
+                                                 data-districtcode=${v.mdistricts?.districtcode},
+                                                 data-statecode=${v.mstates?.statecode},
+                                                 data-officepincode=${v.officepincode},
+                                                 data-contactpersonname=${v.contactpersonname},
+                                                 data-mobileno=${v.mobileno},
+                                                 data-landlineno=${v.landlineno},
+                                                 data-emailid=${v.emailid}">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="office-modal" tabindex="-1" aria-labelledby="officeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="officeModalLabel"><i class="fas fa-building text-primary me-2"></i> Add/Edit Office Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body p-4 p-md-5">
+                    <form th:action="@{/offices/saveOfficeDetails}" th:object="${moffices}" method="POST" name="mofficefn" id="mofficefid" role="form" autocomplete="off" novalidate>
+                        <input type="hidden" th:field="*{officecode}" id="officecode" />
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-8">
+                                <label for="officename" class="form-label-modern">Office Name <span class="text-danger">*</span></label>
+                                <textarea th:field="*{officename}" id="officename" class="form-control modern-input" rows="1" required maxlength="100" placeholder="Enter full office name"></textarea>
+                                <div class="invalid-feedback">Office name is required.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="officeshortname" class="form-label-modern">Short Name <span class="text-danger">*</span></label>
+                                <input type="text" th:field="*{officeshortname}" id="officeshortname" class="form-control modern-input" required maxlength="50" placeholder="e.g., HQ"/>
+                                <div class="invalid-feedback">Office short name is required.</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="shorttermcoursecode" class="form-label-modern">Short Term Course Code <span class="text-danger">*</span></label>
+                                <textarea th:field="*{shorttermcoursecode}" id="shorttermcoursecode" class="form-control modern-input" rows="1" required maxlength="2" placeholder="Enter code (2 chars)"></textarea>
+                                <div class="invalid-feedback">Short term course code is required (2 characters).</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="longtermcoursecode" class="form-label-modern">Long Term Course Code <span class="text-danger">*</span></label>
+                                <textarea th:field="*{longtermcoursecode}" id="longtermcoursecode" class="form-control modern-input" rows="1" required maxlength="3" placeholder="Enter code (3 chars)"></textarea>
+                                <div class="invalid-feedback">Long term course code is required (3 characters).</div>
+                            </div>
+                            
+                            <div class="col-md-12 border-top pt-4 mt-2">
+                                <h6 class="fw-bold text-dark mb-3">Location Details</h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="statecode" class="form-label-modern">State <span class="text-danger">*</span></label>
+                                <select th:field="*{mstates.statecode}" id="statecode" class="form-select modern-select" required>
+                                    <option value="">-- Select State --</option>
+                                    <option th:each="state : ${statelist}"
+                                            th:value="${state.statecode}"
+                                            th:text="${state.statename}">
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback">Please select a state.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="districtcode" class="form-label-modern">District <span class="text-danger">*</span></label>
+                                <select th:field="*{mdistricts.districtcode}" id="districtcode" class="form-select modern-select" required>
+                                    <option value="">-- Select District --</option>
+                                    <th:block th:if="${moffices.mdistricts != null}">
+                                        <option th:value="${moffices.mdistricts.districtcode}"
+                                                th:text="${moffices.mdistricts.districtname}" selected>
+                                        </option>
+                                    </th:block>
+                                </select>
+                                <div class="invalid-feedback">Please select a district.</div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <label for="officeaddress" class="form-label-modern">Street Address <span class="text-danger">*</span></label>
+                                <textarea th:field="*{officeaddress}" id="officeaddress" class="form-control modern-input" rows="1" required maxlength="150" placeholder="123 Main St..."></textarea>
+                                <div class="invalid-feedback">Office address is required.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="officepincode" class="form-label-modern">Pincode <span class="text-danger">*</span></label>
+                                <input type="text" th:field="*{officepincode}" id="officepincode" class="form-control modern-input numbers" required maxlength="6" pattern="\d{6}" placeholder="6-digit PIN"/>
+                                <div class="invalid-feedback">Valid 6-digit pincode is required.</div>
+                                <small id="pincode-msg" class="text-danger mt-1 d-block"></small>
+                            </div>
+
+                            <div class="col-md-12 border-top pt-4 mt-2">
+                                <h6 class="fw-bold text-dark mb-3">Contact Information</h6>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="contactpersonname" class="form-label-modern">Contact Person <span class="text-danger">*</span></label>
+                                <input type="text" th:field="*{contactpersonname}" id="contactpersonname" class="form-control modern-input alphabets" required maxlength="70" placeholder="Full Name"/>
+                                <div class="invalid-feedback">Contact person name is required.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="mobileno" class="form-label-modern">Mobile No. <span class="text-danger">*</span></label>
+                                <input type="text" th:field="*{mobileno}" id="mobileno" class="form-control modern-input numbers" required maxlength="10" pattern="\d{10}" placeholder="10-digit number"/>
+                                <div class="invalid-feedback">Valid 10-digit mobile number is required.</div>
+                                <small id="mobileno-msg" class="text-danger mt-1 d-block"></small>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="landlineno" class="form-label-modern">Landline No.</label>
+                                <input type="text" th:field="*{landlineno}" id="landlineno" class="form-control modern-input" maxlength="13" placeholder="(Optional)"/>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <label for="emailid" class="form-label-modern">E-mail ID <span class="text-danger">*</span></label>
+                                <input type="email" th:field="*{emailid}" id="emailid" class="form-control modern-input" required maxlength="50" placeholder="office@example.com"/>
+                                <div class="invalid-feedback">Please enter a valid email address.</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-5 pt-3 border-top">
+                            <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">Cancel</button>
+                            <button id="submitOfficeForm" type="submit" class="btn btn-primary btn-modern px-5"><i class="fas fa-save me-2"></i> Save Details</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                    </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            getDistrict: [[@{/districts/get-districts}]],
+        };
+    </script>
+    <script th:src="@{/js/createOffice.js}"></script>
+</th:block>
+
+</body>
+</html>

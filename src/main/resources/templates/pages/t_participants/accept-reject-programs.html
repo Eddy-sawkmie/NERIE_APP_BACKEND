@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/participant-layout}"
+>
+<head>
+    <title layout:fragment="title">Accept/Reject Program</title>
+    <th:block layout:fragment="static-files"></th:block>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-tasks me-3 fs-5"></i> Accept / Reject Assigned Programs
+                </h4>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                <div id="emptyTableMessage" style="display: none;">
+                    <div class="text-center p-5 text-muted">
+                        <i class="fas fa-folder-open fs-2 mb-3 d-block opacity-50"></i>
+                        No Assigned Programs Available.
+                    </div>
+                </div>
+
+                <div class="table-responsive table-wrapper p-3">
+                    <table class="table modern-table align-middle mb-0 w-100" id="approveprogram">
+                        <thead>
+                        <tr>
+                            <th style="width: 5%;" class="text-center">#</th>
+                            <th style="width: 20%;">Program Name</th>
+                            <th style="width: 25%;">Description</th>
+                            <th style="width: 15%;">Location Details</th>
+                            <th style="width: 15%;">Timeline</th>
+                            <th style="width: 20%;" class="text-center noExport">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${mcourselist != null}" th:each="v, iterStat : ${mcourselist}">
+                            <td class="text-center fw-semibold text-muted" th:text="${iterStat.count}"></td>
+                            
+                            <td class="fw-bold text-dark" th:text="${v[1]}"></td>
+                            
+                            <td>
+                                <span class="d-block text-secondary small" th:text="${v[2] + ': ' + v[3]}"></span>
+                            </td>
+                            
+                            <td>
+                                <span class="d-block fw-medium text-dark"><i class="fas fa-building me-1 text-muted"></i> <th:block th:text="${v[7]}"></th:block></span>
+                                <span class="d-block small text-muted mt-1"><i class="fas fa-map-marker-alt me-1"></i> <th:block th:text="${v[10]}"></th:block></span>
+                            </td>
+                            
+                            <td>
+                                <span class="date-block text-success fw-semibold" title="Start Date">
+                                    <i class="far fa-calendar-check me-1"></i> Start: <th:block th:text="${v[4] != null ? #dates.format(v[4], 'dd-MMM-yyyy') : '-'}"></th:block>
+                                </span>
+                                <hr>
+                                <span class="date-block text-danger fw-semibold" title="End Date">
+                                    <i class="far fa-calendar-times me-1"></i> End: <th:block th:text="${v[5] != null ? #dates.format(v[5], 'dd-MMM-yyyy') : '-'}"></th:block>
+                                </span>
+                                <!-- <hr>
+                                <span class="date-block text-warning text-dark fw-semibold mt-2" title="Last Date to Respond">
+                                    <i class="fas fa-hourglass-half me-1"></i> Respond by: <th:block th:text="${v[6] != null ? #dates.format(v[6], 'dd-MMM-yyyy') : '-'}"></th:block>
+                                </span> -->
+                            </td>
+                            
+                            <td class="text-center">
+                                <div class="d-flex flex-wrap justify-content-center gap-2">
+                                    <button class="acceptbtn btn btn-sm btn-success btn-modern px-3"
+                                            th:data-programcode="${v[12]}"
+                                            th:data-programname="${v[1]}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalaccept-modal">
+                                        <i class="fas fa-check-circle me-1"></i> Accept
+                                    </button>
+                                    
+                                    <button class="rejectbtn btn btn-sm btn-danger btn-modern px-3"
+                                            th:data-programcode="${v[12]}"
+                                            th:data-programname="${v[1]}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#rejectProgramModal">
+                                        <i class="fas fa-times-circle me-1"></i> Reject
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalaccept-modal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="acceptModalLabel"><i class="fas fa-clipboard-check text-success me-2"></i> Accept Program</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 p-md-5">
+                    <form method="POST" th:action="@{/program/save-accept-program}" id="acceptProgramForm" role="form" autocomplete="off">
+                        <input id="acceptprogramcode" name="phaseid" type="hidden"/>
+                        
+                        <div class="mb-4">
+                            <label class="form-label-modern">Selected Program</label>
+                            <div class="p-3 bg-light rounded border text-dark fw-bold" id="acceptprogramname"></div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="acceptremarks" class="form-label-modern">Expectations of the Program (Optional)</label>
+                            <textarea name="remarks" id="acceptremarks" class="form-control modern-input" maxlength="100" rows="3" placeholder="Briefly state your expectations..."></textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">Cancel</button>
+                            <button id="submitAccept" type="submit" class="btn btn-success btn-modern px-5"><i class="fas fa-check me-2"></i> Confirm Acceptance</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="rejectProgramModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="rejectModalLabel"><i class="fas fa-times-circle text-danger me-2"></i> Reject Program</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 p-md-5">
+                    <form name="rejectProgramForm" id="rejectProgramForm" role="form" autocomplete="off" method="POST" th:action="@{/program/save-reject-program}">
+                        <input type="hidden" id="reject_program_code" name="phaseid"/>
+                        
+                        <div class="mb-4">
+                            <label class="form-label-modern">Selected Program</label>
+                            <div class="p-3 bg-light rounded border text-dark fw-bold" id="reject_program_name_display"></div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="reject_remarks" class="form-label-modern">Reason for Rejection <span class="text-danger">*</span></label>
+                            <textarea id="reject_remarks" name="remarks" class="form-control modern-input" maxlength="500" rows="3" required placeholder="Please provide a valid reason..."></textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">Cancel</button>
+                            <button id="submitRejectBtn" type="submit" class="btn btn-danger btn-modern px-5"><i class="fas fa-times me-2"></i> Confirm Rejection</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                    </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/acceptRejectPrograms.js}"></script>
+</th:block>
+</body>
+</html>

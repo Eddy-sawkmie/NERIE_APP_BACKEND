@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="timetable" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="coursecode" class="java.lang.Short"/>
+	<parameter name="sectioncode" class="java.lang.Short"/>
+	<queryString>
+		<![CDATA[SELECT C.coursecode,C.coursename,to_char(C.startdate,'dd-MM-yyyy') AS startdate,to_char(C.enddate,'dd-MM-yyyy') As enddate,C.enddate-C.startdate+1 As noofdays, C.ttfinalized,
+ COALESCE(TT.shortcoursetimetablecode,'') AS shortcoursetimetablecode,
+   TT.slno,
+   COALESCE(TT.coursecode,-1) AS coursecodett,
+   TT.coursedate,
+   TT.courseday ,
+   to_char(starttime,'HH12') || ':' || to_char(starttime,'MI') || ' '|| to_char(starttime,'AM') AS starttime ,
+   to_char(endtime,'HH12') || ':' || to_char(endtime,'MI') || ' '|| to_char(endtime,'AM') AS endtime ,
+   TT.subject ,
+   TT.rpslno , R.rpname,
+   TT.usercode ,
+   TT.entrydate, COALESCE(V.venuename,'') AS venuename,V.venuecode,
+   VR.roomcode,COALESCE(VR.roomname) AS roomname,S.sectioncode,S.sectionname
+ FROM m_courses C
+ LEFT OUTER JOIN t_shortcoursetimetable TT ON C.coursecode=TT.coursecode
+ LEFT OUTER JOIN mt_resourcepersons R ON R.rpslno=TT.rpslno
+ LEFT OUTER JOIN m_sections S ON TT.sectioncode=S.sectioncode
+ LEFT OUTER JOIN mt_venuerooms VR ON VR.roomcode=TT.roomcode
+ LEFT OUTER JOIN m_venues V ON V.venuecode=VR.venuecode
+ WHERE C.coursecode=$P{coursecode} AND (0=$P{sectioncode} OR TT.sectioncode=$P{sectioncode})
+ ORDER BY S.sectioncode,TT.courseday,TT.starttime]]>
+	</queryString>
+	<field name="coursecode" class="java.lang.Integer"/>
+	<field name="coursename" class="java.lang.String"/>
+	<field name="startdate" class="java.lang.String"/>
+	<field name="enddate" class="java.lang.String"/>
+	<field name="noofdays" class="java.lang.Integer"/>
+	<field name="ttfinalized" class="java.lang.String"/>
+	<field name="shortcoursetimetablecode" class="java.lang.String"/>
+	<field name="slno" class="java.lang.Integer"/>
+	<field name="coursecodett" class="java.lang.Integer"/>
+	<field name="coursedate" class="java.sql.Date"/>
+	<field name="courseday" class="java.lang.Integer"/>
+	<field name="starttime" class="java.lang.String"/>
+	<field name="endtime" class="java.lang.String"/>
+	<field name="subject" class="java.lang.String"/>
+	<field name="rpslno" class="java.lang.Integer"/>
+	<field name="rpname" class="java.lang.String"/>
+	<field name="usercode" class="java.lang.Integer"/>
+	<field name="entrydate" class="java.sql.Timestamp"/>
+	<field name="venuename" class="java.lang.String"/>
+	<field name="venuecode" class="java.lang.Integer"/>
+	<field name="roomcode" class="java.lang.Integer"/>
+	<field name="roomname" class="java.lang.String"/>
+	<field name="sectioncode" class="java.lang.Integer"/>
+	<field name="sectionname" class="java.lang.String"/>
+	<group name="sectiongroup" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{sectionname}]]></groupExpression>
+		<groupHeader>
+			<band height="131">
+				<staticText>
+					<reportElement x="97" y="105" width="144" height="26"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Time]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="241" y="105" width="178" height="26"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Subject
+(Venue & Room)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="419" y="105" width="136" height="26"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Resource Person]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="60" width="555" height="22"/>
+					<box leftPadding="3" rightPadding="2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{sectionname}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="0" width="555" height="20"/>
+					<textElement textAlignment="Center" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["Time Table for  "+$F{coursename}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="20" width="555" height="20"/>
+					<textElement textAlignment="Center" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["Duration : "+$F{noofdays}+" days"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="40" width="555" height="20"/>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{startdate}+" to "+$F{enddate}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="105" width="97" height="26"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Date]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="dategroup">
+		<groupExpression><![CDATA[$F{coursedate}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="1">
+				<line>
+					<reportElement x="0" y="0" width="555" height="1"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<frame>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="97" y="0" width="144" height="16"/>
+					<box leftPadding="1" rightPadding="1">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{starttime}+" - "+$F{endtime}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement isPrintRepeatedValues="false" x="0" y="0" width="97" height="16" isPrintInFirstWholeBand="true" printWhenGroupChanges="dategroup"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0" lineStyle="Double"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0" lineStyle="Double"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{coursedate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="241" y="0" width="178" height="16"/>
+					<box leftPadding="1" rightPadding="1">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{subject}+"\n("+$F{venuename}+": "+$F{roomname}+")"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="419" y="0" width="136" height="16"/>
+					<box leftPadding="1" rightPadding="1">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{rpname}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="31" splitType="Stretch"/>
+	</summary>
+</jasperReport>

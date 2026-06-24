@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/participant-layout}">
+<head>
+    <title>Test Scores</title>
+    <th:block layout:fragment="static-files">
+        <link th:href="@{/css/viewPrePostTestScores.css}" rel="stylesheet">
+    </th:block>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <div class="container my-4 my-md-5">
+        <div class="card shadow-lg">
+            <div class="test-main-container">
+                <h2 class="titlecss mb-4">Test Scores</h2>
+                <div class="d-flex justify-content-end">
+                    <div>
+                        <h4 th:text="'Total Marks: ' + ${totalmarks}"></h4>
+                    </div>
+                </div>
+                <div th:each="question, iterStat : ${questions}" class="form-group">
+                    <div class="question-label" th:text="${iterStat.count} + '. ' + ${question.questionname}">Question text</div>
+
+                    <div class="options-group">
+                        <label th:if="${question.option1 != null}" class="option-label" th:classappend="${question.op1correct == '1'} ? 'is-correct-answer' : ''">
+                            <input th:type="${question.qopcode == '1' ? 'radio' : 'checkbox'}" disabled/>
+                            <span th:text="${question.option1}"></span>
+                        </label>
+                        <label th:if="${question.option2 != null}" class="option-label" th:classappend="${question.op2correct == '1'} ? 'is-correct-answer' : ''">
+                            <input th:type="${question.qopcode == '1' ? 'radio' : 'checkbox'}" disabled/>
+                            <span th:text="${question.option2}"></span>
+                        </label>
+                        <label th:if="${question.option3 != null}" class="option-label" th:classappend="${question.op3correct == '1'} ? 'is-correct-answer' : ''">
+                            <input th:type="${question.qopcode == '1' ? 'radio' : 'checkbox'}" disabled/>
+                            <span th:text="${question.option3}"></span>
+                        </label>
+                        <label th:if="${question.option4 != null}" class="option-label" th:classappend="${question.op4correct == '1'} ? 'is-correct-answer' : ''">
+                            <input th:type="${question.qopcode == '1' ? 'radio' : 'checkbox'}" disabled/>
+                            <span th:text="${question.option4}"></span>
+                        </label>
+                        <label th:if="${question.option5 != null}" class="option-label" th:classappend="${question.op5correct == '1'} ? 'is-correct-answer' : ''">
+                            <input th:type="${question.qopcode == '1' ? 'radio' : 'checkbox'}" disabled/>
+                            <span th:text="${question.option5}"></span>
+                        </label>
+                        <label th:if="${question.option6 != null}" class="option-label" th:classappend="${question.op6correct == '1'} ? 'is-correct-answer' : ''">
+                            <input th:type="${question.qopcode == '1' ? 'radio' : 'checkbox'}" disabled/>
+                            <span th:text="${question.option6}"></span>
+                        </label>
+                    </div>
+
+                    <!-- Display Pre-Test User Answer(s) -->
+                    <div class="answer-section">
+                        <span class="answer-label">Pre-Test Answer(s) Chosen: </span>
+                        <th:block th:each="p : ${pretestanswers}" th:if="${p.questionid.questionid == question.questionid}">
+                            <span th:switch="${p.selectedoption}" class="user-answer-display" th:classappend="${#strings.equals(p.selectedoption, '1') and #strings.equals(question.op1correct, '1') or #strings.equals(p.selectedoption, '2') and #strings.equals(question.op2correct, '1') or #strings.equals(p.selectedoption, '3') and #strings.equals(question.op3correct, '1') or #strings.equals(p.selectedoption, '4') and #strings.equals(question.op4correct, '1') or #strings.equals(p.selectedoption, '5') and #strings.equals(question.op5correct, '1') or #strings.equals(p.selectedoption, '6') and #strings.equals(question.op6correct, '1')} ? 'correct' : 'incorrect'">
+                                <span th:case="'1'" th:text="${question.option1} + ' '"></span>
+                                <span th:case="'2'" th:text="${question.option2} + ' '"></span>
+                                <span th:case="'3'" th:text="${question.option3} + ' '"></span>
+                                <span th:case="'4'" th:text="${question.option4} + ' '"></span>
+                                <span th:case="'5'" th:text="${question.option5} + ' '"></span>
+                                <span th:case="'6'" th:text="${question.option6} + ' '"></span>
+                            </span>
+                        </th:block>
+                    </div>
+
+                    <!-- Display Post-Test User Answer(s) -->
+                    <div class="answer-section">
+                        <span class="answer-label">Post-Test Answer(s) Chosen: </span>
+                        <th:block th:each="p : ${posttestanswers}" th:if="${p.questionid.questionid == question.questionid}">
+                             <span th:switch="${p.selectedoption}" class="user-answer-display" th:classappend="${#strings.equals(p.selectedoption, '1') and #strings.equals(question.op1correct, '1') or #strings.equals(p.selectedoption, '2') and #strings.equals(question.op2correct, '1') or #strings.equals(p.selectedoption, '3') and #strings.equals(question.op3correct, '1') or #strings.equals(p.selectedoption, '4') and #strings.equals(question.op4correct, '1') or #strings.equals(p.selectedoption, '5') and #strings.equals(question.op5correct, '1') or #strings.equals(p.selectedoption, '6') and #strings.equals(question.op6correct, '1')} ? 'correct' : 'incorrect'">
+                                <span th:case="'1'" th:text="${question.option1} + ' '"></span>
+                                <span th:case="'2'" th:text="${question.option2} + ' '"></span>
+                                <span th:case="'3'" th:text="${question.option3} + ' '"></span>
+                                <span th:case="'4'" th:text="${question.option4} + ' '"></span>
+                                <span th:case="'5'" th:text="${question.option5} + ' '"></span>
+                                <span th:case="'6'" th:text="${question.option6} + ' '"></span>
+                            </span>
+                        </th:block>
+                    </div>
+                </div>
+
+                <!-- Final Score Cards -->
+                <div class="score-card mt-5">
+                    <h3 class="text-primary">PRE-TEST SCORE</h3>
+                    <h3>
+                        <span th:text="${preMarksObtained}"></span> / <span th:text="${totalmarks}"></span>
+                        <span class="score-percent" th:if="${totalmarks > 0}" th:text="'(' + ${#numbers.formatDecimal((preMarksObtained * 100.0) / totalmarks, 1, 2)} + '%)'"></span>
+                    </h3>
+                </div>
+                <div class="score-card">
+                    <h3 class="text-primary">POST-TEST SCORE</h3>
+                    <h3>
+                        <span th:text="${postMarksObtained}"></span> / <span th:text="${totalmarks}"></span>
+                        <span class="score-percent" th:if="${totalmarks > 0}" th:text="'(' + ${#numbers.formatDecimal((postMarksObtained * 100.0) / totalmarks, 1, 2)} + '%)'"></span>
+                    </h3>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts"></th:block>
+
+</body>
+</html>

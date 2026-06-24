@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+  <title>Register Faculties</title>
+  <div layout:fragment="static-files">
+    <link rel="stylesheet" th:href="@{/tempscripts/bootstrap-select/bootstrap-select.min.css}" />
+    <link rel="stylesheet" th:href="@{/lily/js/select2/select2.min.css}" />
+  </div>
+</head>
+<body>
+
+<div id="loader">
+  <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container py-5">
+    <div class="card border-0 modern-card mb-4">
+
+      <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+        <h4 class="mb-0 fw-bold d-flex align-items-center">
+          <i class="fas fa-chalkboard-teacher me-3 fs-5"></i> Register Faculties
+        </h4>
+      </div>
+
+      <div class="card-body p-4 p-md-5">
+        <form method="POST" th:object="${tfaculty}" name="userloginfn" id="userloginfid" role="form" autocomplete="off" novalidate>
+          <input type="hidden" th:field="*{facultyid}" id="facultyid" readonly="true" />
+
+          <div class="row mb-4 align-items-center">
+            <div class="col-md-4">
+              <label for="usercode" class="form-label-modern mb-0">User: <span class="text-danger">*</span></label>
+            </div>
+            <div class="col-md-6">
+              <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-user-tie"></i></span>
+                <select th:field="*{usercode.usercode}" id="usercode" class="form-select modern-input border-start-0 ps-2" required="true">
+                  <option value="-1">-- Select User --</option>
+                  <option th:each="f : ${faculties}" th:value="${f[0]}" th:text="${f[1]}"></option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-4 align-items-center">
+            <div class="col-md-4">
+              <label for="fname" class="form-label-modern mb-0">First Name: <span class="text-danger">*</span></label>
+            </div>
+            <div class="col-md-6">
+              <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-font"></i></span>
+                <input type="text" th:field="*{fname}" id="fname" class="form-control modern-input border-start-0 ps-2" required="true" maxlength="30" placeholder="First Name" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-4 align-items-center">
+            <div class="col-md-4">
+              <label for="mname" class="form-label-modern mb-0">Middle Name:</label>
+            </div>
+            <div class="col-md-6">
+              <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-font"></i></span>
+                <input type="text" th:field="*{mname}" id="mname" class="form-control modern-input border-start-0 ps-2" maxlength="30" placeholder="Middle Name (Optional)" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-4 align-items-center">
+            <div class="col-md-4">
+              <label for="lname" class="form-label-modern mb-0">Last Name: <span class="text-danger">*</span></label>
+            </div>
+            <div class="col-md-6">
+              <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-font"></i></span>
+                <input type="text" th:field="*{lname}" id="lname" class="form-control modern-input border-start-0 ps-2" required="true" maxlength="30" placeholder="Last Name" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-4 align-items-center">
+            <div class="col-md-4">
+              <label for="designationcode" class="form-label-modern mb-0">Designation: <span class="text-danger">*</span></label>
+            </div>
+            <div class="col-md-6">
+              <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-id-badge"></i></span>
+                <select th:field="*{designationcode.designationcode}" id="designationcode" class="form-select modern-input border-start-0 ps-2" required="true">
+                  <option value="-1">-- Select Designation --</option>
+                  <option th:each="e : ${designation}" th:value="${e.designationcode}" th:text="${e.designationname}"></option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-4 align-items-center">
+            <div class="col-md-4">
+              <label for="departmentcode" class="form-label-modern mb-0">Department faculty belongs to: <span class="text-danger">*</span></label>
+            </div>
+            <div class="col-md-6">
+              <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-building"></i></span>
+                <select th:field="*{departmentcode.departmentcode}" id="departmentcode" class="form-select modern-input border-start-0 ps-2" required="true">
+                  <option value="-1">-- Select Department --</option>
+                  <option th:each="d : ${departments}" th:value="${d.departmentcode}" th:text="${d.departmentname}"></option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-4 align-items-start">
+            <div class="col-md-4 pt-2">
+              <label for="coursecode" class="form-label-modern mb-0">Select Course/Courses: <span class="text-danger">*</span></label>
+            </div>
+            <div class="col-md-6" id="courselist">
+              <select name="course" id="coursecode" class="form-control select2 shadow-sm" multiple="multiple" title="Select Courses" required="true">
+                <option value="-1">Select</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-5 align-items-start">
+            <div class="col-md-4 pt-2">
+              <label for="subject" class="form-label-modern mb-0">Select subjects faculty will teach: <span class="text-danger">*</span></label>
+            </div>
+            <div class="col-md-6" id="subjectslist">
+              <select name="subject" id="subject" class="form-control select2 shadow-sm" multiple="multiple" title="Select Subjects" required="true">
+              </select>
+            </div>
+          </div>
+
+          <div class="row mt-4 pt-4 border-top">
+            <div class="col-12 d-flex justify-content-center gap-3">
+              <button type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                <i class="fas fa-save me-2"></i> Submit
+              </button>
+              <button type="reset" class="btn btn-light border btn-modern px-5">
+                <i class="fas fa-undo me-2"></i> Reset
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div class="table-responsive table-wrapper mt-5 pt-3 border-top">
+          <table class="table modern-table align-middle mb-0 w-100" id="usertable">
+            <thead>
+            <tr>
+              <th class="text-center" style="width: 5%;">Sl No.</th>
+              <th style="width: 11%;">First Name</th>
+              <th style="width: 10%;">Middle Name</th>
+              <th style="width: 11%;">Last Name</th>
+              <th style="width: 12%;">Designation</th>
+              <th style="width: 14%;">Department</th>
+              <th style="width: 19%;">Subjects</th>
+              <th style="width: 8%;">Course</th>
+              <th class="noExport text-center" style="width: 10%; min-width: 100px;">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="v, s : ${allfaculties}">
+              <td class="text-center fw-semibold text-muted" th:text="${s.count}"></td>
+              <td class="fw-bold text-dark" th:text="${v[2]}"></td>
+              <td th:text="${v[3]}"></td>
+              <td th:text="${v[4]}"></td>
+              <td class="text-muted" th:text="${v[5]}"></td>
+              <td th:text="${v[6]}"></td>
+              <td class="text-muted small" th:text="${v[7]}"></td>
+              <td th:text="${v[8]}"></td>
+              <td class="text-center white-space-nowrap">
+                <button type="button" class="edit-faculty-btn btn btn-sm btn-primary btn-modern w-100" th:attr="data-id=${v[0]}">
+                  <i class="fas fa-edit me-1"></i> Edit
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light border-0 px-4 py-3">
+          <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel"><i class="fas fa-info-circle me-2 text-primary"></i> Message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+        </div>
+        <div class="modal-footer border-top-0 pt-0">
+          <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<th:block layout:fragment="scripts">
+  <script th:src="@{/tempscripts/bootstrap-select/bootstrap-select.min.js}"></script>
+  <script th:src="@{/lily/js/select2/select2.min.js}"></script>
+  <script th:inline="javascript">
+    const API = {
+        createEditFaculty: [[@{/faculties/createEditFaculty}]],
+        getCoursesBasedOnDepartmentFaculty: [[@{/course-academics/getCoursesBasedOnDepartmentFaculty}]],
+        facultyDetails: [[@{/faculties/facultyDetails}]],
+        facultySubjects: [[@{/faculties/facultySubjects}]],
+        getFacultyByCourse: [[@{/faculties/by-courses}]]
+    };
+  </script>
+  <script th:src="@{/js/registerFaculties.js}"></script>
+</th:block>
+</body>
+</html>

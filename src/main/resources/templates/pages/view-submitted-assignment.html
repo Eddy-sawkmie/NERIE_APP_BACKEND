@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/coordinator-faculty-layout}"
+>
+<head>
+    <title>Assignments</title>
+    <th:block layout:fragment="static-files"></th:block>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container py-5">
+
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-tasks me-3 fs-5"></i> Assignment Submissions
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+
+                <div class="bg-light p-4 rounded-3 border-0 shadow-sm mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <span class="text-muted small text-uppercase fw-bold"><i class="fas fa-book me-1"></i> Subject</span>
+                            <div class="fw-semibold text-dark fs-6" th:text="${assignmentdetails.subjectcode.subjectname}"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="text-muted small text-uppercase fw-bold"><i class="fas fa-heading me-1"></i> Assignment</span>
+                            <div class="fw-semibold text-dark fs-6" th:text="${assignmentdetails.title}"></div>
+                        </div>
+
+                        <div class="col-md-6 mt-3">
+                            <span class="text-muted small text-uppercase fw-bold"><i class="fas fa-calendar-plus me-1"></i> Assigned</span>
+                            <div class="text-dark" th:text="${#dates.format(assignmentdetails.uploaddate, 'dd-MM-yyyy')}"></div>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <span class="text-muted small text-uppercase fw-bold"><i class="fas fa-calendar-times me-1"></i> Deadline</span>
+                            <div class="text-danger fw-semibold" th:text="${#dates.format(assignmentdetails.submissiondate, 'dd-MM-yyyy')}"></div>
+                        </div>
+
+                        <div class="col-12 mt-3">
+                            <span class="text-muted small text-uppercase fw-bold"><i class="fas fa-align-left me-1"></i> Description</span>
+                            <div class="text-secondary fst-italic mt-1" th:text="${assignmentdetails.description}"></div>
+                        </div>
+
+                        <div class="col-12 mt-4 pt-3 border-top">
+                            <a th:href="@{/assignments/viewAssignmentDocument(fid=${assignmentdetails.assignmenttestid})}" class="btn btn-sm btn-primary btn-modern shadow-sm" target="_blank">
+                                <i class="fas fa-file-pdf me-1"></i> View Original Assignment Document
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-primary border-0 shadow-sm rounded-3 py-3 px-4 mb-5">
+                    <div class="d-flex justify-content-around fw-bold align-items-center">
+                        <span class="fs-6"><i class="fas fa-check-circle me-1 text-primary"></i> Pass Mark: <span class="badge bg-danger rounded-pill px-3 py-2 ms-1 shadow-sm" th:text="${assignmentdetails.passmark}"></span></span>
+                        <span class="fs-6"><i class="fas fa-star me-1 text-warning"></i> Full Marks: <span class="badge bg-success rounded-pill px-3 py-2 ms-1 shadow-sm" th:text="${assignmentdetails.fullmark}"></span></span>
+                    </div>
+                </div>
+
+                <form role="form" enctype="multipart/form-data" id="stuasstform" name="studentassignmentform" autocomplete="off">
+                    <div class="table-responsive table-wrapper">
+                        <table class="table modern-table align-middle mb-0 w-100" id="submittedassignmenttable">
+                            <thead>
+                            <tr>
+                                <th style="width: 5%;" class="text-center">Sl. No</th>
+                                <th style="width: 15%;">Roll No.</th>
+                                <th style="width: 30%;">Student Name</th>
+                                <th style="width: 15%;" class="text-center">Submission Date</th>
+                                <th style="width: 15%;" class="text-center noExport">View Submission</th>
+                                <th style="width: 20%;" class="text-center">Submit Mark</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="v, iterStat : ${studentasssignments}">
+                                <td class="text-center text-muted fw-semibold">
+                                    <span th:text="${iterStat.count}"></span>
+                                    <input type="hidden" th:value="${v.studentassignmentid}" name="stdid" />
+                                </td>
+                                <td><span class="fw-semibold text-dark" th:text="${studentasssignmentsnames[iterStat.index][0]}"></span></td>
+                                <td>
+                                    <span class="d-block text-dark fw-bold" th:text="${studentasssignmentsnames[iterStat.index][1]}"></span>
+                                    <span class="small text-muted" th:text="${studentasssignmentsnames[iterStat.index][2]}"></span>
+                                </td>
+                                <td class="text-center text-muted" th:text="${#dates.format(v.uploaddate, 'dd-MM-yyyy HH:mm')}"></td>
+
+                                <td class="text-center">
+                                    <span th:if="${v.reldoc == null or #strings.isEmpty(v.reldoc) or v.reldoc.length == 0}" class="badge bg-light text-muted border px-2 py-1"><i class="fas fa-times me-1"></i> Not Uploaded</span>
+
+                                    <a th:if="${v.reldoc != null and not #strings.isEmpty(v.reldoc) and v.reldoc.length > 0}"
+                                       class="btn btn-sm btn-light btn-modern text-primary shadow-sm border"
+                                       th:href="@{/assignments/viewStudentUploadAssignmentDocument(fid=${v.assignmenttestid.assignmenttestid}, sid=${v.usercode.usercode})}"
+                                       target="_blank" title="View Submission">
+                                        <i class="fas fa-eye me-1"></i> View
+                                    </a>
+                                </td>
+
+                                <td class="text-center">
+                                    <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                        <input type="number" step="0.01" min="0" th:max="${assignmentdetails.fullmark}" class="form-control modern-input text-center py-2" style="border-radius: 0.5rem;" name="assignmentmarks" th:value="${v.assignmentmark}" placeholder="Score"/>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4 pt-4 border-top">
+                        <button type="submit" class="btn btn-success btn-modern px-5 shadow-sm py-2">
+                            <i class="fas fa-save me-2"></i> Save Student Marks
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            saveStudentAssignmentMarks: [[@{/assignments/saveStudentAssignmentMarks}]]
+        };
+    </script>
+    <script th:src="@{/js/viewSubmittedAssignment.js}"></script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title layout:fragment="title">Add Academic Subject</title>
+    <div layout:fragment="static-files">
+        <style>
+            /*Toggle Switch*/
+            .switch {
+              position: relative;
+              display: inline-block;
+              width: 60px;
+              height: 34px;
+            }
+
+            .switch input {
+              opacity: 0;
+              width: 0;
+              height: 0;
+            }
+
+            .slider {
+              position: absolute;
+              cursor: pointer;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background-color: #ccc;
+              -webkit-transition: .4s;
+              transition: .4s;
+            }
+
+            .slider:before {
+              position: absolute;
+              content: "";
+              height: 26px;
+              width: 26px;
+              left: 4px;
+              bottom: 4px;
+              background-color: white;
+              -webkit-transition: .4s;
+              transition: .4s;
+            }
+
+            input:checked + .slider {
+              background-color: #84deff; /* Blue color for "Yes" */
+            }
+
+            input:focus + .slider {
+              box-shadow: 0 0 1px #84deff;
+            }
+
+            input:checked + .slider:before {
+              -webkit-transform: translateX(26px);
+              -ms-transform: translateX(26px);
+              transform: translateX(26px);
+            }
+
+            .slider.round {
+              border-radius: 34px;
+            }
+
+            .slider.round:before {
+              border-radius: 50%;
+            }
+        </style>
+    </div>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container py-5">
+
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-book me-3 fs-5"></i> Add New Subject
+                </h4>
+                <button type="button" class="btn btn-light btn-modern text-primary fw-bold shadow-sm" id="adddept" data-bs-toggle="modal" data-bs-target="#department-modal">
+                    <i class="fas fa-plus me-2"></i> Add New Department
+                </button>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <div id="form_container">
+                    <form id="newsubjectform" novalidate>
+                        <input name="subjectcode" id="subjectcode" type="hidden"/>
+
+                        <div class="row mb-4 align-items-center">
+                            <label class="col-md-3 col-form-label form-label-modern text-md-end">Department <span class="text-danger">*</span></label>
+                            <div class="col-md-7">
+                                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-building"></i></span>
+                                    <select name="departmentcode" id="departmentcode" class="form-select modern-input border-start-0 ps-2" required>
+                                        <option value="" selected disabled>Select Department</option>
+                                        <th:block th:each="o : ${mdepartmentList}">
+                                            <option th:value="${o.departmentcode}" th:text="${o.departmentname}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4 align-items-center">
+                            <label class="col-md-3 col-form-label form-label-modern text-md-end">Belongs to Short Term Course? <span class="text-danger">*</span></label>
+                            <div class="col-md-7 d-flex align-items-center gap-3">
+                                <input type="hidden" id="isshortterm" name="isshortterm" value="0"/>
+                                <label class="switch mb-0">
+                                    <input type="checkbox" id="isshortterm_toggle"/>
+                                    <span class="slider round shadow-sm"></span>
+                                </label>
+                                <span class="text-muted fw-bold" id="isshortterm_label">No</span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4 align-items-center">
+                            <label class="col-md-3 col-form-label form-label-modern text-md-end">Course Name <span class="text-danger">*</span></label>
+                            <div class="col-md-7">
+                                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-graduation-cap"></i></span>
+                                    <select name="coursecode" id="coursecode" class="form-select modern-input border-start-0 ps-2" required>
+                                        <option value="" selected disabled>Select Course</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4 align-items-center" id="semesterdiv">
+                            <label class="col-md-3 col-form-label form-label-modern text-md-end">Semester <span class="text-danger">*</span></label>
+                            <div class="col-md-7">
+                                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-calendar-alt"></i></span>
+                                    <select name="semestercode" id="semestercode" class="form-select modern-input border-start-0 ps-2">
+                                        <option value="" selected disabled>Select Semester</option>
+                                        <th:block th:each="o : ${semesterList}">
+                                            <option th:value="${o.semestercode}" th:text="${o.semestername}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4 align-items-center" id="phasediv" style="display:none;">
+                            <label class="col-md-3 col-form-label form-label-modern text-md-end">Phases <span class="text-danger">*</span></label>
+                            <div class="col-md-7">
+                                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-layer-group"></i></span>
+                                    <select name="sphase" id="sphase" class="form-select modern-input border-start-0 ps-2">
+                                        <option value="" selected disabled>Select Phase</option>
+                                        <th:block th:each="s : ${sphaseList}">
+                                            <option th:value="${s.sphaseid}" th:text="${s.sphasename}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4 align-items-center">
+                            <label class="col-md-3 col-form-label form-label-modern text-md-end">Subject Name <span class="text-danger">*</span></label>
+                            <div class="col-md-7">
+                                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book-open"></i></span>
+                                    <input name="subjectname" id="subjectname" class="form-control modern-input border-start-0 ps-2" required="true" maxlength="50" placeholder="e.g., Data Structures"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4 align-items-center">
+                            <label class="col-md-3 col-form-label form-label-modern text-md-end">Is this Subject Optional? <span class="text-danger">*</span></label>
+                            <div class="col-md-7">
+                                <div class="d-flex gap-4 pt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="isoptional" id="isoptionaly" value="1" required="true" />
+                                        <label class="form-check-label text-dark" for="isoptionaly">Yes</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="isoptional" id="isoptionaln" checked="true" value="0" required="true" />
+                                        <label class="form-check-label text-dark" for="isoptionaln">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 mt-5">
+                            <div class="col-md-7 offset-md-3">
+                                <div class="d-flex justify-content-start gap-3">
+                                    <button type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                                        <i class="fas fa-save me-2"></i> Submit
+                                    </button>
+                                    <button type="reset" class="btn btn-light border btn-modern px-4">
+                                        <i class="fas fa-undo me-2"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <hr class="my-5 border-light"/>
+
+                    <div class="table-responsive table-wrapper mt-2">
+                        <table class="table modern-table align-middle mb-0 w-100" id="s-table">
+                            <thead>
+                            <tr>
+                                <th style="width: 5%;" class="text-center">Sl. No</th>
+                                <th style="width: 25%;">Subject Name</th>
+                                <th style="width: 25%;">Department</th>
+                                <th style="width: 10%;">Course</th>
+                                <th style="width: 10%;">Subject Type</th>
+                                <th style="width: 15%;">Semester/Phase</th>
+                                <th style="width: 10%;" class="text-center noExport">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="department-modal" tabindex="-1" aria-labelledby="departmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="departmentModalLabel">
+                        <i class="fas fa-building me-2 text-primary"></i> Add New Department
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4 p-md-5">
+                    <form name="departmentForm" id="departmentForm" th:action="@{/departments/saveDepartments}" method="POST" role="form" autocomplete="off" novalidate>
+
+                        <div class="row mb-4 align-items-center">
+                            <div class="col-md-12">
+                                <label for="departmentname_modal" class="form-label-modern">Department Name <span class="text-danger">*</span></label>
+                                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-building"></i></span>
+                                    <input name="departmentcode" id="departmentcode_modal_hidden" type="hidden"/>
+                                    <input name="departmentname" id="departmentname_modal" class="form-control modern-input border-start-0 ps-2 alphabets" required maxlength="200" placeholder="e.g., Department of Education"/>
+                                </div>
+                                <div class="invalid-feedback">Department name is required.</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-4 pt-4 border-top">
+                            <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </button>
+                            <button id="submitDepartmentForm" type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                                <i class="fas fa-save me-2"></i> Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            saveNewSubject: [[@{/subjects/saveNewSubject}]],
+            getListOfSubjects: [[@{/subjects/getListOfSubjects}]],
+            getCoursesBasedOnDepartment: [[@{/course-academics/getCoursesBasedOnDepartment}]]
+        };
+    </script>
+    <script th:src="@{/js/createAcademicSubjects.js}"></script>
+</th:block>
+</body>
+</html>

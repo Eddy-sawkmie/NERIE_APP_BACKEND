@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layouts/student-layout}"
+        xmlns:th="http://www.thymeleaf.org"
+>
+<div layout:fragment="static-files">
+    <link rel="stylesheet" th:href="@{/js/jquery-ui/jquery-ui.css}">
+    <script th:src="@{/js/jquery-ui/jquery-ui.min.js}"></script>
+
+    <script th:inline="javascript">
+        const API = {
+            submitLeaveApplication: [[@{/student-leaves/submit-application}]],
+        };
+    </script>
+    <script th:src="@{/js/leaveApplication.js}"></script>
+    
+    <style>
+        .status-pill {
+            padding: 0.35rem 0.75rem;
+            border-radius: 50rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .pill-danger { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+        .pill-success { background-color: rgba(25, 135, 84, 0.1); color: #198754; }
+        .pill-warning { background-color: rgba(255, 193, 7, 0.1); color: #856404; }
+        
+        .student-info-box {
+            background-color: #f8f9fa;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid #e9ecef;
+        }
+    </style>
+</div>
+
+<title layout:fragment="title">Leave Application</title>
+
+<main layout:fragment="content">
+
+    <div class="container py-5">
+        
+        <div class="card border-0 modern-card mb-5">
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-file-signature me-3 fs-5"></i>
+                    Apply For Leave
+                </h4>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                
+                <div class="student-info-box mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-3">
+                            <span class="text-muted small text-uppercase fw-bold d-block">Name</span>
+                            <span class="fw-semibold text-dark fs-5">
+                                <th:block th:text="${student.fname}"></th:block>
+                                <th:block th:if="${student.mname != null}" th:text="' ' + ${student.mname}"></th:block>
+                                <th:block th:if="${student.lname != null}" th:text="' ' + ${student.lname}"></th:block>
+                            </span>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <span class="text-muted small text-uppercase fw-bold d-block">Roll No</span>
+                            <span class="fw-medium text-dark fs-6" th:text="${student.rollno}"></span>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <span class="text-muted small text-uppercase fw-bold d-block">Course</span>
+                            <span class="fw-medium text-dark fs-6" th:text="${student.coursecode.coursename}"></span>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <th:block th:if="${student.semestercode != null}">
+                                <span class="text-muted small text-uppercase fw-bold d-block">Semester</span>
+                                <span class="fw-medium text-dark fs-6" th:text="${student.semestercode.semestername}"></span>
+                            </th:block>
+                            <th:block th:if="${student.sphaseid != null}">
+                                <span class="text-muted small text-uppercase fw-bold d-block">Phase</span>
+                                <span class="fw-medium text-dark fs-6" th:text="${student.sphaseid.sphasename}"></span>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="text-muted mb-4 opacity-25">
+
+                <form name="studentleave" id="studentleaveid" enctype="multipart/form-data" role="form" autocomplete="off">
+                    
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="form-check form-switch fs-5">
+                                <input class="form-check-input" type="checkbox" id="isDayScholar" role="switch">
+                                <label class="form-check-label fw-semibold text-dark ms-2" for="isDayScholar">I am a Day Scholar</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label for="leave-station" class="form-label form-label-modern">Leave Station <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control modern-input" id="leave-station" name="leavestation" required="true" placeholder="e.g., Hometown, Event City"/>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="leave-reason" class="form-label form-label-modern">Reason For Leave <span class="text-danger">*</span></label>
+                            <textarea form="studentleaveid" name="reasonforleave" maxlength="500" rows="3" class="form-control modern-input" id="leave-reason" required="true" placeholder="Provide a brief explanation..."></textarea>
+                            <div class="text-end mt-1">
+                                <small id="charactercountdesc" class="text-muted fw-medium">Characters left: 500</small>
+                            </div>
+                        </div>
+
+                        <div id="nondayscholar-info" class="col-12 m-0 p-0 row g-4">
+                            <div class="col-md-6">
+                                <label for="buildingno" class="form-label form-label-modern">Hostel / Building <span class="text-danger">*</span></label>
+                                <select id="buildingno" name="buildingno" class="form-select modern-select" required="true">
+                                    <option value="">-- Select --</option>
+                                    <option th:if="${student.gender == 'F'}" value="Type IV (Female)">Type IV (Female)</option>
+                                    <option th:if="${student.gender == 'M'}" value="Type II (Male)">Type II (Male)</option>
+                                    <option value="Quarter">Quarter</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="roomno" class="form-label form-label-modern">Room Number <span class="text-danger">*</span></label>
+                                <input type="text" id="roomno" name="roomno" class="form-control modern-input" required="true" placeholder="e.g., 204B"/>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <label for="guardian-name" class="form-label form-label-modern">Guardian Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control modern-input" id="guardian-name" name="nameofguardian" required="true"/>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="guardian-rel" class="form-label form-label-modern">Relationship <span class="text-danger">*</span></label>
+                            <select id="guardian-rel" name="guardianrelationship" class="form-select modern-select" required="true">
+                                <option value="">-- Select --</option>
+                                <option value="Mother">Mother</option>
+                                <option value="Father">Father</option>
+                                <option value="Guardian">Guardian</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="guardian-phno" class="form-label form-label-modern">Guardian Phone <span class="text-danger">*</span></label>
+                            <input type="text" maxlength="10" class="form-control modern-input" id="guardian-phno" name="phnoguardian" required="true" placeholder="10-digit number"/>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="requestedfromdate" class="form-label form-label-modern">Leave From <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-calendar-alt text-muted"></i></span>
+                                <input type="text" class="form-control modern-input border-start-0 datepicker" id="requestedfromdate" name="requestedfrom" required="true" placeholder="DD-MM-YYYY"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="requestedtodate" class="form-label form-label-modern">Leave To <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-calendar-alt text-muted"></i></span>
+                                <input type="text" class="form-control modern-input border-start-0 datepicker" id="requestedtodate" name="requestedto" required="true" placeholder="DD-MM-YYYY"/>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4 p-4 bg-light rounded-3 border border-dashed text-center">
+                            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-paperclip me-2"></i>Supporting Documents (If Any)</h6>
+                            <label for="file1" class="form-label text-muted d-block mb-2">Upload Guardian's Approval Letter <span class="text-danger fw-semibold">(PDF only)</span></label>
+                            <input class="form-control modern-input w-50 mx-auto" type="file" accept=".pdf" name="file1" id="file1" onchange="validateFile(this)">
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <div class="form-check bg-light p-3 rounded-3 border border-warning border-opacity-50">
+                                <input class="form-check-input ms-1 mt-2" type="checkbox" id="declarationCheckbox" style="transform: scale(1.2);">
+                                <label class="form-check-label text-dark ms-2 fw-medium" for="declarationCheckbox">
+                                    <strong>Declaration:</strong> The information provided by me is correct and accurate to the best of my knowledge. I understand that any false information may lead to consequences as per the Institute's policies.
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4 text-end">
+                            <button id="subbtn" type="submit" class="btn btn-primary btn-modern px-5" disabled>
+                                <i class="fas fa-paper-plane me-2"></i> Submit Application
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card border-0 modern-card">
+            <div class="card-body p-4 p-md-5">
+                
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="fas fa-history text-primary me-2"></i> My Leave Applications
+                </h5>
+                
+                <div class="table-responsive table-wrapper">
+                    <table class="table modern-table align-middle mb-0" id="leavelist" style="width: 100%;">
+                        <thead>
+                        <tr>
+                            <th>Applied On</th>
+                            <th>Station</th>
+                            <th>Duration</th>
+                            <th style="width: 25%;">Reason</th>
+                            <th class="text-center">Attachment</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="v : ${leavelist}">
+                            <td class="fw-medium text-dark" th:text="${#dates.format(v.applicationdate, 'dd-MMM-yyyy')}"></td>
+                            <td th:text="${v.leavestation}"></td>
+                            <td>
+                                <span class="d-block text-success fw-semibold"><i class="fas fa-plane-departure me-1"></i> <th:block th:text="${#dates.format(v.requestedfrom, 'dd-MMM-yyyy')}"></th:block></span>
+                                <span class="d-block text-danger fw-semibold mt-1"><i class="fas fa-plane-arrival me-1"></i> <th:block th:text="${#dates.format(v.requestedto, 'dd-MMM-yyyy')}"></th:block></span>
+                            </td>
+                            <td class="text-muted small" th:text="${v.reasonforleave}"></td>
+
+                            <td class="text-center">
+                                <th:block th:if="${#strings.isEmpty(v.gapprovalletter)}">
+                                    <span class="text-muted small"><i class="fas fa-times me-1"></i> None</span>
+                                </th:block>
+                                <a th:if="${not #strings.isEmpty(v.gapprovalletter)}"
+                                   th:href="@{'/student-leaves/view-approval'(studentleaveid=${v.studentleaveid}, approvaltype='G')}"
+                                   class="btn btn-sm btn-danger btn-modern" target="_blank">
+                                    <i class="fas fa-file-pdf me-1 text-white"></i> View
+                                </a>
+                            </td>
+
+                            <td class="text-center">
+                                <span th:if="${v.iswardenapproved == '0'}" class="status-pill pill-danger text-start">
+                                    <i class="fas fa-times-circle me-1"></i> Rejected (Warden)<br/>
+                                    <small class="fw-normal">Reason: <th:block th:text="${v.rejectionreason}"></th:block></small>
+                                </span>
+                                <span th:if="${v.isdeanapproved == '0'}" class="status-pill pill-danger text-start">
+                                    <i class="fas fa-times-circle me-1"></i> Rejected (Dean)<br/>
+                                    <small class="fw-normal">Reason: <th:block th:text="${v.rejectionreason}"></th:block></small>
+                                </span>
+                                <span th:if="${v.isapproved == '0'}" class="status-pill pill-danger text-start">
+                                    <i class="fas fa-times-circle me-1"></i> Rejected (Principal)<br/>
+                                    <small class="fw-normal">Reason: <th:block th:text="${v.rejectionreason}"></th:block></small>
+                                </span>
+                                <span th:if="${(v.iswardenapproved == null or v.iswardenapproved == '1' or v.iswardenapproved == '2') and (v.isdeanapproved == null or v.isdeanapproved == '1') and v.isapproved == null}" class="status-pill pill-warning">
+                                    <i class="fas fa-hourglass-half me-1"></i> Pending
+                                </span>
+                                <span th:if="${v.isapproved == '1'}" class="status-pill pill-success">
+                                    <i class="fas fa-check-circle me-1"></i> Approved
+                                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary" id="feedbackModalBody">
+                    </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+</html>

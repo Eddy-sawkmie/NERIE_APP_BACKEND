@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="coursecoordinators" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="0.9313819845887326"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="finyearend" class="java.lang.String"/>
+	<parameter name="finyearstart" class="java.lang.String"/>
+	<parameter name="financialyear" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT o.officecode,o.officename,o.officeshortname,o.officeaddress,d.districtname,s.statename,
+o.officepincode,c.programid || ': ' || c.programname || '(' || TO_CHAr(pd.startdate,'dd-MM-yyyy') || ' to ' || TO_CHAr(pd.enddate,'dd-MM-yyyy') || ')' || ' [' || cat.coursecategoryname || ' ]'
+AS program,
+ph.phaseno || ': ' || ph.phasedescription AS phase_details,
+u.username AS coursecoordinator
+From nerie.m_offices o
+inner join nerie.m_districts d on o.officedistrictcode=d.districtcode
+inner join nerie.m_states s on d.statecode=s.statecode
+left outer join nerie.m_programs c on o.officecode=c.officecode
+left outer join nerie.mt_programdetails pd on c.programcode=pd.programcode
+left outer join nerie.mt_program_members cc on pd.phaseid=cc.phaseid AND c.programcode=cc.programcode
+left outer join nerie.mt_userlogin u on cc.usercode=u.usercode
+left outer join nerie.m_coursecategories cat on cat.coursecategorycode=c.coursecodecategory
+left outer join nerie.m_phases ph on ph.phaseid=pd.phaseid
+WHERE ((TO_CHAR(pd.startdate,'yyyy-MM')>=$P{finyearstart} AND TO_CHAR(pd.startdate,'yyyy-MM')<=$P{finyearend}) OR ($P{financialyear}='0')) AND pd.finalized='Y'
+order by  o.officecode,o.officename,o.officeshortname,o.officeaddress,d.districtname,s.statename,o.officepincode,program,phase_details,u.username]]>
+	</queryString>
+	<field name="officecode" class="java.lang.String"/>
+	<field name="officename" class="java.lang.String"/>
+	<field name="officeshortname" class="java.lang.String"/>
+	<field name="officeaddress" class="java.lang.String"/>
+	<field name="districtname" class="java.lang.String"/>
+	<field name="statename" class="java.lang.String"/>
+	<field name="officepincode" class="java.lang.String"/>
+	<field name="program" class="java.lang.String"/>
+	<field name="phase_details" class="java.lang.String"/>
+	<field name="coursecoordinator" class="java.lang.String"/>
+	<variable name="grpcount" class="java.lang.Integer" incrementType="Group" incrementGroup="course" calculation="Count">
+		<variableExpression><![CDATA[$V{grpcount}+1]]></variableExpression>
+		<initialValueExpression><![CDATA[1]]></initialValueExpression>
+	</variable>
+	<group name="office">
+		<groupExpression><![CDATA[$F{officecode}]]></groupExpression>
+		<groupHeader>
+			<band height="70">
+				<staticText>
+					<reportElement x="0" y="0" width="48" height="37"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Office]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="48" y="0" width="507" height="37"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{officename}+"\n"+$F{officeaddress}+"\n"+$F{districtname}+"-"+$F{officepincode}+" "+$F{statename}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="402" y="37" width="153" height="33"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Coordinator]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="48" y="37" width="354" height="33"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[List of programs approved]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="37" width="48" height="33"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sl.no.]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="course">
+		<groupExpression><![CDATA[$F{program}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="1">
+				<line>
+					<reportElement x="0" y="0" width="555" height="1"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="148" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="91"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[North East Regional Institute of Education (NERIE)
+National Council of Educational Research and Training (NCERT)
+Umiam,Shillong, Meghalaya - 793103]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="91" width="555" height="37"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[List of Program Coordinators]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="128" width="555" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{financialyear}.equals("0")?"":"Financial Year: "+$P{financialyear}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="15" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="36" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="36"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textField>
+					<reportElement isPrintRepeatedValues="false" x="0" y="0" width="48" height="35" isPrintInFirstWholeBand="true"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{grpcount}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement isPrintRepeatedValues="false" x="48" y="0" width="354" height="35" isPrintInFirstWholeBand="true"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{program} + "\n" + "Phase Details: "+ $F{phase_details}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="402" y="0" width="153" height="35"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Top"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{course_COUNT}+". "+$F{coursecoordinator}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<line>
+				<reportElement x="48" y="0" width="1" height="35"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

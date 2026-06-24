@@ -1,0 +1,84 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f7f9;
+}
+
+.programs-card-style2 {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+    background-color: #ffffff;
+    margin: 60px;
+    margin-top: 30px;
+}
+
+.programs-card-style2 .card-body {
+    padding: 0;
+}
+
+.modern-table-style2 {
+    width: 100%;
+    border-collapse: collapse;
+    color: #34495e;
+}
+
+.modern-table-style2 thead th {
+    background-color: #ffc107;
+    color: #000000;
+    font-weight: 600;
+    text-align: center;
+    padding: 18px 15px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+}
+
+.modern-table-style2 thead tr:last-child th {
+    background-color: #128293;
+    font-weight: 500;
+    padding: 12px 15px;
+    text-transform: none;
+    font-size: 14px;
+}
+
+.modern-table-style2 tbody td {
+    padding: 16px 15px;
+    border-bottom: 1px solid #e9ecef;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 15px;
+    color: #495057;
+}
+
+.modern-table-style2 tbody td:nth-child(2) {
+    text-align: left;
+    font-weight: 500;
+    color: #212529;
+}
+
+.modern-table-style2 tbody tr:nth-of-type(even) {
+    background-color: #f8f9fa;
+}
+
+.modern-table-style2 tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.modern-table-style2 tfoot td {
+    font-weight: 700;
+    color: #212529;
+    padding: 16px 15px;
+    background-color: #e9ecef;
+    border-top: 2px solid #ced4da;
+    text-align: center;
+}
+.modern-table-style2 tfoot td:first-child {
+    text-align: left;
+}
+@media (max-width: 768px) {
+    .programs-card-style2 {
+        margin: 0px;
+    }
+}

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://thymeleaf.org"
+      layout:decorate="~{layouts/landing-layout}">
+<head>
+    <title>About</title>
+    <div layout:fragment="styles">
+        <link rel="stylesheet" th:href="@{/css/about.css}">
+    </div>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div layout:replace="~{fragments/lilypreloader :: preloader}"></div>
+
+    <!-- ── Hero ── -->
+    <section class="ab-hero">
+        <img th:src="@{/lily/images/about/nerie_front_view.jpg}"
+             alt="NERIE Campus" class="ab-hero__bg">
+        <div class="ab-hero__overlay"></div>
+        <div class="container ab-hero__content">
+            <nav class="ab-breadcrumb" aria-label="breadcrumb">
+                <a th:href="@{/index}" class="ab-breadcrumb__home">Home</a>
+                <span class="ab-breadcrumb__sep">/</span>
+                <span class="ab-breadcrumb__current">About Us</span>
+            </nav>
+            <h1 class="ab-hero__title">About Us</h1>
+            <p class="ab-hero__address">
+                North East Regional Institute of Education (NERIE)<br>
+                National Council of Educational Research &amp; Training<br>
+                An Autonomous Organisation under Ministry of Education, Government of India<br>
+                Umiam, Shillong – 793103, Meghalaya
+            </p>
+        </div>
+    </section>
+
+    <!-- ── NCERT intro ── -->
+    <section class="ab-section">
+        <div class="container">
+            <div class="ab-intro">
+                <div class="ab-intro__text">
+                    <span class="ab-eyebrow">Our Journey</span>
+                    <h2 class="ab-section-title">About NCERT</h2>
+                    <div class="ab-title-rule"></div>
+                    <h5 class="ab-intro__subhead">National Council of Educational Research and Training (NCERT)</h5>
+                    <p class="ab-intro__body">
+                        The National Council of Educational Research and Training (NCERT) is an autonomous organisation
+                        set up in 1961 by the Government of India to assist and advise the Central and State Governments
+                        on policies and programmes for qualitative improvement in school education. The major objectives
+                        of NCERT and its constituent units are to: undertake, promote and coordinate research in areas
+                        related to school education; prepare and publish model textbooks, supplementary material,
+                        newsletters, journals and develops educational kits, multimedia digital materials, etc.
+                        Organise pre-service and in-service training of teachers; develop and disseminate innovative
+                        educational techniques and practices; collaborate and network with state educational departments,
+                        universities, NGOs and other educational institutions; act as a clearing house for ideas and
+                        information in matters related to school education; and act as a nodal agency for achieving
+                        the goals of Universalisation of Elementary Education.
+                    </p>
+                    <p class="ab-intro__body">
+                        In addition to research, development, training, extension, publication and dissemination
+                        activities, NCERT is an implementation agency for bilateral cultural exchange programmes with
+                        other countries in the field of school education. The NCERT also interacts and works in
+                        collaboration with international organisations, visiting foreign delegations and offers
+                        various training facilities to educational personnel from developing countries.
+                    </p>
+                </div>
+
+                <!-- Quick-stat sidebar -->
+                <div class="ab-stats">
+                    <div class="ab-stat">
+                        <span class="ab-stat__num">1961</span>
+                        <span class="ab-stat__label">Year Established</span>
+                    </div>
+                    <div class="ab-stat">
+                        <span class="ab-stat__num">7</span>
+                        <span class="ab-stat__label">Constituent Units</span>
+                    </div>
+                    <div class="ab-stat">
+                        <span class="ab-stat__num">MoE</span>
+                        <span class="ab-stat__label">Under Ministry of Education</span>
+                    </div>
+                    <div class="ab-stat">
+                        <span class="ab-stat__num">All India</span>
+                        <span class="ab-stat__label">Geographic Reach</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Constituent Units ── -->
+    <section class="ab-units-section">
+        <div class="container">
+            <div class="ab-units-header">
+                <span class="ab-eyebrow">Our Network</span>
+                <h2 class="ab-section-title">NCERT Constituent Units</h2>
+                <div class="ab-title-rule"></div>
+            </div>
+
+            <div class="ab-units-grid">
+
+                <!-- CIET -->
+                <div class="ab-unit-card windowOpenBtn"
+                     th:attr="data-arg=@{/about/blog/{id}(id=1)}">
+                    <div class="ab-unit-card__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/CIET_blog.jpg}"
+                             alt="CIET" class="ab-unit-card__img">
+                        <div class="ab-unit-card__img-overlay"></div>
+                    </div>
+                    <div class="ab-unit-card__body">
+                        <h4 class="ab-unit-card__title">CIET</h4>
+                        <p class="ab-unit-card__text">
+                            Central Institute of Educational Technology (CIET), a constituent unit of NCERT,
+                            came into existence in the year 1984…
+                        </p>
+                        <span class="ab-unit-card__cta">Read More <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+                <!-- NERIE Shillong -->
+                <div class="ab-unit-card windowOpenBtn"
+                     th:attr="data-arg=@{/about/blog/{id}(id=2)}">
+                    <div class="ab-unit-card__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/NERIE_blog.jpg}"
+                             alt="NERIE Shillong" class="ab-unit-card__img">
+                        <div class="ab-unit-card__img-overlay"></div>
+                    </div>
+                    <div class="ab-unit-card__body">
+                        <h4 class="ab-unit-card__title">NERIE, Shillong</h4>
+                        <p class="ab-unit-card__text">
+                            The North East Regional Institute of Education (NERIE) stands amidst the natural
+                            grandeur in Umiam village…
+                        </p>
+                        <span class="ab-unit-card__cta">Read More <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+                <!-- RIE Ajmer -->
+                <div class="ab-unit-card windowOpenBtn"
+                     th:attr="data-arg=@{/about/blog/{id}(id=3)}">
+                    <div class="ab-unit-card__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/RIE_AJMERblog.jpg}"
+                             alt="RIE Ajmer" class="ab-unit-card__img">
+                        <div class="ab-unit-card__img-overlay"></div>
+                    </div>
+                    <div class="ab-unit-card__body">
+                        <h4 class="ab-unit-card__title">RIE Ajmer</h4>
+                        <p class="ab-unit-card__text">
+                            Set up in 1963, later renamed as Regional Institute of Education (RIE), Ajmer in 1995…
+                        </p>
+                        <span class="ab-unit-card__cta">Read More <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+                <!-- RIE Bhopal -->
+                <div class="ab-unit-card windowOpenBtn"
+                     th:attr="data-arg=@{/about/blog/{id}(id=4)}">
+                    <div class="ab-unit-card__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/RIE_BHOPAL_blog.jpg}"
+                             alt="RIE Bhopal" class="ab-unit-card__img">
+                        <div class="ab-unit-card__img-overlay"></div>
+                    </div>
+                    <div class="ab-unit-card__body">
+                        <h4 class="ab-unit-card__title">RIE Bhopal</h4>
+                        <p class="ab-unit-card__text">
+                            Regional Institute of Education (RIE), Bhopal is a constituent unit of NCERT,
+                            New Delhi, focusing on teacher education…
+                        </p>
+                        <span class="ab-unit-card__cta">Read More <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+                <!-- RIE Bhubaneshwar -->
+                <div class="ab-unit-card windowOpenBtn"
+                     th:attr="data-arg=@{/about/blog/{id}(id=5)}">
+                    <div class="ab-unit-card__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/RIE_Bhubaneswar_blog.jpg}"
+                             alt="RIE Bhubaneswar" class="ab-unit-card__img">
+                        <div class="ab-unit-card__img-overlay"></div>
+                    </div>
+                    <div class="ab-unit-card__body">
+                        <h4 class="ab-unit-card__title">RIE Bhubaneswar</h4>
+                        <p class="ab-unit-card__text">
+                            The Regional Institute of Education, Bhubaneswar is a constituent unit of
+                            NCERT serving the eastern region…
+                        </p>
+                        <span class="ab-unit-card__cta">Read More <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+                <!-- PSSCIVE -->
+                <div class="ab-unit-card windowOpenBtn"
+                     th:attr="data-arg=@{/about/blog/{id}(id=6)}">
+                    <div class="ab-unit-card__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/PSSSCIVE_Bhopal_blog.jpg}"
+                             alt="PSSCIVE" class="ab-unit-card__img">
+                        <div class="ab-unit-card__img-overlay"></div>
+                    </div>
+                    <div class="ab-unit-card__body">
+                        <h4 class="ab-unit-card__title">PSSCIVE</h4>
+                        <p class="ab-unit-card__text">
+                            The Pandit Sundarlal Sharma Central Institute of Vocational Education (PSSCIVE)
+                            is an apex R&amp;D organisation for vocational education…
+                        </p>
+                        <span class="ab-unit-card__cta">Read More <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+                <!-- RIE Mysuru -->
+                <div class="ab-unit-card windowOpenBtn"
+                     th:attr="data-arg=@{/about/blog/{id}(id=7)}">
+                    <div class="ab-unit-card__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/RIE_Mysore_blog.jpg}"
+                             alt="RIE Mysuru" class="ab-unit-card__img">
+                        <div class="ab-unit-card__img-overlay"></div>
+                    </div>
+                    <div class="ab-unit-card__body">
+                        <h4 class="ab-unit-card__title">RIE Mysuru</h4>
+                        <p class="ab-unit-card__text">
+                            The Regional Institute of Education Mysuru (formerly Regional College of Education)
+                            serves the southern region of India…
+                        </p>
+                        <span class="ab-unit-card__cta">Read More <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+
+            </div><!-- /.ab-units-grid -->
+        </div>
+    </section>
+
+</div>
+
+<div layout:fragment="scripts">
+    <script th:src="@{/js/about.js}"></script>
+    <script th:inline="none">
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll("[data-background]").forEach(function (el) {
+                const bg = el.getAttribute("data-background");
+                if (bg) el.style.backgroundImage = `url('${bg}')`;
+            });
+        });
+    </script>
+</div>
+
+</body>
+</html>

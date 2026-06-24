@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://thymeleaf.org"
+      layout:decorate="~{${layoutPath}}">
+<head>
+    <div layout:fragment="static-files">
+        <script th:inline="javascript">
+            const API = {
+                listFinancialYear: [[@{/program/financial-year/list}]],
+                listPhases: [[@{/phases/list}]],
+                listResourcePersonPhase: [[@{/resource-persons/list/phase}]],
+                mapResourcePerson: [[@{/resource-persons/map/save}]]
+            };
+        </script>
+        <script th:src="@{/js/mapResourcePerson.js}"></script>
+    </div>
+
+    <title layout:fragment="title">Map Resource Person Program</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+
+        <div class="card border-0 modern-card mb-4">
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-users-cog me-3 fs-5"></i> Map Resource Person to Program
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <form name="mprogramfid" id="mprogramfid" role="form" autocomplete="off">
+                    <div class="row mb-4 bg-light p-4 rounded border">
+                        <!-- Financial Year -->
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <label for="financialyear" class="form-label-modern">
+                                Financial Year <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </span>
+                                <select name="financialyear"
+                                        id="financialyear"
+                                        class="form-select modern-input border-start-0 ps-2"
+                                        required>
+                                    <option value="">Select</option>
+                                    <option th:each="o : ${fyList}" th:value="${o[4]}" th:text="${o[1]}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Program Name -->
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <label for="programs" class="form-label-modern">
+                                Program Name <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </span>
+                                <select name="programcode"
+                                        id="programs"
+                                        class="form-select modern-input border-start-0 ps-2 select2-search"
+                                        required>
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Phase -->
+                        <div class="col-md-4">
+                            <label for="phaseno" class="form-label-modern">
+                                Phase No <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="fas fa-layer-group"></i>
+                                </span>
+                                <select id="phaseno"
+                                        name="phaseid"
+                                        class="form-select modern-input border-start-0 ps-2"
+                                        required>
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+                        <h5 class="fw-bold text-secondary mb-0"><i class="fas fa-list-ul me-2"></i> Resource Persons</h5>
+                        <a class="btn btn-success btn-modern shadow-sm px-4" th:href="@{/resource-persons/create}" target="_blank">
+                            <i class="fas fa-plus me-2"></i> Add New Resource Person
+                        </a>
+                    </div>
+
+                    <div class="table-responsive table-wrapper rounded"  id="tablediv">
+                        <table class="table modern-table align-middle mb-0 w-100" id="resoursepersontable">
+                            <thead>
+                            <tr>
+                                <th class="text-center" style="width: 5%;">Select</th>
+                                <th style="width: 20%;">Name</th>
+                                <th style="width: 15%;">Email Id</th>
+                                <th style="width: 15%;">Designation</th>
+                                <th style="width: 15%;">Qualification</th>
+                                <th style="width: 15%;">Institute Name</th>
+                                <th style="width: 15%;">Office Address</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 pt-4 mt-4 border-top">
+                        <button type="button" id="resetButton" class="btn btn-light border btn-modern px-4">
+                            <i class="fas fa-redo me-2"></i> Reset
+                        </button>
+                        <button id="submit" type="submit" name="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                            <i class="fas fa-save me-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

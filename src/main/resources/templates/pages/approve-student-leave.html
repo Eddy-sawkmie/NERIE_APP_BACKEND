@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title>Leave Application</title>
+    <th:block layout:fragment="static-files">
+    </th:block>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-file-signature me-3 fs-5"></i> Leave Applications
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-4">
+                <div class="table-responsive table-wrapper mt-2">
+                    <table class="table modern-table align-middle mb-0 w-100" id="leavelist">
+                        <thead>
+                        <tr>
+                            <th>Approval Status</th>
+                            <th>Student Information</th>
+                            <th>Applied On</th>
+                            <th>Leave Station</th>
+                            <th>Leave From</th>
+                            <th>Leave To</th>
+                            <th>Reason for Leave</th>
+                            <th>Remarks</th>
+                            <th>Currently With</th>
+                            <th class="text-center" style="width: 1%; white-space: nowrap;">Application</th>
+                            <th class="noExport text-center" th:if="${userRole == 'A'}" style="width: 1%; white-space: nowrap;">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="v : ${leavelist}">
+                            <td>
+                                <span th:if="${v.isapproved == null and (v.iswardenapproved == null or v.iswardenapproved == '1' or v.iswardenapproved == '2') and (v.isdeanapproved == null or v.isdeanapproved == '1')}" class="text-warning fw-bold">
+                                    <i class="fas fa-clock me-1"></i> Pending Action
+                                </span>
+                                <div th:if="${v.isapproved == '0' or v.isdeanapproved == '0' or v.iswardenapproved == '0'}">
+                                    <span class="text-danger fw-bold"><i class="fas fa-times-circle me-1"></i> Not Approved</span><br/>
+                                    <small class="text-muted">Reason: <span th:text="${v.rejectionreason}"></span></small>
+                                </div>
+                                <span th:if="${v.isapproved == '1'}" class="text-success fw-bold">
+                                    <i class="fas fa-check-circle me-1"></i> Approved
+                                </span>
+                            </td>
+
+                            <td>
+                                <a th:href="@{/student-leaves/view-student-leave-history(aid=${v.studentid.studentid})}" class="text-decoration-none text-primary fw-bold">
+                                    <span th:text="${v.studentid.fname + ' ' + v.studentid.mname + ' ' + v.studentid.lname}"></span>
+                                </a>
+                                <br>
+                                <span class="text-muted small fw-semibold">(<span th:text="${v.studentid.rollno}"></span>)</span>
+                            </td>
+
+                            <td class="text-muted fw-semibold" th:text="${v.applicationdate != null ? #dates.format(v.applicationdate, 'dd-MM-yyyy') : ''}"></td>
+                            <td th:text="${v.leavestation}"></td>
+                            <td class="text-dark fw-semibold" th:text="${v.requestedfrom != null ? #dates.format(v.requestedfrom, 'dd-MM-yyyy') : ''}"></td>
+                            <td class="text-dark fw-semibold" th:text="${v.requestedto != null ? #dates.format(v.requestedto, 'dd-MM-yyyy') : ''}"></td>
+
+                            <td class="text-muted small" th:text="${v.reasonforleave}"></td>
+                            <td class="text-muted small">
+                                <span th:if="${#strings.isEmpty(v.remarks)}" class="fst-italic text-black-50">No remarks</span>
+                                <span th:unless="${#strings.isEmpty(v.remarks)}" th:text="${v.remarks}"></span>
+                            </td>
+
+                            <td class="fw-bold text-info">
+                                <span th:if="${v.iswardenapproved == null}">Warden</span>
+                                <span th:if="${v.iswardenapproved != null and v.isdeanapproved == null}">Dean</span>
+                                <span th:if="${v.iswardenapproved != null and v.isdeanapproved != null}">Principal</span>
+                            </td>
+
+                            <td class="text-center" style="white-space: nowrap;">
+                                <a th:href="@{/student-leaves/view-leave-application-details(aid=${v.studentleaveid}, origin='approve')}"
+                                   class="btn btn-sm btn-primary btn-modern shadow-sm">
+                                    <i class="fas fa-eye me-1"></i> View
+                                </a>
+                            </td>
+
+                            <td class="text-center" style="white-space: nowrap;" th:if="${userRole == 'A'}">
+                                <button class="btn btn-sm btn-danger btn-modern delete-leave-btn shadow-sm" th:data-id="${v.studentleaveid}">
+                                    <i class="fas fa-trash-alt me-1"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel"><i class="fas fa-info-circle me-2 text-primary"></i> Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            deleteStudentLeave: [[@{/student-leaves/deleteStudentLeave}]],
+        };
+    </script>
+    <script th:src="@{/js/approveStudentLeave.js}"></script>
+</th:block>
+</body>
+</html>

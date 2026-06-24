@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layouts/main-layout}"
+>
+    <!-- Hamburger Button for Mobile View  -->
+    <th:block layout:fragment="hamburger-button">
+        <button id="hamburger-btn" aria-label="Open menu" aria-controls="dynamicmenu" aria-expanded="false">
+            <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+            </svg>
+        </button>
+    </th:block>
+    <div id="sidebar-overlay"></div>
+
+    <!-- Dynamic Menu -->
+    <div id="dynamicmenu" layout:fragment="navigation"></div>
+
+    <!-- Dynamic Menu Script -->
+    <th:block layout:fragment="dynamic-menu">
+        <script th:inline="javascript">
+            const Menu = {
+                dynamicMenu: [[@{/users/dynamic-menu}]]
+            };
+
+            const Auth = {
+                logout: [[@{/logout}]],
+                redirectURL: [[@{/index}]]
+            };
+
+            document.addEventListener("DOMContentLoaded", () => {
+                fetch(Menu.dynamicMenu)
+                    .then(res => res.text())
+                    .then(html => {
+                        document.getElementById("dynamicmenu").innerHTML = html;
+                        // Ensure sidebar logic runs after HTML injection
+                        if (typeof initializeSidebar === 'function') {
+                            initializeSidebar();
+                        }
+                    });
+            });
+        </script>
+
+        <script th:src="@{/js/nav-bar.js}"></script>
+        <script th:src="@{/js/auth.js}"></script>
+    </th:block>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title layout:fragment="title">Initialize Holiday</title>
+
+    <div layout:fragment="static-files">
+        <script th:inline="javascript">
+            const API = {
+                listHolidays: [[@{/holidays/list}]],
+                saveHolidays: [[@{/holidays/save}]],
+                removeHolidays: [[@{/holidays/remove}]],
+                redirectURL: [[@{/holidays/init}]]
+            };
+        </script>
+        <script th:src="@{/js/initHoliday.js}"></script>
+    </div>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-calendar-alt me-3 fs-5"></i> Initialize Holiday
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <form name="mholidayfn" id="mholidayfid" role="form" autocomplete="off" novalidate>
+
+                    <div class="row mb-4 justify-content-center">
+                        <div class="col-md-8">
+                            <label for="financialyear" class="form-label-modern">Financial Year <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm has-validation" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-chart-line"></i></span>
+                                <select name="financialyear" id="financialyear" class="form-select modern-input border-start-0 ps-2" required>
+                                    <option value="-1">-- Select Financial Year --</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a financial year.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 justify-content-center">
+                        <div class="col-md-8">
+                            <label for="holidaydate" class="form-label-modern">Holiday Date <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm has-validation" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-calendar-day"></i></span>
+                                <input id="holidaydate" name="holidaydate" type="text" data-language="en" placeholder="dd/mm/yyyy" class="form-control modern-input border-start-0 ps-2 datepicker-here bg-white" required readonly />
+                                <input id="oldholidaydate" name="oldholidaydate" type="hidden" />
+                                <div class="invalid-feedback">Holiday date is required.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 justify-content-center">
+                        <div class="col-md-8">
+                            <label for="holidayreason" class="form-label-modern">Holiday Reason <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm has-validation" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-comment-alt"></i></span>
+                                <textarea name="holidayreason" id="holidayreason" class="form-control modern-input border-start-0 ps-2" required maxlength="255" rows="3" placeholder="Enter reason for holiday..."></textarea>
+                                <div class="invalid-feedback">Please provide a reason.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3 mt-5 pt-4 border-top">
+                        <button type="button" id="resetBtn" class="btn btn-light border btn-modern px-5">
+                            <i class="fas fa-undo me-2"></i> Reset
+                        </button>
+                        <button id="submitBtn" type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                            <i class="fas fa-save me-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-5" id="tablediv">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0" id="feedbackModalFooter">
+                    <button type="button" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

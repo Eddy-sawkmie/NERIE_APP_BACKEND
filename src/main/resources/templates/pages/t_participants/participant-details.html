@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Participant Registration Form</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const btn = document.getElementById("downloadBtn");
+
+            btn.addEventListener("click", function () {
+                const element = document.getElementById("pdfContent");
+
+                const opt = {
+                    margin:       [0.3, 0.4, 0.3, 0.4],
+                    filename:     'Participant_Registration_Form.pdf',
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
+                    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().from(element).set(opt).save();
+            });
+        });
+    </script>
+
+    <style>
+        /* Base Styling */
+        body {
+            background-color: #525659;
+            font-family: Arial, sans-serif;
+            -webkit-print-color-adjust: exact;
+        }
+
+        #pdfContent {
+            background-color: white;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px 20px;
+            color: #000;
+        }
+
+        /* Header Layout */
+        .header-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-box { width: 80px; flex-shrink: 0; text-align: left; }
+        .logo-box img { width: 70px; height: auto; }
+
+        .title-box { flex-grow: 1; text-align: center; }
+        .org-name { font-size: 14px; font-weight: bold; color: #000; margin-bottom: 2px; }
+        .doc-title { text-decoration: underline; font-weight: bold; font-size: 14px; margin-top: 5px; text-transform: uppercase; }
+
+        /* Program Info Block */
+        .meta-info { font-size: 11px; margin-bottom: 15px; line-height: 1.4; }
+        .meta-label { font-weight: bold; }
+
+        /* Table Styling */
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            border: 2px solid #000;
+            margin-bottom: 15px;
+        }
+        .custom-table th, .custom-table td {
+            border: 1px solid #000;
+            padding: 4px 8px;
+            vertical-align: middle;
+        }
+        .custom-table th { width: 30%; font-weight: bold; text-align: left; background-color: transparent; }
+
+        /* Section Headers */
+        .section-header {
+            background-color: #e0e0e0 !important;
+            text-align: center !important;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 6px !important;
+        }
+
+        /* Coordinator Section */
+        .coordinator-wrapper { text-align: right; margin-top: 10px; font-size: 11px; }
+        .coordinator-name { font-weight: bold; margin-top: 5px; display: block; }
+
+        /* Footer */
+        .footer-row {
+            margin-top: 20px;
+            padding-top: 5px;
+            border-top: 1px solid #ccc;
+            font-size: 9px;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        @media print {
+            body { background: white; }
+            #pdfContent { margin: 0; max-width: none; width: 100%; padding: 0; box-shadow: none; }
+            #downloadBtn { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Download Button -->
+<div class="container text-end mt-3 mb-2" style="max-width: 800px;">
+    <button id="downloadBtn" class="btn btn-success btn-sm fw-bold">Download PDF</button>
+</div>
+
+<!-- PDF Content Area -->
+<div id="pdfContent">
+
+    <!-- Header -->
+    <div class="header-container">
+        <div class="logo-box">
+            <img th:src="@{/tempscripts/images/ncertlogo.png}" alt="NCERT Logo" />
+        </div>
+        <div class="title-box">
+            <div class="org-name">North East Regional Institute of Education (NERIE)</div>
+            <div class="org-name">National Council of Educational Research and Training (NCERT)</div>
+            <div class="doc-title">Registration Form for Participant</div>
+        </div>
+    </div>
+
+    <!-- Info Block -->
+    <div class="meta-info">
+        <div class="row g-1">
+            <div class="col-12">
+                <span class="meta-label">Program ID:</span> <span th:text="${v[1]}"></span>
+            </div>
+            <div class="col-12">
+                <span class="meta-label">Program Title:</span> <span th:text="${v[0]}"></span>
+            </div>
+        </div>
+        <div class="row g-1 mt-1">
+            <div class="col-7">
+                <span class="meta-label">Organized by:</span><br>
+                NERIE NCERT, Shillong, Umiam - 793103
+            </div>
+            <div class="col-5 text-end">
+                <span class="meta-label">Venue:</span> <span th:text="${v[19]}"></span><br>
+                <span class="meta-label">Date:</span> <span th:text="${#dates.format(v[21], 'dd-MMM-yyyy')}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Table -->
+    <table class="custom-table">
+        <!-- Section 1 -->
+        <tr>
+            <th colspan="2" class="section-header">Personal Details</th>
+        </tr>
+        <tr>
+            <th>Participant Name</th>
+            <td th:text="${v[2]}"></td>
+        </tr>
+        <tr>
+            <th>Gender</th>
+            <td th:switch="${v[7]}">
+                <span th:case="'F'">Female</span>
+                <span th:case="'Female'">Female</span>
+                <span th:case="'M'">Male</span>
+                <span th:case="'Male'">Male</span>
+                <span th:case="*">N/A</span>
+            </td>
+        </tr>
+        <tr>
+            <th>Category</th>
+            <td th:switch="${v[14]}">
+                <span th:case="'GEN'">General</span>
+                <span th:case="'ST'">ST</span>
+                <span th:case="'SC'">SC</span>
+                <span th:case="'OBC'">OBC</span>
+                <span th:case="*">N/A</span>
+            </td>
+        </tr>
+        <tr>
+            <th>Locality/Region</th>
+            <td th:switch="${v[13]}">
+                <span th:case="'U'">Urban</span>
+                <span th:case="'Urban'">Urban</span>
+                <span th:case="'R'">Rural</span>
+                <span th:case="'Rural'">Rural</span>
+                <span th:case="*">N/A</span>
+            </td>
+        </tr>
+        <tr>
+            <th>Religious Minority</th>
+            <td>
+                 <span th:text="${#strings.trim(v[15]) == 'Y' ?
+                        'Yes — ' + (v[16] == 'Other' ? v[17] : v[16]) :
+                        (#strings.trim(v[15]) == 'N' ? 'No' : 'N/A')}"></span>
+            </td>
+        </tr>
+        <tr>
+            <th>Address (Residence)</th>
+            <td th:text="${v[10]}"></td>
+        </tr>
+
+        <!-- Section 2 -->
+        <tr>
+            <th colspan="2" class="section-header">Professional & Contact Details</th>
+        </tr>
+        <tr>
+            <th>Designation</th>
+            <td th:text="${v[3]}"></td>
+        </tr>
+        <tr>
+            <th>Qualification</th>
+            <td th:text="${v[4]}"></td>
+        </tr>
+        <tr>
+            <th>Experience</th>
+            <td th:text="${v[6]} + ' year(s)'"></td>
+        </tr>
+        <tr>
+            <th>Specialization</th>
+            <td th:text="${v[5] != null and v[5] != '' ? v[5] : 'N/A'}"></td>
+        </tr>
+        <tr>
+            <th>Office / Institute Address</th>
+            <td th:text="${v[9]}"></td>
+        </tr>
+        <tr>
+            <th>Mobile No</th>
+            <td th:text="${v[11]}"></td>
+        </tr>
+        <tr>
+            <th>Email ID</th>
+            <td th:text="${v[12]}"></td>
+        </tr>
+
+        <!-- Section 3 -->
+        <tr>
+            <th colspan="2" class="section-header">Expectation</th>
+        </tr>
+        <tr>
+            <th>Expectation from Programme</th>
+            <td th:text="${v[18] != null ? v[18] : 'N/A'}"></td>
+        </tr>
+    </table>
+
+    <!-- Coordinator -->
+    <div class="coordinator-wrapper">
+        <span style="text-decoration: underline; font-weight: bold;">Program Coordinator</span>
+        <span class="coordinator-name" th:text="${v[20]}"></span>
+        <span>Assistant Professor, NERIE NCERT, UMIAM</span>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-row">
+        <span>Submitted Online By: <span th:text="${v[2]}"></span></span>
+        <span>Generated: <span th:text="${#dates.format(v[21], 'dd-MMM-yyyy HH:mm')}"></span></span>
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

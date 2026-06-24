@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title layout:fragment="title">Qualification Subjects</title>
+
+    <div layout:fragment="static-files">
+        <script th:inline="javascript">
+            const API = {
+                saveQualificationSubject: [[@{/qualification-subjects/save}]],
+                redirectErrorURL: [[@{/login}]]
+            };
+        </script>
+        <script th:src="@{/js/qualificationSubjectList.js}"></script>
+    </div>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-book me-3 fs-5"></i> Qualification Subjects
+                </h4>
+                <button type="button" class="btn btn-light btn-modern text-primary fw-bold shadow-sm" id="addft" data-bs-toggle="modal" data-bs-target="#modalid-modal">
+                    <i class="fas fa-plus me-2"></i> Add New
+                </button>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <div id="message-container" class="mb-3"></div>
+                <div class="table-responsive table-wrapper mt-2">
+                    <table class="table modern-table align-middle mb-0 w-100" id="qsubjecttable">
+                        <thead>
+                        <tr>
+                            <th style="width: 10%;" class="text-center">Sl No.</th>
+                            <th style="width: 75%;">Subject Name</th>
+                            <th style="width: 15%;" class="text-center noExport">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="v, s : ${mqsubjectList}">
+                            <td class="text-center fw-semibold text-muted" th:text="${s.index + 1}"></td>
+                            <td><span class="fw-bold text-dark d-block" th:text="${v.qualificationsubjectname}"></span></td>
+                            <td class="text-center white-space-nowrap">
+                                <button class="edit-subject-btn btn btn-sm btn-primary btn-modern"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalid-modal"
+                                        th:attr="data-subjectcode=${v.qualificationsubjectcode},
+                                            data-subjectname=${v.qualificationsubjectname}">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalid-modal" tabindex="-1" aria-labelledby="subjectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="subjectModalLabel"><i class="fas fa-book-open me-2 text-primary"></i> <span id="modal-title-text">Add Qualification Subject</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form name="mqsubjectfn" id="mqsubjectfid" th:action="@{/qualification-subjects/save}" method="POST" role="form" autocomplete="off" novalidate>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="qualificationsubjectname" class="form-label-modern">Subject Name <span class="text-danger">*</span></label>
+                                <div class="input-group shadow-sm has-validation" style="border-radius: 0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book"></i></span>
+                                    <input name="qualificationsubjectcode" id="qualificationsubjectcode" type="hidden" />
+                                    <input name="qualificationsubjectname" id="qualificationsubjectname" class="form-control modern-input border-start-0 ps-2 alphabets" required maxlength="200" placeholder="e.g., Advanced Mathematics" />
+                                    <div class="invalid-feedback">Subject name is required.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-4 pt-4 border-top">
+                            <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </button>
+                            <button id="submitSubjectForm" type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                                <i class="fas fa-save me-2"></i> Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

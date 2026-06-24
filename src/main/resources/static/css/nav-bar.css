@@ -1,0 +1,423 @@
+:root {
+    --sidebar-bg-color: #ffffff;
+    --primary-text-color: #313131;
+    --secondary-text-color: #3b3b3b;
+    --active-bg-color: #0067cd;
+    --active-text-color: #ffffff;
+    --hover-bg-color: #0067cd21;
+    --hover-text-color: #0067cd;
+    --border-color: #EEEEEE;
+    --font-family: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+    --sidebar-shadow: 0px 10px 60px rgba(226, 236, 249, 0.25);
+    --border-radius: 8px;
+
+    /* Topbar specific */
+    --topbar-height: 70px;
+    --topbar-bg: #0067cd;
+    --topbar-border: #e0e0e0;
+}
+
+/* =========================================================
+   LAYOUT TOGGLE BUTTON
+   ========================================================= */
+#layout-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--sidebar-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--secondary-text-color);
+    font-size: 13px;
+    font-family: var(--font-family);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+#layout-toggle-btn:hover {
+    background: var(--hover-bg-color);
+    color: var(--hover-text-color);
+    border-color: var(--hover-text-color);
+}
+#layout-toggle-btn svg {
+    flex-shrink: 0;
+}
+/* Container for toggle — placed in main-layout header or just below it */
+#layout-toggle-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 6px 16px;
+    /* background: #f8f9fa; */
+    /* border-bottom: 1px solid var(--border-color); */
+}
+
+/* =========================================================
+   HAMBURGER BUTTON — sidebar mode only
+   ========================================================= */
+#hamburger-btn {
+    display: none;
+    position: absolute;
+    top: 85px;
+    left: 0;
+    z-index: 1001;
+    cursor: pointer;
+    color: var(--primary-text-color);
+    background: var(--sidebar-bg-color);
+    border: 1px solid var(--border-color);
+    border-left: none;
+    padding: 10px;
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+    box-shadow: 3px 0px 10px rgba(0, 0, 0, 0.1);
+}
+#hamburger-btn:hover { background-color: #f1f1f1; }
+
+/* =========================================================
+   SIDEBAR CLOSE BUTTON (mobile)
+   ========================================================= */
+#sidebar-close-btn {
+    display: none;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: var(--secondary-text-color);
+    cursor: pointer;
+}
+#sidebar-close-btn:hover { color: var(--primary-text-color); }
+
+/* =========================================================
+   SIDEBAR MODE  (default / body.nav-mode-sidebar)
+   ========================================================= */
+body.nav-mode-sidebar #dynamicmenu {
+    width: 280px;
+    background-color: var(--sidebar-bg-color);
+    box-shadow: var(--sidebar-shadow);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    font-family: var(--font-family);
+    
+    /* --- CRITICAL CHANGES BELOW --- */
+    position: sticky;      /* Keeps it visible during scroll */
+    top: 0;               /* Anchors it to the top of the viewport */
+    height: 100vh;        /* Ensures it spans the full window height */
+    overflow-y: auto;     /* Allows the sidebar itself to scroll if it has too many links */
+    /* ------------------------------ */
+
+    padding: 20px;
+    transition: transform 0.3s ease-in-out;
+    border-right: 1px solid rgba(0, 0, 0, 0.125);
+    border-bottom: none;
+}
+
+body.nav-mode-sidebar #dynamicmenu > nav {
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    width: 100% !important;
+}
+
+body.nav-mode-sidebar .main-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+body.nav-mode-sidebar .nav-item-menu { margin: 0 !important; }
+
+body.nav-mode-sidebar .nav-link-menu {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px !important;
+    border-radius: var(--border-radius);
+    color: #505050 !important;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+body.nav-mode-sidebar .nav-icon { width: 24px; height: 24px; flex-shrink: 0; }
+
+body.nav-mode-sidebar .nav-link-menu-title {
+    font-weight: 500;
+    margin-left: 0 !important;
+    flex-grow: 1;
+}
+
+body.nav-mode-sidebar .nav-arrow {
+    width: 16px;
+    height: 16px;
+    margin-left: auto;
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+/* Sidebar hover */
+body.nav-mode-sidebar .nav-item-menu > a.nav-link-menu:hover {
+    background-color: var(--hover-bg-color) !important;
+    color: var(--hover-text-color) !important;
+    text-decoration: none !important;
+    font-weight: bold !important;
+}
+
+/* Sidebar active */
+body.nav-mode-sidebar a.nav-link-menu.active-menu {
+    background-color: var(--active-bg-color) !important;
+    color: var(--active-text-color) !important;
+    text-decoration: none !important;
+}
+body.nav-mode-sidebar a.nav-link-menu.active-menu .nav-link-menu-title { color: var(--active-text-color) !important; }
+body.nav-mode-sidebar a.nav-link-menu.active-menu .nav-icon,
+body.nav-mode-sidebar a.nav-link-menu.active-menu .nav-arrow {
+    stroke: var(--active-text-color) !important;
+    fill: var(--active-text-color) !important;
+}
+body.nav-mode-sidebar a.nav-link-menu.active-menu:hover {
+    background-color: var(--active-bg-color) !important;
+    color: var(--active-text-color) !important;
+}
+
+/* Sidebar arrow rotate */
+body.nav-mode-sidebar a.nav-link-menu.menu-open .nav-arrow { transform: rotate(90deg); }
+
+/* Sidebar submenu */
+body.nav-mode-sidebar .nav-item-submenu {
+    display: none;
+    flex-direction: column;
+    list-style-type: none;
+    gap: 8px;
+    padding-left: 20px;
+    margin: 8px 0 8px 24px;
+    border-left: 1px solid var(--border-color);
+    background-color: transparent !important;
+}
+body.nav-mode-sidebar .nav-item-submenu a {
+    color: var(--secondary-text-color) !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    border-radius: var(--border-radius);
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+    display: block;
+}
+body.nav-mode-sidebar .nav-item-submenu a:hover {
+    background-color: var(--hover-bg-color) !important;
+    color: var(--hover-text-color) !important;
+}
+body.nav-mode-sidebar .nav-item-submenu a.active-sub-link {
+    color: var(--hover-text-color) !important;
+    font-weight: 600 !important;
+    background-color: var(--hover-bg-color) !important;
+}
+
+/* =========================================================
+   TOPBAR MODE  (body.nav-mode-topbar)
+   ========================================================= */
+body.nav-mode-topbar .d-flex.flex-row.flex-nowrap.min-vh-100 {
+    flex-direction: column !important;
+}
+
+body.nav-mode-topbar #dynamicmenu {
+    width: 100% !important;
+    height: var(--topbar-height);
+    background-color: var(--topbar-bg);
+    border-bottom: 1px solid var(--topbar-border);
+    border-right: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow: visible;
+}
+
+body.nav-mode-topbar #dynamicmenu > nav {
+    width: 100% !important;
+    margin: 0;
+    padding: 0;
+    overflow: visible; /* must stay visible so fixed dropdowns render correctly */
+}
+
+/* Topbar: hide close button & hamburger */
+body.nav-mode-topbar #sidebar-close-btn,
+body.nav-mode-topbar #hamburger-btn { display: none !important; }
+
+/* Topbar: horizontal list */
+body.nav-mode-topbar .main-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    /* gap: 20px; */
+    height: var(--topbar-height);
+    flex-wrap: nowrap;
+    overflow: visible; /* MUST be visible - overflow:auto clips absolute dropdowns */
+}
+
+body.nav-mode-topbar .nav-item-menu {
+    margin: 0 !important;
+    position: relative;
+}
+
+body.nav-mode-topbar .nav-link-menu {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 8px 12px !important;
+    border-radius: var(--border-radius) !important;
+    color: white !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    white-space: nowrap;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer;
+    background-color: transparent;
+    font-family: var(--font-family);
+    height: 38px;
+}
+
+/* Hide icons in topbar to save space (show only text + arrow) */
+body.nav-mode-topbar .nav-icon { display: none !important; }
+
+body.nav-mode-topbar .nav-link-menu-title {
+    flex-grow: 0 !important;
+    font-weight: 500 !important;
+    margin-left: 0 !important;
+}
+
+/* Arrow points DOWN in topbar */
+body.nav-mode-topbar .nav-arrow {
+    width: 14px !important;
+    height: 14px !important;
+    margin-left: 2px !important;
+    transition: transform 0.25s ease !important;
+    display: inline-block;
+}
+
+/* Topbar hover */
+body.nav-mode-topbar .nav-item-menu > a.nav-link-menu:hover {
+    background-color: #FFCC00 !important;
+    color: black !important;
+    font-weight: 600 !important;
+}
+
+/* Topbar active */
+body.nav-mode-topbar a.nav-link-menu.active-menu {
+    background-color: #FFCC00  !important;
+    color: black !important;
+}
+body.nav-mode-topbar a.nav-link-menu.active-menu .nav-link-menu-title { color: black !important; }
+body.nav-mode-topbar a.nav-link-menu.active-menu:hover {
+    background-color: #FFCC00 !important;
+    color: black !important;
+}
+
+/* Topbar arrow rotate when open */
+body.nav-mode-topbar a.nav-link-menu.menu-open .nav-arrow { transform: rotate(90deg); }
+
+body.nav-mode-topbar .nav-item-submenu {
+    display: none;
+    flex-direction: column !important;
+    list-style-type: none;
+    padding: 8px !important; /* Increased for breathing room */
+    margin: 0;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    position: fixed;
+    min-width: 240px; /* Slightly wider for longer menu text */
+    background: #ffffff;
+    border-radius: 10px; /* Softer corners */
+    /* Deep, soft shadow for a "floating" effect */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    /* Prevents layout shift when appearing */
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* Optional: Subtle animation for the dropdown */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+body.nav-mode-topbar .nav-item-submenu a {
+    color: #334155 !important; /* Dark slate (more professional than pure black) */
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    border-radius: 6px; /* Rounded items look better on hover */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none !important;
+    display: flex; /* Changed from block to flex for alignment */
+    align-items: center;
+    white-space: nowrap;
+    margin-bottom: 2px; /* Small gap between items */
+}
+
+body.nav-mode-topbar .nav-item-submenu a:hover {
+    /* background-color: #FFCC00 !important;*/
+    background-color: #0067cd !important; 
+    color: white !important;
+    padding-left: 20px !important; /* Very subtle "indent" animation */
+}
+body.nav-mode-topbar .nav-item-submenu a.active-sub-link {
+    color: var(--hover-text-color) !important;
+    font-weight: 600 !important;
+    background-color: var(--hover-bg-color) !important;
+}
+
+/* =========================================================
+   MOBILE — sidebar mode responsive
+   ========================================================= */
+@media (max-width: 991.98px) {
+    /* Hide the layout toggle button */
+    #layout-toggle-container { display: none !important; }
+    body.nav-mode-sidebar #hamburger-btn { display: block; }
+    body.nav-mode-sidebar #sidebar-close-btn { display: block; }
+
+    body.nav-mode-sidebar #dynamicmenu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 75%;
+        max-width: 300px;
+        height: 100vh;
+        z-index: 1001;
+        overflow-y: auto;
+        transform: translateX(-100%);
+    }
+    body.nav-mode-sidebar #dynamicmenu.sidebar-open {
+        transform: translateX(0);
+    }
+
+    /* Topbar on mobile: allow scrolling row */
+    body.nav-mode-topbar #dynamicmenu {
+        overflow-x: auto;
+    }
+}
+
+body.sidebar-active-lock {
+    overflow: hidden !important;
+    touch-action: none;
+    height: 100vh;
+}

@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pastcourselist" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="finyearend" class="java.lang.String"/>
+	<parameter name="finyearstart" class="java.lang.String"/>
+	<parameter name="financialyear" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select DISTINCT  cc.coursecategorycode,cc.coursecategoryname,p.programcode,p.programname,p.programid,p.programdescription,ph.phaseno,ph.phasedescription,
+                   TO_CHAR(pd.startdate,'dd/MM/yyyy') AS startdate,TO_CHAR(pd.enddate,'dd/MM/yyyy') AS enddate,p.officecode,pd.finalized,ph.phaseid,p.programid,TO_CHAR(pd.lastdate,'dd/MM/yyyy') AS lastdate,p.closed,f.officename,TO_CHAR(pd.courseclosedate,'dd/MM/yyyy') AS courseclosedate,
+                   array_to_string
+                   (
+                   ARRAY(
+                   SELECT V.venuename FROM nerie.mt_programvenues P
+                              INNER JOIN nerie.m_venues V ON V.venuecode=P.venuecode
+                   WHERE P.phaseid=pd.phaseid
+                   ), ','
+                   ) AS venues,
+                   array_to_string
+                   (
+                   ARRAY(
+                   SELECT  U.username || ' (Mob: ' || U.usermobile || ')' FROM nerie.mt_program_members P
+                              INNER JOIN nerie.mt_userlogin U ON U.usercode=P.usercode
+                   WHERE P.phaseid=pd.phaseid
+                   ), E'\n'
+                   ) AS coursecoordinators,
+		   array_to_string
+                   (
+                   ARRAY(
+                   SELECT  P.rpname || ', ' || rpd.designationname || '(' || P.rpspecialization || ')' FROM nerie.mt_resourcepersons P
+                              INNER JOIN nerie.mt_resourcepersoncoursemap U ON U.rpslno=P.rpslno
+                              INNER JOIN nerie.m_designations rpd ON rpd.designationcode=P.designationcode
+                   WHERE U.phaseid=pd.phaseid
+                   ), E'\n'
+                   ) AS resource_person, pd.enddate-pd.startdate + 1 || ' days ' AS duration,
+                   (SELECT COUNT(DISTINCT applicationcode) FROM nerie.t_applications sp WHERE pd.phaseid=sp.phaseid) As noofparticipants,
+                   COALESCE((SELECT SUM(CASE WHEN a.attendance='P' THEN 1 ELSE 0 END)/count(a.programtimetablecode) FROM nerie.t_programtimetable tt
+                   INNER JOIN nerie.t_participantattendance a ON a.programtimetablecode=tt.programtimetablecode AND tt.phaseid=pd.phaseid) || '','Not taken') AS avgattd
+                   FROM nerie.mt_programdetails pd
+                   INNER JOIN nerie.m_programs p ON pd.programcode=p.programcode
+                   INNER JOIN nerie.m_coursecategories cc ON cc.coursecategorycode=p.coursecodecategory
+                   INNER JOIN nerie.m_offices f ON p.officecode=f.officecode
+                   INNER JOIN nerie.m_phases ph ON ph.phaseid=pd.phaseid
+WHERE ((TO_CHAR(pd.startdate,'yyyy-MM')>=$P{finyearstart} AND TO_CHAR(pd.startdate,'yyyy-MM')<=$P{finyearend}) OR ($P{financialyear}='0')) AND pd.finalized='Y' AND
+TO_CHAR(pd.startdate,'yyyy-MM-dd')<=TO_CHAR(now(),'yyyy-MM-dd') AND TO_CHAR(pd.lastdate,'yyyy-MM-dd')<=TO_CHAR(now(),'yyyy-MM-dd')]]>
+	</queryString>
+	<field name="coursecategorycode" class="java.lang.String"/>
+	<field name="coursecategoryname" class="java.lang.String"/>
+	<field name="programcode" class="java.lang.String"/>
+	<field name="programname" class="java.lang.String"/>
+	<field name="programid" class="java.lang.String"/>
+	<field name="programdescription" class="java.lang.String"/>
+	<field name="phaseno" class="java.lang.String"/>
+	<field name="phasedescription" class="java.lang.String"/>
+	<field name="startdate" class="java.lang.String"/>
+	<field name="enddate" class="java.lang.String"/>
+	<field name="officecode" class="java.lang.String"/>
+	<field name="finalized" class="java.lang.String"/>
+	<field name="phaseid" class="java.lang.String"/>
+	<field name="lastdate" class="java.lang.String"/>
+	<field name="closed" class="java.lang.String"/>
+	<field name="officename" class="java.lang.String"/>
+	<field name="courseclosedate" class="java.lang.String"/>
+	<field name="venues" class="java.lang.String"/>
+	<field name="coursecoordinators" class="java.lang.String"/>
+	<field name="resource_person" class="java.lang.String"/>
+	<field name="duration" class="java.lang.String"/>
+	<field name="noofparticipants" class="java.lang.Long"/>
+	<field name="avgattd" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="153" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="77" width="802" height="37"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[List of Programs Conducted]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="77"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[North East Regional Institute of Education (NERIE)
+National Council of Educational Research and Training (NCERT)
+Umiam,Shillong, Meghalaya - 793103]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="122" width="802" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{financialyear}.equals("0")?"":"Financial Year: "+$P{financialyear}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="49" splitType="Stretch">
+			<staticText>
+				<reportElement x="562" y="0" width="82" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Program Coordinators]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="0" width="57" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Office]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="30" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Slno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="454" y="0" width="58" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Duration]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="644" y="0" width="62" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Resource person]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="87" y="0" width="90" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Program Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="759" y="0" width="43" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Avg Attd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="706" y="0" width="53" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No of Participants]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="177" y="0" width="138" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Program Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="512" y="0" width="50" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Venue]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="0" width="47" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Phase No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="362" y="0" width="92" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Phase Description]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<frame>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="20"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="512" y="0" width="50" height="20"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{venues}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="706" y="0" width="53" height="20"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.Long"><![CDATA[$F{noofparticipants}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="562" y="0" width="82" height="20"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{coursecoordinators}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="644" y="0" width="62" height="20"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{resource_person}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="454" y="0" width="58" height="20"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{duration} +" ("+$F{startdate}+" to "+$F{enddate}+")"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="87" y="0" width="90" height="20"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{programid}+": "+$F{programname}+" ["+$F{coursecategoryname}+"]"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="759" y="0" width="43" height="20"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{avgattd}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="30" y="0" width="57" height="20"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{officename}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="177" y="0" width="138" height="20"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{programdescription}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="20"/>
+					<box leftPadding="2" rightPadding="2">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="315" y="0" width="47" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{phaseno}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="362" y="0" width="92" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{phasedescription}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

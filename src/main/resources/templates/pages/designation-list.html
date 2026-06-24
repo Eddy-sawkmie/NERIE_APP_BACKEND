@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title layout:fragment="title">Designations</title>
+
+    <div layout:fragment="static-files">
+        <script th:inline="javascript">
+            const API = {
+                redirectURL: [[@{/login}]]
+            };
+        </script>
+        <script th:src="@{/js/designationList.js}"></script>
+    </div>
+</head>
+
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-id-badge me-3 fs-5"></i> Manage Designations
+                </h4>
+                <button type="button" class="btn btn-light text-primary btn-modern fw-bold shadow-sm" id="addDesignationBtn" data-bs-toggle="modal" data-bs-target="#office-modal">
+                    <i class="fas fa-plus me-2"></i> Add New
+                </button>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <div id="message-container" class="mb-3"></div>
+
+                <div class="table-responsive table-wrapper">
+                    <table class="table modern-table align-middle mb-0 w-100" id="designationtable">
+                        <thead>
+                        <tr>
+                            <th style="width: 10%;" class="text-center">#</th>
+                            <th style="width: 45%;">Designation Name</th>
+                            <th style="width: 30%;">Designation Type</th>
+                            <th style="width: 15%;" class="text-center noExport">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="v, s : ${mdesignationList}">
+                            <td class="text-center fw-semibold text-muted" th:text="${s.index + 1}"></td>
+                            <td><span class="fw-bold text-dark d-block" th:text="${v.designationname}"></span></td>
+                            <td>
+                                <span th:if="${v.isparticipantdesignation == 'N'}" class="badge bg-primary bg-opacity-10 text-primary border border-primary px-2 py-1">NCERT</span>
+                                <span th:if="${v.isparticipantdesignation == 'Y'}" class="badge bg-success bg-opacity-10 text-primary border border-success px-2 py-1">Participant</span>
+                            </td>
+                            <td class="text-center">
+                                <button class="clickme designationbtn btn btn-sm btn-primary btn-modern"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#office-modal"
+                                        th:attr="data-designationcode=${v.designationcode},
+                                            data-designationname=${v.designationname},
+                                            data-isparticipantdesignation=${v.isparticipantdesignation}">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="office-modal" tabindex="-1" aria-labelledby="designationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="designationModalLabel">
+                        <i class="fas fa-id-badge text-primary me-2"></i> <span id="modal-title-text">Add Designation</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4 p-md-5">
+                    <form name="mdesignationfn" id="mdesignationfid" th:action="@{/designations/save}" method="POST" role="form" autocomplete="off" novalidate>
+
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <label for="isparticipantdesignation" class="form-label-modern">Designation Type <span class="text-danger">*</span></label>
+                                <div class="input-group has-validation shadow-sm">
+                                    <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 0.5rem 0 0 0.5rem;"><i class="fas fa-users-cog"></i></span>
+                                    <select name="isparticipantdesignation" id="isparticipantdesignation" class="form-select modern-input border-start-0 ps-2" required>
+                                        <option value="">-- Select Type --</option>
+                                        <option value="N">NCERT Designation</option>
+                                        <option value="Y">Participant Designation</option>
+                                    </select>
+                                    <div class="invalid-feedback mt-2">Please select a designation type.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <label for="designationname" class="form-label-modern">Designation Name <span class="text-danger">*</span></label>
+                                <div class="input-group has-validation shadow-sm">
+                                    <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 0.5rem 0 0 0.5rem;"><i class="fas fa-signature"></i></span>
+                                    <input name="designationcode" id="designationcode" type="hidden"/>
+                                    <input name="designationname" id="designationname" class="form-control modern-input border-start-0 ps-2 alphabets" required maxlength="100" placeholder="e.g., Senior Coordinator"/>
+                                    <div class="invalid-feedback mt-2">Designation name is required.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-5 pt-3 border-top">
+                            <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </button>
+                            <button id="submitDesignationForm" type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                                <i class="fas fa-save me-2"></i> Save
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody"></div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

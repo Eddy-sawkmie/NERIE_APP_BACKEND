@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css?family=Pacifico');
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  flex-flow: column;
+  font-family: Pacifico, Arial, Helvetica, sans-serif;
+}
+.clock408 {
+  width: 400px;
+  /*animation: bounce .1s infinite ease-in-out;*/
+}
+.number408 {
+  font-size: 5em;
+  letter-spacing: 25px;
+  margin-top: -55px;
+}
+.text408 {
+  font-size: 1.2em;
+  text-align: center;
+}
+button {
+  background-color: blue;
+  color: white;
+  padding: 15px;
+  font-size: 1.3em;
+  text-align: center;
+  border: none;
+  border-radius: 15px;
+  font: inherit;
+  cursor: pointer;
+  transition: .3s;
+}
+button:hover {
+  background-color: darkblue;
+  transition: .3s;
+}
+@keyframes bounce {
+  50% {
+    transform: translateY(-20px);
+  }
+}

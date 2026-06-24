@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="blankattandanceparticipants" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="649e0b4d-697a-4168-903a-ad397657deb1">
+	<property name="ireport.zoom" value="1.1289478601075547"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="3"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="participantslist" uuid="6f0e2920-7da2-4a76-a595-a3af0c658fa4">
+		<parameter name="pphaseid" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[select distinct(a.usercode), a.applicationcode, a.phaseid, u.username
+FROM nerie.t_applications a, nerie.mt_userlogin u, nerie.mt_programdetails pd
+where a.phaseid=$P{pphaseid} and a.status='A' and u.usercode=a.usercode and a.phaseid=pd.phaseid]]>
+		</queryString>
+		<field name="usercode" class="java.lang.String"/>
+		<field name="applicationcode" class="java.lang.String"/>
+		<field name="phaseid" class="java.lang.String"/>
+		<field name="username" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="coordinator" uuid="941adaf0-dd7f-4368-869d-7b8c8463b44e">
+		<parameter name="ccphaseid" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT
+    x.usercode,
+    x.username,
+    x.designationname,
+    x.officeshortname
+FROM (
+    SELECT DISTINCT
+        UL.usercode,
+        UL.username,
+        D.designationname,
+        O.officeshortname,
+        CC.isheadcoordinator
+    FROM nerie.mt_program_members CC
+    INNER JOIN nerie.mt_programdetails C ON C.phaseid = CC.phaseid
+    INNER JOIN nerie.mt_userlogin UL ON CC.usercode = UL.usercode
+    INNER JOIN nerie.m_designations D ON D.designationcode = UL.designationcode
+    INNER JOIN nerie.m_offices O ON O.officecode = UL.officecode
+    INNER JOIN nerie.m_phases ph ON C.phaseid = ph.phaseid
+    WHERE C.phaseid = $P{ccphaseid}
+) x
+ORDER BY
+    CASE
+        WHEN x.isheadcoordinator = '1' THEN 0
+        ELSE 1
+    END,
+    x.username;]]>
+		</queryString>
+		<field name="usercode" class="java.lang.String"/>
+		<field name="username" class="java.lang.String"/>
+		<field name="designationname" class="java.lang.String"/>
+		<field name="officeshortname" class="java.lang.String"/>
+		<group name="usercode">
+			<groupExpression><![CDATA[$F{usercode}]]></groupExpression>
+		</group>
+		<group name="username">
+			<groupExpression><![CDATA[$F{username}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="phaseid" class="java.lang.String"/>
+	<parameter name="dynamicpath" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT p.programname, p.programdescription, p.programid, ph.phaseno, ph.phasedescription, pd.startdate, pd.enddate, pd.programcode,
+
+
+array_to_string
+(
+ARRAY(
+SELECT UL.username || ', Designation: ' || D.designationname || ', Office: ' || O.officeshortname FROM nerie.mt_program_members CC
+INNER JOIN nerie.mt_userlogin UL ON CC.usercode=UL.usercode
+INNER JOIN nerie.m_designations D ON D.designationcode=UL.designationcode
+INNER JOIN nerie.m_offices O ON O.officecode=UL.officecode
+INNER JOIN nerie.mt_programdetails pr ON pr.phaseid=CC.phaseid
+INNER JOIN nerie.m_phases ph ON pr.phaseid=ph.phaseid
+WHERE pd.phaseid=CC.phaseid ORDER BY UL.usercode
+), '  *  '
+) AS coursecoordinator
+
+FROM nerie.m_programs p, nerie.m_phases ph, nerie.mt_programdetails pd
+WHERE p.programcode=ph.programcode AND p.programcode=pd.programcode AND ph.phaseid=$P{phaseid}]]>
+	</queryString>
+	<field name="programname" class="java.lang.String"/>
+	<field name="programdescription" class="java.lang.String"/>
+	<field name="programid" class="java.lang.String"/>
+	<field name="phaseno" class="java.lang.String"/>
+	<field name="phasedescription" class="java.lang.String"/>
+	<field name="startdate" class="java.sql.Date"/>
+	<field name="enddate" class="java.sql.Date"/>
+	<field name="programcode" class="java.lang.String"/>
+	<field name="coursecoordinator" class="java.lang.String"/>
+	<title>
+		<band height="182" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="78dcd521-7e05-44b3-a84e-f65268f72f4e" x="0" y="0" width="555" height="56"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[North East Regional Institute of Education (NERIE)
+National Council of Educational Research and Training (NCERT)
+Umiam,Shillong, Meghalaya - 793103]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d13b90e8-cc21-479e-8e84-4ea9e3171271" x="0" y="56" width="555" height="28"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Attendance Sheet for Participants]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5a9685a3-6b6f-4163-9cf8-0d4e68601424" positionType="Float" isPrintRepeatedValues="false" x="0" y="110" width="555" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Program Name: "+$F{programname}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="642223aa-c58a-4ae9-bba6-b27fbc5f760c" positionType="Float" isPrintRepeatedValues="false" x="0" y="158" width="555" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA["Phase Details: (Phase no - "+ $F{phaseno}+")   "+$F{phasedescription}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="49c1679a-11e2-4e42-9b89-ea15a8b1ff58" isPrintRepeatedValues="false" x="0" y="87" width="271" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Program ID: "+$F{programid}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5e0c41c5-708a-4aca-b94f-5251778af1f1" x="271" y="87" width="284" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Date: ___/___/____]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="38a32e54-49be-41f8-aeb1-f84b8f731767" positionType="Float" isPrintRepeatedValues="false" x="0" y="134" width="554" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Top">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Program Description: "+$F{programdescription}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="62f89cea-5a09-47e5-a82e-84cee8d3a9bd" x="30" y="0" width="100" height="56"/>
+				<imageExpression><![CDATA[$P{dynamicpath} + "/ncertlogo.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="70" splitType="Stretch">
+			<componentElement>
+				<reportElement uuid="20aa9111-a531-40fb-8048-702c2dad3569" key="table" style="table" positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="0" y="5" width="555" height="65">
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT} == 1]]></printWhenExpression>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="participantslist" uuid="2363be87-b9b9-41c3-b312-8b860bb608c8">
+						<datasetParameter name="pphaseid">
+							<datasetParameterExpression><![CDATA[$P{phaseid}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="ed609d79-d829-4320-b044-98ca0439f11a">
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="9d6c3759-a4a8-4e2a-9dc4-42bc7dfcd6d2" x="0" y="0" width="90" height="30"/>
+								<box leftPadding="0">
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Sl. No]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="0c7a142f-71ea-4e1d-af51-ca2604fd2315" stretchType="RelativeToBandHeight" x="0" y="0" width="90" height="20"/>
+								<box leftPadding="3">
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="103" uuid="beb2f604-8859-4780-8a99-f975650bd5fb">
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="f91c431c-ae29-45c9-a816-fa832e629116" x="0" y="0" width="103" height="30"/>
+								<box leftPadding="0">
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Application Code]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="05ec8399-ee59-4a3e-b97d-a0e06cca2bee" stretchType="RelativeToBandHeight" x="0" y="0" width="103" height="20"/>
+								<box leftPadding="3">
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{applicationcode}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="273" uuid="cd5c22bb-c4df-4d94-ba76-9f098263a794">
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="322f5f0f-e44d-400f-976a-71dbb71ae913" x="0" y="0" width="273" height="30"/>
+								<box leftPadding="3">
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Name]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="0fb4cfe2-865e-46a9-8898-ffa28b817dd2" stretchType="RelativeToBandHeight" x="0" y="0" width="273" height="20"/>
+								<box leftPadding="3">
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="95" uuid="c5d9223a-36ab-4951-8091-19d49cd5f249">
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="4473e397-b764-4381-bfb3-1c660e9d2b89" x="0" y="0" width="95" height="30"/>
+								<box leftPadding="0">
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[Attendance]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<staticText>
+								<reportElement uuid="0daccb1e-408a-4ceb-967e-49d740c9d68a" x="0" y="0" width="95" height="20"/>
+								<box leftPadding="3">
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement verticalAlignment="Middle"/>
+								<text><![CDATA[]]></text>
+							</staticText>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="79">
+			<componentElement>
+				<reportElement uuid="f241ddb5-a560-439e-ba1c-33c6a4e7b41c" key="table 1" style="table 1" positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="306" y="0" width="249" height="77" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT} == 1]]></printWhenExpression>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="coordinator" uuid="b01fd15d-9b40-4b1f-a71f-b66584bab656">
+						<datasetParameter name="ccphaseid">
+							<datasetParameterExpression><![CDATA[$P{phaseid}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="188" uuid="05d29984-9285-47c2-8845-02049b400077">
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="6be28a5c-a4be-4d2c-8b22-b726cd7f21ba" x="0" y="0" width="188" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font isBold="true" isUnderline="true"/>
+								</textElement>
+								<text><![CDATA[Program Coordinator]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="49" rowSpan="1">
+							<textField>
+								<reportElement uuid="2419ff32-998c-4b62-85d6-83cb5b14e778" x="0" y="0" width="188" height="49"/>
+								<textElement textAlignment="Center"/>
+								<textFieldExpression><![CDATA[$F{username} + ",\n"+ $F{designationname}+",\n" + $F{officeshortname} + "\n"]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="96" uuid="257813d7-f138-48d8-be86-8b73caf78244">
+						<jr:columnHeader height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="1e1ee3b9-6291-4682-bd09-d467829e7b8d" x="0" y="0" width="96" height="30"/>
+								<textElement verticalAlignment="Middle">
+									<font isBold="true" isUnderline="true"/>
+								</textElement>
+								<text><![CDATA[Signature]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="49" rowSpan="1"/>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,369 @@
+/* ============================================================
+   blogs.css
+   Individual blog / unit detail page
+   Matches nd- design system — navy #1e3a8a, Playfair Display
+   ============================================================ */
+
+
+/* ============================================================
+   1. HERO  (same pattern as about.css .ab-hero)
+   ============================================================ */
+.bl-hero {
+    position: relative;
+    min-height: 320px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.bl-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    z-index: 0;
+}
+
+.bl-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(15, 23, 42, 0.40) 0%,
+        rgba(15, 23, 42, 0.78) 100%
+    );
+    z-index: 1;
+}
+
+.bl-hero__content {
+    position: relative;
+    z-index: 2;
+    padding-bottom: 2.75rem;
+    padding-top: 2rem;
+}
+
+/* Breadcrumb */
+.bl-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.bl-breadcrumb__home {
+    color: #93c5fd;
+    font-size: 0.83rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.bl-breadcrumb__home:hover { color: #ffffff; text-decoration: none; }
+
+.bl-breadcrumb__sep   { color: rgba(255,255,255,0.35); font-size: 0.83rem; }
+.bl-breadcrumb__current { color: rgba(255,255,255,0.75); font-size: 0.83rem; }
+
+.bl-hero__title {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0.4rem;
+    line-height: 1.1;
+}
+
+.bl-hero__sub {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.72);
+    margin: 0;
+}
+
+
+/* ============================================================
+   2. PAGE SHELL
+   ============================================================ */
+.bl-page {
+    background-color: #f8fafc;
+    padding: 3rem 0 5rem;
+}
+
+/* Two-column layout: article + sidebar */
+.bl-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 991.98px) {
+    .bl-layout {
+        grid-template-columns: 1fr;
+    }
+
+    /* on mobile sidebar goes below article */
+    .bl-sidebar { order: 2; }
+    .bl-article { order: 1; }
+}
+
+
+/* ============================================================
+   3. ARTICLE
+   ============================================================ */
+.bl-article {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.07);
+    border: 1px solid #e2e8f0;
+}
+
+/* Feature image */
+.bl-article__img-wrap {
+    width: 100%;
+    max-height: 380px;
+    overflow: hidden;
+}
+
+.bl-article__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.bl-article:hover .bl-article__img {
+    transform: scale(1.02);
+}
+
+/* Text area */
+.bl-article__body {
+    padding: 2rem 2.25rem 2.5rem;
+}
+
+.bl-article__title {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin: 0 0 0.5rem;
+}
+
+.bl-title-rule {
+    width: 52px;
+    height: 4px;
+    background: linear-gradient(to right, #1e3a8a, #3b82f6);
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.bl-article__text {
+    font-size: 0.92rem;
+    color: #475569;
+    line-height: 1.9;
+    margin-bottom: 1rem;
+}
+
+.bl-article__text:last-child { margin-bottom: 0; }
+
+
+/* ============================================================
+   4. SIDEBAR INFO CARD
+   ============================================================ */
+.bl-info-card {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.07);
+    border: 1px solid #e2e8f0;
+    padding: 0 0 1.5rem;
+
+    /* Stick to top while scrolling */
+    position: sticky;
+    top: 90px;
+}
+
+.bl-info-card__heading {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    padding: 1rem 1.4rem;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    letter-spacing: 0.02em;
+}
+
+/* Each info row */
+.bl-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 0.9rem 1.4rem;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.15s;
+}
+
+.bl-info-row:hover { background-color: #f8fafc; }
+.bl-info-row:last-of-type { border-bottom: none; }
+
+.bl-info-row__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #1e3a8a;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.bl-info-row__label {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    margin-bottom: 0.2rem;
+}
+
+.bl-info-row__value {
+    display: block;
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: #1e293b;
+    line-height: 1.45;
+}
+
+.bl-info-row__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #2563eb;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.bl-info-row__link:hover { color: #1e3a8a; text-decoration: underline; }
+
+/* Back button */
+.bl-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 1.25rem 1.4rem 0;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #ffffff !important;
+    background-color: #1e3a8a;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(30,58,138,0.25);
+    transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.bl-back-btn:hover {
+    background-color: #1e3382;
+    transform: translateX(-2px);
+    box-shadow: 0 4px 14px rgba(30,58,138,0.35);
+    text-decoration: none;
+    color: #ffffff !important;
+}
+
+
+/* ============================================================
+   5. LEGACY — keep old selectors working
+   ============================================================ */
+#about-hero  { padding: 70px 0; }
+.adjust-section { margin-top: 0; }
+.bg-cover {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.hero-section { position: relative; }
+.section-sm { padding: 2rem 0; }
+.custom-breadcrumb { list-style: none; padding: 0; }
+.nasted { opacity: 0.85; }
+.overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(15,23,42,0.55);
+    z-index: 1;
+}
+
+
+/* ============================================================
+   6. ARTICLE SUBHEAD + OBJECTIVE LIST
+      For blogs with structured numbered content (e.g. NERIE)
+   ============================================================ */
+.bl-article__subhead {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin: 1.75rem 0 1rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.bl-objective-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.bl-objective-list__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.65;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+.bl-objective-list__item:hover {
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.bl-objective-list__item strong {
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.bl-objective-list__num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    letter-spacing: 0.03em;
+}

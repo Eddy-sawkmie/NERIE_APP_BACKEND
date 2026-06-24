@@ -1,0 +1,105 @@
+.test-main-container {
+    padding: clamp(1rem, 4vw, 3rem);
+}
+
+.titlecss {
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 2.5rem;
+    background-color: #fdfdfd;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.form-group > .question-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.25rem;
+    display: block;
+    font-size: 1.1em;
+}
+
+.options-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.options-group .option-label {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.options-group .option-label input[type="radio"],
+.options-group .option-label input[type="checkbox"] {
+    margin-right: 0.8rem;
+    accent-color: #64b1c4;
+    width: 1.2em;
+    height: 1.2em;
+    flex-shrink: 0;
+}
+
+/* Style for the objectively correct answer in the list of all options */
+.options-group .option-label.is-correct-answer {
+    border-color: #007bff;
+    border-width: 2px;
+    background-color: #f0f8ff;
+}
+
+.answer-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px dashed #ddd;
+}
+.answer-label {
+    font-weight: bold;
+    font-size: 0.95em;
+    color: #555;
+}
+.user-answer-display {
+    font-weight: 600;
+}
+.user-answer-display.correct {
+    color: #28a745;
+}
+.user-answer-display.incorrect {
+    color: #dc3545;
+}
+.no-answer {
+    color: #888;
+    font-style: italic;
+}
+
+.score-card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 25px;
+    border-radius: 8px;
+    margin: 20px auto;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+.score-card h3 {
+    font-size: 1.6em;
+    font-weight: 600;
+    margin: 0;
+}
+.score-card {
+    font-weight: bold;
+    color: #0056b3;
+}
+.score-card .score-percent {
+    font-size: 0.9em;
+    color: #6c757d;
+}

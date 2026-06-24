@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resourceatt" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="phaseid" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT(T1.rpslno),T1.rpname, to_char(TT.programdate,'dd-MM-yyyy') AS programdate,
+P.programname, P.programid, ph.phaseno, ph.phasedescription ,
+to_char(C.startdate,'dd-MM-yyyy') AS startdate,to_char(C.enddate,'dd-MM-yyyy') As enddate,
+C.enddate-C.startdate+1 As noofdays,
+ array_to_string
+                   (
+                   ARRAY(
+                   SELECT V.venuename FROM nerie.mt_programvenues P
+                              INNER JOIN nerie.m_venues V ON V.venuecode=P.venuecode
+                   WHERE P.phaseid=C.phaseid
+                   ), ', '
+                   ) AS venues,
+                   array_to_string
+                   (
+                   ARRAY(
+                   SELECT U.username FROM nerie.mt_program_members P
+                              INNER JOIN nerie.mt_userlogin U ON U.usercode=P.usercode
+                   WHERE P.phaseid=C.phaseid
+                   ), ', '
+                   ) AS coursecoordinators ,
+                                      array_to_string
+                   (
+                   ARRAY(
+                   SELECT T1.subject FROM nerie.t_programtimetable T1
+                    WHERE T1.programdate=TT.programdate AND T1.subject!='BREAK'
+                   ), ', '
+                   ) AS subjects
+
+ FROM nerie.m_phases ph
+ INNER JOIN nerie.t_programtimetable TT ON ph.phaseid=TT.phaseid
+ INNER JOIN nerie.mt_programdetails C on C.phaseid=TT.phaseid
+ INNER JOIN nerie.mt_programttresourceperson RP ON TT.programtimetablecode=RP.programtimetablecode
+ INNER JOIN nerie.mt_resourcepersons R ON R.rpslno=RP.rpslno
+ INNER JOIN nerie.m_programs P ON P.programcode=ph.programcode
+ INNER JOIN nerie.mt_resourcepersons T1 ON T1.rpslno=RP.rpslno AND RP.programtimetablecode=TT.programtimetablecode AND R.rpslno=T1.rpslno
+ WHERE TT.phaseid='10'
+ ORDER BY T1.rpslno]]>
+	</queryString>
+	<field name="rpslno" class="java.lang.String"/>
+	<field name="rpname" class="java.lang.String"/>
+	<field name="programdate" class="java.lang.String"/>
+	<field name="programname" class="java.lang.String"/>
+	<field name="programid" class="java.lang.String"/>
+	<field name="phaseno" class="java.lang.String"/>
+	<field name="phasedescription" class="java.lang.String"/>
+	<field name="startdate" class="java.lang.String"/>
+	<field name="enddate" class="java.lang.String"/>
+	<field name="noofdays" class="java.lang.Integer"/>
+	<field name="venues" class="java.lang.String"/>
+	<field name="coursecoordinators" class="java.lang.String"/>
+	<field name="subjects" class="java.lang.String"/>
+	<variable name="noofdays" class="java.lang.Integer" incrementType="Report" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{programdate}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="79"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[North East Regional Institute of Education (NERIE)
+National Council of Educational Research and Training (NCERT)
+Umian, Barapani, Shillong-793103]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="242" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Attendance for "+$F{programname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="32" width="555" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Phase No: " +$F{phaseno}+ "Phase Description: " +$F{phasedescription}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="67" width="555" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Duration: "+ $F{noofdays}+ " days"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="101" width="555" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{startdate}+" TO "+$F{enddate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="135" width="195" height="58"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Coordinators: "+ $F{coursecoordinators}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="345" y="135" width="210" height="58"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Venues: "+$F{venues}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="0" y="208" width="195" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Total Classes: "+$V{noofdays}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="50"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+>
+  <div layout:fragment="preloader" id="lily-preloader" class="preloader">
+    <img th:src="@{/lily/images/preloader.gif}" alt="preloader">
+
+    <script type="text/javascript">
+      // Hides the preloader after 700msec
+      $(window).on('load', function () {
+        $('.preloader').fadeOut(700);
+      });
+    </script>
+  </div>
+</html>

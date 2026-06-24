@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="adminofficelist" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="finyearstart" class="java.lang.String"/>
+	<parameter name="finyearend" class="java.lang.String"/>
+	<parameter name="financialyear" class="java.lang.String"/>
+	<parameter name="dynamicpath" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT W.*,COALESCE(X.ongoing,0) AS ongoing,COALESCE(X.upcoming,0) AS upcoming,COALESCE(X.past,0) AS past,COALESCE(Y.coursecoordinator,0) AS coursecoordinator,COALESCE(Z.rejectedcourse,0) AS rejectedcourse
+FROM
+(SELECT DISTINCT o.officecode,o.officename,o.officeshortname,o.officeaddress,d.districtname,s.statename,o.officepincode,o.contactpersonname,o.mobileno,o.landlineno,o.emailid,
+SUM(CASE WHEN u.enabled=1 then 1 else 0 end) AS activeusers,SUM(CASE WHEN u.enabled=0 then 1 else 0 end) AS deactiveusers
+From nerie.m_offices o
+inner join nerie.m_districts d on o.officedistrictcode=d.districtcode
+inner join nerie.m_states s on d.statecode=s.statecode
+left outer join nerie.mt_userlogin u on o.officecode=u.officecode
+group by o.officecode,o.officename,o.officeshortname,o.officeaddress,d.districtname,s.statename,o.officepincode,o.contactpersonname,o.mobileno,o.landlineno,o.emailid) W
+LEFT OUTER JOIN
+(Select pr.officecode,
+SUM(CASE WHEN TO_CHAR(c.startdate,'yyyy-MM-dd')<=TO_CHAR(now(),'yyyy-MM-dd') AND TO_CHAR(c.lastdate,'yyyy-MM-dd')>=TO_CHAR(now(),'yyyy-MM-dd') THEN 1 ELSE 0 END) AS ongoing,
+SUM(CASE WHEN TO_CHAR(c.startdate,'yyyy-MM-dd')>=TO_CHAR(now(),'yyyy-MM-dd') AND TO_CHAR(c.lastdate,'yyyy-MM-dd')>=TO_CHAR(now(),'yyyy-MM-dd') THEN 1 ELSE 0 END) AS upcoming,
+SUM(CASE WHEN TO_CHAR(c.startdate,'yyyy-MM-dd')<=TO_CHAR(now(),'yyyy-MM-dd') AND TO_CHAR(c.lastdate,'yyyy-MM-dd')<=TO_CHAR(now(),'yyyy-MM-dd') THEN 1 ELSE 0 END) AS past
+from nerie.mt_programdetails c, nerie.m_programs pr
+WHERE (TO_CHAR(c.startdate,'yyyy-MM')>=$P{finyearstart} AND TO_CHAR(c.startdate,'yyyy-MM')<=$P{finyearend}) AND c.finalized='Y' AND c.programcode=pr.programcode
+group by pr.officecode) X ON W.officecode=X.officecode
+LEFT OUTER JOIN
+(SELECT DISTINCT pr.officecode,COUNT(DISTINCT mb.usercode) AS coursecoordinator
+from nerie.mt_programdetails c, nerie.m_programs pr, nerie.mt_program_members mb
+WHERE (TO_CHAR(c.startdate,'yyyy-MM')>=$P{finyearstart} AND TO_CHAR(c.startdate,'yyyy-MM')<=$P{finyearend}) AND c.finalized='Y' AND c.programcode=mb.programcode AND pr.programcode=mb.programcode
+group by pr.officecode) Y ON W.officecode=Y.officecode
+LEFT OUTER JOIN
+(SELECT pr.officecode, r.rejectedusercode, COUNT(r.programcode) AS rejectedcourse
+From nerie.mt_programdetails r, nerie.m_programs pr
+WHERE (TO_CHAR(r.startdate,'yyyy-MM')>=$P{finyearstart} AND TO_CHAR(r.startdate,'yyyy-MM')<=$P{finyearend}) AND r.programcode=pr.programcode AND r.finalized='R'
+group by pr.officecode, r.rejectedusercode) Z  ON W.officecode=Z.officecode]]>
+	</queryString>
+	<field name="officecode" class="java.lang.Integer"/>
+	<field name="officename" class="java.lang.String"/>
+	<field name="officeshortname" class="java.lang.String"/>
+	<field name="officeaddress" class="java.lang.String"/>
+	<field name="districtname" class="java.lang.String"/>
+	<field name="statename" class="java.lang.String"/>
+	<field name="officepincode" class="java.lang.String"/>
+	<field name="contactpersonname" class="java.lang.String"/>
+	<field name="mobileno" class="java.lang.String"/>
+	<field name="landlineno" class="java.lang.String"/>
+	<field name="emailid" class="java.lang.String"/>
+	<field name="activeusers" class="java.lang.Long"/>
+	<field name="deactiveusers" class="java.lang.Long"/>
+	<field name="ongoing" class="java.lang.Long"/>
+	<field name="upcoming" class="java.lang.Long"/>
+	<field name="past" class="java.lang.Long"/>
+	<field name="coursecoordinator" class="java.lang.Long"/>
+	<field name="rejectedcourse" class="java.lang.Long"/>
+	<variable name="past_1" class="java.lang.Long" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{past}]]></variableExpression>
+	</variable>
+	<variable name="upcoming_1" class="java.lang.Long" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{upcoming}]]></variableExpression>
+	</variable>
+	<variable name="ongoing_1" class="java.lang.Long" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{ongoing}]]></variableExpression>
+	</variable>
+	<variable name="rejectedcourse_1" class="java.lang.Long" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{rejectedcourse}]]></variableExpression>
+	</variable>
+	<variable name="coursecoordinator_1" class="java.lang.Long" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{coursecoordinator}]]></variableExpression>
+	</variable>
+	<variable name="activeusers_1" class="java.lang.Long" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{activeusers}]]></variableExpression>
+	</variable>
+	<variable name="deactiveusers_1" class="java.lang.Long" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{deactiveusers}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="139" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="85" width="555" height="27" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[List of Units of NCERT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="54" width="555" height="27" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[National Council Of Educational Research And Training]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="116" width="555" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{financialyear}.equals("0")?"":"Financial Year: "+$P{financialyear}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="209" y="0" width="103" height="54"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{dynamicpath} + "/ncertlogo.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="30" height="61"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Slno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="157" y="0" width="41" height="61"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No of active users]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="198" y="0" width="53" height="61"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No of deactive users]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="323" y="0" width="65" height="61"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No of programs conducted ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="388" y="0" width="53" height="61"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No of ongoing programs ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="441" y="0" width="63" height="61"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No of upcoming programs ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="0" width="127" height="61"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Office]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="504" y="0" width="51" height="61"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No of programs rejected]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="251" y="0" width="72" height="61"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No of Program Co-ordinators]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="76" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="30" height="76"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="30" y="0" width="127" height="76"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{officename}+"\n"+$F{officeaddress}+"\n"+$F{districtname}+"-"+$F{officepincode}+"\n"+$F{statename}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="157" y="0" width="41" height="76"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{activeusers}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="198" y="0" width="53" height="76"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{deactiveusers}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="251" y="0" width="72" height="76"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{coursecoordinator}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="323" y="0" width="65" height="76"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{past}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="388" y="0" width="53" height="76"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{ongoing}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="441" y="0" width="63" height="76"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{upcoming}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="504" y="0" width="51" height="76"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$F{rejectedcourse}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="157" height="20"/>
+				<box leftPadding="2" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="323" y="0" width="65" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{past_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="441" y="0" width="63" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{upcoming_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="388" y="0" width="53" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{ongoing_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="504" y="0" width="51" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{rejectedcourse_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="251" y="0" width="72" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{coursecoordinator_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="157" y="0" width="41" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{activeusers_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="198" y="0" width="53" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$V{deactiveusers_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

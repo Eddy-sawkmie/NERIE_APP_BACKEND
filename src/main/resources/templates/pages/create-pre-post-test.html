@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+        xmlns="http://www.w3.org/1999/html">
+<head>
+  <title>Create Pre-Post Test</title>
+  <div layout:fragment="static-files"></div>
+</head>
+<body>
+
+<div id="loader">
+  <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container py-5">
+    <div class="card border-0 modern-card mb-4">
+
+      <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+        <h4 class="mb-0 fw-bold d-flex align-items-center">
+          <i class="fas fa-clipboard-list me-3 fs-5"></i> Create Pre-Post Test
+        </h4>
+        <button type="button" class="btn btn-light btn-modern text-primary fw-bold shadow-sm" id="newQbtn" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+          <i class="fas fa-plus me-2"></i> Add New Question
+        </button>
+      </div>
+
+      <div class="card-body p-4 p-md-5">
+
+        <div id="collapseOne" class="collapse mb-5" aria-labelledby="headingOne">
+          <div class="card border border-light shadow-sm rounded-3">
+            <div class="card-header bg-light border-0 py-3">
+              <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-question-circle me-2 text-primary"></i> Add Question Details</h5>
+            </div>
+            <div class="card-body p-4 bg-white">
+              <form
+                      th:object="${t_preposttestquestions}"
+                      method="POST"
+                      th:action="@{/pre-post-test/questions/save}"
+                      name="t_preposttestquestions"
+                      id="t_preposttestquestions"
+                      role="form"
+                      autocomplete="off"
+              >
+                <div class="row gx-4 gy-3">
+                  <div class="col-12">
+                    <label for="questionname" class="form-label-modern">
+                      Question: <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                      <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-pen"></i></span>
+                      <textarea class="form-control modern-input border-start-0 ps-2" id="questionname" th:field="*{questionname}" required placeholder="Enter your question" rows="3"></textarea>
+                    </div>
+                    <div class="invalid-feedback d-block mt-1" id="questionname-error" style="display: none; color: red;"></div>
+                  </div>
+
+                  <div class="col-12 col-md-6 mb-3">
+                    <label for="questiontype" class="form-label-modern">
+                      Question Type/Category: <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                      <span class="input-group-text bg-light border-end-0 text-muted d-flex align-items-center">
+                          <i class="fas fa-tags"></i>
+                      </span>
+                      <select id="questiontype" class="form-select modern-input border-start-0 ps-2" th:field="*{questiontype}" required name="questiontype">
+                        <option value="">Select</option>
+                        <option value="Other">Other</option>
+                        <option th:each="qc : ${qcategory}" th:value="${qc.pptqcategoryname}" th:text="${qc.pptqcategoryname}"></option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div id="newCategoryWrapper" class="col-12 col-lg-6" style="display: none;">
+                    <div class="w-100 d-block">
+                      <label for="newCategory" class="form-label-modern">
+                        New Category: <span class="text-danger">*</span>
+                      </label>
+                      <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                        <span class="input-group-text bg-light border-end-0 text-muted d-flex align-items-center">
+                            <i class="fas fa-folder-plus"></i>
+                        </span>
+                        <input type="text" id="newCategory" name="newCategory" class="form-select modern-input border-start-0 ps-2" placeholder="Enter new category" />
+                      </div>
+                      <div class="invalid-feedback d-block mt-1" id="newCategory-error" style="display: none; color: red;"></div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 mt-4">
+                    <label class="form-label-modern mb-1">Options & Correct Answer(s): <span class="text-danger">*</span></label>
+                    <small class="form-text text-muted d-block mb-3"><i class="fas fa-info-circle me-1"></i>Select the checkbox for each correct answer.</small>
+
+                    <div class="row gx-4 gy-3">
+                      <div class="col-md-6">
+                        <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                          <div class="input-group-text bg-light border-end-0">
+                            <input class="form-check-input mt-0" type="checkbox" name="correctans" value="1" aria-label="Correct answer checkbox for Option 1">
+                          </div>
+                          <input type="text" class="form-control modern-input border-start-0 ps-2" id="option1" th:field="*{option1}" required placeholder="Option 1 *">
+                        </div>
+                        <div class="invalid-feedback d-block w-100 mt-1" id="option1-error" style="display: none; color: red;"></div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                          <div class="input-group-text bg-light border-end-0">
+                            <input class="form-check-input mt-0" type="checkbox" name="correctans" value="2" aria-label="Correct answer checkbox for Option 2">
+                          </div>
+                          <input type="text" class="form-control modern-input border-start-0 ps-2" id="option2" th:field="*{option2}" required placeholder="Option 2 *">
+                        </div>
+                        <div class="invalid-feedback d-block w-100 mt-1" id="option2-error" style="display: none; color: red;"></div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                          <div class="input-group-text bg-light border-end-0">
+                            <input class="form-check-input mt-0" type="checkbox" name="correctans" value="3" aria-label="Correct answer checkbox for Option 3">
+                          </div>
+                          <input type="text" class="form-control modern-input border-start-0 ps-2" id="option3" th:field="*{option3}" placeholder="Option 3 (Optional)">
+                        </div>
+                        <div class="invalid-feedback d-block w-100 mt-1" id="option3-error" style="display: none; color: red;"></div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                          <div class="input-group-text bg-light border-end-0">
+                            <input class="form-check-input mt-0" type="checkbox" name="correctans" value="4" aria-label="Correct answer checkbox for Option 4">
+                          </div>
+                          <input type="text" class="form-control modern-input border-start-0 ps-2" id="option4" th:field="*{option4}" placeholder="Option 4 (Optional)">
+                        </div>
+                        <div class="invalid-feedback d-block w-100 mt-1" id="option4-error" style="display: none; color: red;"></div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                          <div class="input-group-text bg-light border-end-0">
+                            <input class="form-check-input mt-0" type="checkbox" name="correctans" value="5" aria-label="Correct answer checkbox for Option 5">
+                          </div>
+                          <input type="text" class="form-control modern-input border-start-0 ps-2" id="option5" th:field="*{option5}" placeholder="Option 5 (Optional)">
+                        </div>
+                        <div class="invalid-feedback d-block w-100 mt-1" id="option5-error" style="display: none; color: red;"></div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                          <div class="input-group-text bg-light border-end-0">
+                            <input class="form-check-input mt-0" type="checkbox" name="correctans" value="6" aria-label="Correct answer checkbox for Option 6">
+                          </div>
+                          <input type="text" class="form-control modern-input border-start-0 ps-2" id="option6" th:field="*{option6}" placeholder="Option 6 (Optional)">
+                        </div>
+                        <div class="invalid-feedback d-block w-100 mt-1" id="option6-error" style="display: none; color: red;"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 mt-4 pt-3 border-top text-end">
+                    <button type="button" class="btn btn-light border btn-modern px-4 me-2" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                      Cancel
+                    </button>
+                    <button id="subbtn" type="submit" class="btn btn-success btn-modern px-4 shadow-sm">
+                      <i class="fas fa-save me-2"></i> Add Question
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <h5 class="fw-bold mb-4 border-bottom pb-2 text-dark"><i class="fas fa-cogs me-2 text-primary"></i> Configuration</h5>
+        <div class="row gx-4 gy-4 mb-5">
+
+          <div class="col-md-6 col-lg-4">
+            <label for="activityfinancialyear" class="form-label-modern">
+              Financial Year: <span class="text-danger">*</span>
+            </label>
+            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-calendar-alt"></i></span>
+              <select name="financialyear" id="activityfinancialyear" class="form-select modern-input border-start-0 ps-2" required>
+                <option value="">Select</option>
+                <option th:each="o : ${fylist}" th:value="${o[4]}" th:text="${o[1]}"></option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <label for="activityprograms" class="form-label-modern">
+              Program Name: <span class="text-danger">*</span>
+            </label>
+            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-project-diagram"></i></span>
+              <!-- Added select2-search class here -->
+              <select name="programcode" id="activityprograms" class="form-select modern-input border-start-0 ps-2 select2-search" required>
+                <option value="">Select</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <label for="activityphaseno" class="form-label-modern">Phase No:</label>
+            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-layer-group"></i></span>
+              <select id="activityphaseno" name="phaseid" class="form-select modern-input border-start-0 ps-2" required>
+                <option value="">Select</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label-modern d-block">Test Type:</label>
+            <div class="d-flex align-items-center mt-2">
+              <div class="form-check form-check-inline me-4">
+                <input class="form-check-input shadow-sm" type="radio" id="testtypeapp" name="testtype" value="APP" checked>
+                <label class="form-check-label fw-bold text-secondary" for="testtypeapp">PMIS Test</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input shadow-sm" type="radio" id="testtypelink" name="testtype" value="LINK">
+                <label class="form-check-label fw-bold text-secondary" for="testtypelink">Google Form</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12 col-lg-8" id="googleFormLinkDiv" style="display: none;">
+            <label for="testlink" class="form-label-modern">Google Form Link:</label>
+            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-link"></i></span>
+              <input type="url" id="testlink" name="testlink" class="form-control modern-input border-start-0 ps-2" placeholder="https://forms.gle/...">
+            </div>
+          </div>
+        </div>
+
+        <div id="questionsTableDiv">
+          <h5 class="fw-bold mb-3 border-bottom pb-2 mt-2 text-dark"><i class="fas fa-list-ol me-2 text-primary"></i> Select Questions</h5>
+          <div class="table-responsive table-wrapper mt-3">
+            <form id="phasepreposttestform" method="post" th:action="@{/path/to/submit/selected-questions}">
+              <input type="hidden" id="activityProgcode" name="activityProgcode"/>
+              <input type="hidden" id="activityPhaseID" name="activityPhaseID"/>
+              <input type="hidden" id="randomizeFlag" name="randomizeFlag" value="false" />
+              <input type="hidden" id="randomizeCount" name="randomizeCount" value="">
+
+              <table id="questionsTable" class="table modern-table align-middle mb-0 w-100">
+                <thead>
+                <tr>
+                  <th style="width: 5%;" class="text-center">Select</th>
+                  <th style="width: 45%;">Question</th>
+                  <th style="width: 50%;">Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${questions}">
+                  <td class="text-center">
+                    <input type="checkbox" name="question" class="question-checkbox form-check-input shadow-sm" th:value="${a.questionid}">
+                  </td>
+                  <td><span class="fw-semibold text-dark" th:text="${a.questionname}"></span></td>
+                  <td class="text-muted">
+                    <span th:text="${a.option1}"></span>
+                    <span th:text="', ' + ${a.option2}"></span>
+                    <span th:if="${a.option3 != null && a.option3 != ''}" th:text="', ' + ${a.option3}"></span>
+                    <span th:if="${a.option4 != null && a.option4 != ''}" th:text="', ' + ${a.option4}"></span>
+                    <span th:if="${a.option5 != null}" th:text="', ' + ${a.option5}"></span>
+                    <span th:if="${a.option6 != null}" th:text="', ' + ${a.option6}"></span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </form>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-3 mt-4 pt-4 border-top" id="formActionButtons">
+          <button class="btn btn-primary btn-modern px-4 shadow-sm" id="randomButton" type="button">
+            <i class="fas fa-random me-2"></i> Random
+          </button>
+          <button class="btn btn-light border btn-modern px-4" type="reset" form="phasepreposttestform" id="clearFormButton">
+            <i class="fas fa-undo me-2"></i> Clear
+          </button>
+          <button class="btn btn-success btn-modern px-5 shadow-sm" type="submit" form="phasepreposttestform" id="submitButton">
+            <i class="fas fa-check-circle me-2"></i> Submit
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light border-0 px-4 py-3">
+          <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel"><i class="fas fa-info-circle me-2 text-primary"></i> Message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+        </div>
+        <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
+          <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+<th:block layout:fragment="scripts">
+  <script th:inline="javascript">
+    const API = {
+        savePrePostTest: [[@{/pre-post-test/save}]],
+        savePrePostTestQuestions: [[@{/pre-post-test/questions/save}]],
+        listFinancialYear: [[@{/program/financial-year/list}]],
+        phasesList: [[@{/phases/list}]]
+    };
+  </script>
+  <script th:src="@{/js/createPrePostTest.js}"></script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title>Promotion Students List</title>
+    <th:block layout:fragment="static-files">
+        <link rel="stylesheet" th:href="@{/lily/js/select2/select2.min.css}" />
+    </th:block>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-users-cog me-3 fs-5"></i> Students List
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+
+                <div class="row g-4 mb-4 align-items-end">
+                    <div class="col-md-3">
+                        <label for="departmentcode" class="form-label-modern mb-2">Department <span class="text-danger">*</span></label>
+                        <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-building"></i></span>
+                            <select name="departmentcode" id="departmentcode" class="form-select modern-input border-start-0 ps-2" required>
+                                <option value="">Select</option>
+                                <th:block th:if="${mdepartmentList != null}" th:each="o : ${mdepartmentList}">
+                                    <option th:value="${o.departmentcode}" th:text="${o.departmentname}"></option>
+                                </th:block>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="coursecode" class="form-label-modern mb-2">Course <span class="text-danger">*</span></label>
+                        <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book"></i></span>
+                            <select name="coursecode" id="coursecode" class="form-select modern-input border-start-0 ps-2" required>
+                                <option value="">Select</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <input id="isshortterm" type="hidden" readonly />
+
+                    <div class="col-md-3">
+                        <label for="semphase" class="form-label-modern mb-2">Semester/Phase <span class="text-danger">*</span></label>
+                        <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-layer-group"></i></span>
+                            <select name="semphase" id="semphase" class="form-select modern-input border-start-0 ps-2" required>
+                                <option value="">Select</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <button id="loadStudentsBTN" class="btn btn-primary btn-modern w-100 shadow-sm load-students-btn" data-function="loadStudents" style="padding: 0.6rem 1rem;">
+                            <i class="fas fa-search me-2"></i> Load Students
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive table-wrapper mt-5 pt-3 border-top">
+                    <table class="table modern-table align-middle mb-0 w-100" id="s-table">
+                        <thead>
+                        <tr>
+                            <th class="text-center" style="width: 5%;">Sl. No</th>
+                            <th style="width: 15%;">Roll No.</th>
+                            <th style="width: 20%;">Student Name</th>
+                            <th style="width: 15%;">Department</th>
+                            <th style="width: 20%;">Course</th>
+                            <th style="width: 15%;">Email-Id</th>
+                            <th class="noExport text-center" style="width: 10%; min-width: 100px;">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal fade" id="promotionModal" tabindex="-1" data-bs-backdrop="static" role="dialog" aria-labelledby="promoteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                        <div class="modal-content border-0 shadow-lg">
+                            <div class="modal-header bg-light border-0 px-4 py-3">
+                                <h5 class="modal-title fw-bold text-dark" id="promoteModalLabel"><i class="fas fa-level-up-alt me-2 text-primary"></i> Promote Student</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4" id="modalBody">
+                                <div class="container-fluid">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-3">
+                                            <label for="inputYearid" class="form-label-modern">Academic Year:</label>
+                                            <input type="text" class="form-control bg-light" id="inputYearid" readonly />
+                                        </div>
+                                        <div class="col-md-9">
+                                            <label for="inputStudentid" class="form-label-modern">Roll No.:</label>
+                                            <input type="text" class="form-control bg-light fw-bold" id="inputStudentid" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-4">
+                                            <label for="inputFname" class="form-label-modern">First Name:</label>
+                                            <input type="text" class="form-control bg-light" id="inputFname" readonly />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="inputMname" class="form-label-modern">Middle Name:</label>
+                                            <input type="text" class="form-control bg-light" id="inputMname" readonly />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="inputLname" class="form-label-modern">Last Name:</label>
+                                            <input type="text" class="form-control bg-light" id="inputLname" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label for="inputDepartment" class="form-label-modern">Department:</label>
+                                            <input type="text" class="form-control bg-light" id="inputDepartment" readonly />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="inputCourse" class="form-label-modern">Course:</label>
+                                            <input type="text" class="form-control bg-light" id="inputCourse" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label for="inputSP" id="inputSPLabel" class="form-label-modern">Current Semester</label>
+                                            <input id="inputSP" readonly class="form-control bg-light" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="inputNextSP" id="inputNextSPLabel" class="form-label-modern text-primary">Next Semester</label>
+                                            <input type="text" class="form-control bg-white border-primary shadow-sm" id="inputNextSP" readonly />
+                                            <input type="hidden" class="form-control" id="optionalSubs" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mt-2 pt-3 border-top" id="electiveSub" style="display: none;">
+                                        <div class="col-md-12">
+                                            <label for="inputOptionalSP" id="inputOptionalSPLabel" class="form-label-modern">Select Optional Subject(s)</label>
+                                            <select name="optionalsubjects" id="inputOptionalSP" class="form-control shadow-sm select2" multiple="multiple" required>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-top-0 pt-0 px-4 pb-4 d-flex justify-content-between">
+                                <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">Close</button>
+                                <button id="promoteBTN" type="button" class="btn btn-primary btn-modern px-5 shadow-sm">
+                                    <i class="fas fa-check me-2"></i> Promote Student
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/lily/js/select2/select2.min.js}"></script>
+    <script th:inline="javascript">
+        const API = {
+            getCoursesBasedOnDepartment2: [[@{/course-academics/getCoursesBasedOnDepartment2}]],
+            getSemPhaseBasedOnCourses: [[@{/students/getSemPhaseBasedOnCourses}]],
+            getListOfStudents: [[@{/students/getListOfStudents}]],
+            getStudentOnStudentId: [[@{/students/getStudentOnStudentid}]],
+            getStudentPromotionData: [[@{/students/getStudentPromotionData}]],
+            promoteStudent: [[@{/students/promoteStudent}]]
+        };
+    </script>
+    <script th:src="@{/js/promotionStudentList.js}"></script>
+</th:block>
+</body>
+</html>

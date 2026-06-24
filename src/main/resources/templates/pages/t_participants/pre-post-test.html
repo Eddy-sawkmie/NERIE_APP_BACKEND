@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/participant-layout}"
+>
+<head>
+    <title layout:fragment="title">My Programs - Test</title>
+    <th:block layout:fragment="static-files">
+        <link th:href="@{/css/prePostTest.css}" rel="stylesheet">
+    </th:block>
+</head>
+<body>
+
+<div id="loader"><div class="spinner"></div></div>
+
+<main layout:fragment="content">
+    <div class="container my-4 my-md-5">
+        <div class="card box-shadow-grey">
+            <div class="test-main-container">
+                <h2 class="titlecss mb-4" th:text="${type} + ' TEST'">PRE TEST</h2>
+                <form id="prePostTestForm" role="form" autocomplete="off">
+                    <input type="hidden" id="testid" th:value="${test}" />
+                    <input type="hidden" id="testtype" th:value="${type}" />
+
+                    <div th:each="question, iterStat : ${questions}" class="form-group">
+                        <div class="question-label" th:text="${iterStat.count} + '. ' + ${question.questionname}">Question text</div>
+
+                        <div th:if="${question.qopcode == 1}" class="options-group">
+                            <label th:if="${question.option1 != null}"><input type="radio" th:name="${question.questionid}" th:value="${question.option1}" required /> <span th:text="${question.option1}"></span></label>
+                            <label th:if="${question.option2 != null}"><input type="radio" th:name="${question.questionid}" th:value="${question.option2}" required /> <span th:text="${question.option2}"></span></label>
+                            <label th:if="${question.option3 != null}"><input type="radio" th:name="${question.questionid}" th:value="${question.option3}" required /> <span th:text="${question.option3}"></span></label>
+                            <label th:if="${question.option4 != null}"><input type="radio" th:name="${question.questionid}" th:value="${question.option4}" required /> <span th:text="${question.option4}"></span></label>
+                            <label th:if="${question.option5 != null}"><input type="radio" th:name="${question.questionid}" th:value="${question.option5}" required /> <span th:text="${question.option5}"></span></label>
+                            <label th:if="${question.option6 != null}"><input type="radio" th:name="${question.questionid}" th:value="${question.option6}" required /> <span th:text="${question.option6}"></span></label>
+                        </div>
+
+                        <!-- Checkboxes: 'required' is handled by JS validation -->
+                        <div th:if="${question.qopcode != 1}" class="options-group">
+                            <label th:if="${question.option1 != null}"><input type="checkbox" th:name="${question.questionid}" th:value="${question.option1}" /> <span th:text="${question.option1}"></span></label>
+                            <label th:if="${question.option2 != null}"><input type="checkbox" th:name="${question.questionid}" th:value="${question.option2}" /> <span th:text="${question.option2}"></span></label>
+                            <label th:if="${question.option3 != null}"><input type="checkbox" th:name="${question.questionid}" th:value="${question.option3}" /> <span th:text="${question.option3}"></span></label>
+                            <label th:if="${question.option4 != null}"><input type="checkbox" th:name="${question.questionid}" th:value="${question.option4}" /> <span th:text="${question.option4}"></span></label>
+                            <label th:if="${question.option5 != null}"><input type="checkbox" th:name="${question.questionid}" th:value="${question.option5}" /> <span th:text="${question.option5}"></span></label>
+                            <label th:if="${question.option6 != null}"><input type="checkbox" th:name="${question.questionid}" th:value="${question.option6}" /> <span th:text="${question.option6}"></span></label>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <button type="submit" class="btn-submit">Submit Test</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="feedbackModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-light text-dark">
+                    <h5 class="modal-title" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="close text-dark" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="feedbackModalBody">
+                    <!-- Message content inserted via JS -->
+                </div>
+                <div class="modal-footer">
+                    <!-- Button inserted via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            submitAnswers: [[@{/pre-post-test/answer/submit}]],
+            myProgramList: [[@{/program/my-programs}]]
+        };
+    </script>
+    <script th:src="@{/js/prePostTest.js}"></script>
+</th:block>
+</body>
+</html>

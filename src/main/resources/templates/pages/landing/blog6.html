@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/landing-layout}"
+>
+<head>
+    <title>PSSCIVE</title>
+    <th:block layout:fragment="styles">
+        <link rel="stylesheet" th:href="@{/css/blogs.css}">
+    </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+    <div layout:replace="~{fragments/lilypreloader :: preloader}"></div>
+    
+    <section class="bl-hero">
+        <img th:src="@{/lily/images/aboutus/ncert_building.jpg}"
+             alt="NCERT Building" class="bl-hero__bg">
+        <div class="bl-hero__overlay"></div>
+        <div class="container bl-hero__content">
+            <nav class="bl-breadcrumb" aria-label="breadcrumb">
+                <a th:href="@{/about}" class="bl-breadcrumb__home">NCERT Constituent Units</a>
+                <span class="bl-breadcrumb__sep">/</span>
+                <span class="bl-breadcrumb__current">PSSCIVE</span>
+            </nav>
+            <h1 class="bl-hero__title">PSSCIVE</h1>
+            <p class="bl-hero__sub">PSSCIVE(NCERT), Bhopal – 462013 , Madhya Pradesh, INDIA</p>
+        </div>
+    </section>
+
+    <div class="bl-page">
+        <div class="container">
+            <div class="bl-layout">
+                <article class="bl-article">
+                    <div class="bl-article__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/PSSSCIVE_Bhopal_blog.jpg}"
+                             alt="PSSCIVE" class="bl-article__img">
+                    </div>
+                    <div class="bl-article__body">
+                        <h2 class="bl-article__title">About PSSCIVE</h2>
+                        <div class="bl-title-rule"></div>
+                        <p class="bl-article__text">
+                            The Pandit Sunderlal Sharma Central Institute of Vocational Education (PSSCIVE) is an apex research and development organization in the field of vocational education. It is a constituent unit of National Council of Educational Research and Training (NCERT), established in 1993 by the Ministry of Education (MoE), Government of India. The Institute has a picturesque 38-acre campus at Shyamla Hills in Bhopal. It comprises six academic disciplines, namely Agriculture and Animal Husbandry, Business and Commerce, Engineering and Technology, Health and Paramedical Science, Home Science and Hospitality Management and Humanities, Science, Education and Research with 05 Centres.
+                        </p>
+                        <p class="bl-article__text">
+                            The Institute is also a UNEVOC (International Project on Technical and Vocational Education) Network Centre in India, which coordinates all the activities, including communication with UNESCO-UNEVOC International Centre, Bonn, Germany. Through the network, the Centre shares knowledge and experiences related to all aspects of VET, exchange country experiences, and discuss issues of common relevance.
+                        </p>
+                    </div>
+                </article>
+
+                <aside class="bl-sidebar">
+                    <div class="bl-info-card">
+                        <h3 class="bl-info-card__heading">Institute Details</h3>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-user-tie"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Joint Director</span>
+                                <span class="bl-info-row__value">Prof. Rajesh P. Khambayat</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-university"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Institute</span>
+                                <span class="bl-info-row__value">PSS Central Institute of Vocational Education</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-sitemap"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Parent Organisation</span>
+                                <span class="bl-info-row__value">National Council of Educational Research and Training</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-map-marker-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Address</span>
+                                <span class="bl-info-row__value">Shyamla Hills, Bhopal – 462013 , Madhya Pradesh, INDIA</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-external-link-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Website</span>
+                                <a href="http://www.psscive.ac.in/" target="_blank" class="bl-info-row__link">
+                                    psscive.ac.in
+                                </a>
+                            </div>
+                        </div>
+                        <a th:href="@{/about}" class="bl-back-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Units
+                        </a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

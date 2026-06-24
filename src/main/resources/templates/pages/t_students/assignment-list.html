@@ -1,0 +1,333 @@
+    <!DOCTYPE html>
+    <html
+            lang="en"
+            xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+            layout:decorate="~{layouts/student-layout}"
+            xmlns:th="http://www.thymeleaf.org"
+    >
+    <head>
+        <div layout:fragment="static-files">
+            <script th:inline="javascript">
+                const API = {
+                    uploadAssignment: [[@{/assignments/uploadstudentassignment}]]
+                };
+            </script>
+
+            <script th:src="@{/js/assignmentList.js}"></script>
+            <style>
+                /* Custom Styling for a modern, clean look */
+                .modern-table-card {
+                    background: #ffffff;
+                    border-radius: 1rem;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+                }
+
+                .modern-table {
+                    margin-bottom: 0;
+                    border-collapse: separate;
+                    border-spacing: 0;
+                }
+
+                .modern-table thead th {
+                    background-color: #f8f9fc;
+                    color: #5c636a;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    font-size: 0.75rem;
+                    letter-spacing: 0.5px;
+                    padding: 1rem;
+                    border-bottom: 2px solid #e9ecef;
+                    border-top: none;
+                }
+
+                .modern-table tbody td {
+                    padding: 1rem;
+                    border-bottom: 1px solid #f1f3f5;
+                    vertical-align: middle;
+                }
+
+                .modern-table tbody tr {
+                    transition: all 0.2s ease-in-out;
+                }
+
+                .modern-table tbody tr:hover {
+                    background-color: #f8f9fa;
+                    /* transform: translateY(-1px); */
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+                }
+
+                /* Button Enhancements */
+                .btn-modern {
+                    border-radius: 0.5rem;
+                    font-weight: 500;
+                    transition: all 0.2s;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .btn-modern:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                }
+
+                /* Status Badges */
+                .status-pill {
+                    padding: 0.35rem 0.75rem;
+                    /* border-radius: 50rem; */
+                    font-size: 0.8rem;
+                    font-weight: 700;
+                    display: inline-block;
+                }
+
+                .pill-danger { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+                .pill-success { background-color: rgba(25, 135, 84, 0.1); color: #198754; }
+                .pill-primary { background-color: rgba(13, 110, 253, 0.1); color: #0d6efd; }
+                .pill-warning { background-color: rgba(255, 193, 7, 0.1); color: #856404; }
+            </style>
+        </div>
+
+        <title layout:fragment="title">Assignments</title>
+    </head>
+
+    <body>
+    <main layout:fragment="content">
+        <div class="container py-5">
+
+            <div class="card border-0 modern-card mb-4">
+                <!-- Header -->
+                <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 fw-bold d-flex align-items-center">
+                        <i class="fas fa-book me-3 fs-5"></i> Assignments
+                    </h4>
+                </div>
+                <div class="card-body p-4 modern-table-card">
+                    <div class="table-responsive">
+                        <table class="table modern-table align-middle w-100" id="assignmentlist">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Assignment</th>
+                                    <th>Description</th>
+                                    <th>Assigned</th>
+                                    <th>Deadline</th>
+                                    <th class="text-center">Action</th>
+                                    <th class="text-center">Marks</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="assignmenttabletbody">
+                                <tr th:each="v : ${subs}">
+
+                                    <td class="fw-bold text-dark">
+                                        <span th:text="${v[2]}"></span>
+                                        <input type="hidden" th:id="'subn-' + ${v[0]}" th:value="${v[2]}"/>
+                                    </td>
+
+                                    <td class="fw-medium ">
+                                        <span th:text="${v[4]}"></span>
+                                        <input type="hidden" th:id="'testn-' + ${v[0]}" th:value="${v[4]}"/>
+                                    </td>
+
+                                    <td>
+                                        <input type="hidden"
+                                            th:id="'desc-' + ${v[0]}"
+                                            th:value="${v[9]}"/>
+
+                                        <div class="d-flex flex-column gap-2">
+                                            <button th:id="${v[0]}"
+                                                    class="show-description-btn btn btn-primary btn-sm text-white btn-modern"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#descriptionModal">
+                                                <i class="fas fa-info-circle me-1"></i> Description
+                                            </button>
+
+                                            <th:block th:if="${(v[11] == 'FILE' or v[11] == null) and v[1] != null and #arrays.length(v[1]) > 0}">
+                                                <a th:href="@{/assignments/viewAssignmentDocument(fid=${v[0]})}"
+                                                target="_blank"
+                                                class="btn btn-danger btn-sm btn-modern">
+                                                    <i class="far fa-file-pdf me-1"></i> View PDF
+                                                </a>
+                                            </th:block>
+                                        </div>
+                                    </td>
+
+                                    <td class="text-muted" th:text="${v[5]}"></td>
+                                    <td class="fw-semibold text-dark" th:text="${v[6]}"></td>
+
+                                    <td class="text-center">
+                                        <th:block th:with="today=${#dates.format(new java.util.Date(), 'yyyy-MM-dd')}">
+                                            <th:block th:if="${v[11] == 'FILE' or v[11] == null}">
+
+                                                <th:block th:if="${v[8] == null or v[8] == 0}">
+                                                    <div th:if="${#dates.format(v[6], 'yyyy-MM-dd') >= today}">
+                                                        <button th:id="${v[0]}"
+                                                                class="this_is_upload_button_class btn btn-primary btn-sm btn-modern px-3"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#assignmentActionModal">
+                                                            <i class="fas fa-upload me-1"></i> Upload
+                                                        </button>
+                                                    </div>
+
+                                                    <div th:if="${#dates.format(v[6], 'yyyy-MM-dd') < today}">
+                                                        <span class="status-pill pill-danger">
+                                                            <i class="fas fa-exclamation-circle me-1"></i> Deadline Passed
+                                                        </span>
+                                                    </div>
+                                                </th:block>
+
+                                                <th:block th:if="${v[8] != null and v[8] != 0}">
+                                                    <div class="d-flex flex-column align-items-center gap-2">
+                                                        <a th:href="@{'/assignments/viewassignmentsubmission?studentassignmentid=' + ${v[8]}}"
+                                                        target="_blank"
+                                                        class="btn btn-success btn-sm btn-modern">
+                                                            <i class="far fa-eye me-1"></i> View Submission
+                                                        </a>
+
+                                                        <th:block th:if="${v[7] == null or v[7] == 0}">
+                                                            <button th:id="${v[0]}"
+                                                                    class="edit-assignment-btn btn btn-warning btn-sm btn-modern w-100"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#assignmentActionModal">
+                                                                <i class="fas fa-edit me-1"></i> Edit
+                                                            </button>
+                                                        </th:block>
+                                                    </div>
+                                                </th:block>
+
+                                            </th:block>
+
+                                            <th:block th:if="${v[11] == 'LINK'}">
+                                                <a th:href="${v[3]}"
+                                                target="_blank"
+                                                class="btn btn-primary btn-sm btn-modern">
+                                                    <i class="fas fa-external-link-alt me-1"></i> Open Link
+                                                </a>
+                                            </th:block>
+                                        </th:block>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <th:block th:if="${v[11] == 'FILE' or v[11] == null}">
+
+                                            <div th:if="${v[7] != null and v[7] > 0}" class="status-pill pill-success fs-6">
+                                                <span th:text="${v[7]}"></span> / <span th:text="${v[10]}"></span>
+                                            </div>
+
+                                            <div th:if="${v[8] == null or v[8] == 0}" class="status-pill pill-danger">
+                                                Not Submitted
+                                            </div>
+
+                                            <div th:if="${v[8] != null and v[8] != 0 and (v[7] == null or v[7] == 0)}" class="status-pill pill-primary">
+                                                <i class="fas fa-hourglass-half me-1"></i> Awaiting Eval
+                                            </div>
+
+                                        </th:block>
+
+                                        <th:block th:if="${v[11] == 'LINK'}">
+                                            <span class="status-pill pill-primary">
+                                                Evaluated Externally
+                                            </span>
+                                        </th:block>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- Description Modal -->
+    <div class="modal fade"
+        id="descriptionModal"
+        tabindex="-1"
+        aria-labelledby="descriptionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assignment Description</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="descriptiontext"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload/Edit Modal -->
+    <div class="modal fade"
+        id="assignmentActionModal"
+        tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title"
+                        id="assignmentActionModalLabel"></h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <form method="POST"
+                    id="assignmentActionForm"
+                    enctype="multipart/form-data">
+
+                    <div class="modal-body">
+
+                        <p id="assignmentActionMessage"
+                        class="mb-3"></p>
+
+                        <div class="mb-3">
+                            <label for="assignmentFile"
+                                class="form-label">
+                                Upload File
+                                <span class="text-danger">(Only PDF allowed)</span>
+                            </label>
+
+                            <input type="file"
+                                accept=".pdf"
+                                class="form-control"
+                                name="assignmentfile"
+                                id="assignmentFile"
+                                required>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <input type="hidden"
+                            name="assignmentid"
+                            id="hiddenAssignmentId">
+
+                        <input type="hidden"
+                            th:value="${usercode}"
+                            name="usercode">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-success"
+                                id="submitAssignmentBtn">
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+        </div>
+    </main>
+    </body>
+    </html>

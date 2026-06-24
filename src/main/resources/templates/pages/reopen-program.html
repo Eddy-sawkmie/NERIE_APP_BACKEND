@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <div layout:fragment="static-files">
+        <script th:src="@{/lily/js/notiflix/notiflix.js}"></script>
+        <link th:href="@{/lily/js/notiflix/notiflix.css}" type="text/css" rel="stylesheet" />
+
+        <script th:inline="javascript">
+            const BASE = [[@{/}]];
+
+            function redirect(path) {
+                window.location.href = BASE + path;
+            }
+        </script>
+        <script th:src="@{/lily/js/customajax.js}"></script>
+
+        <script th:inline="javascript">
+            const API = {
+                listCloseCourseProgram: [[@{/program/close-course/list}]],
+                reopenProgramPhase: [[@{/program/reopen-phase}]],
+                reopenCourseReport: [[@{/reports/course/reopen}]]
+            };
+        </script>
+        <script th:src="@{/js/reopenProgram.js}"></script>
+    </div>
+
+    <title layout:fragment="title">Reopen Program</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+            <div class="card-header modern-card-header text-white py-3 px-4 border-0">
+                <h5 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-folder-open me-3 fs-5"></i> Reopen Closed Programs
+                </h5>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                <div class="row mb-4 align-items-end">
+                    <div class="col-md-5 col-lg-4">
+                        <label for="fyclose" class="form-label-modern">Financial Year <span class="text-danger">*</span></label>
+                        <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-calendar-alt"></i></span>
+                            <select name="fyclose" id="fyclose" class="form-select modern-select border-start-0 ps-2" required>
+                                <option value="" disabled selected>-- Select Financial Year --</option>
+                                <option th:each="o : ${FYofclosecourselist}" th:value="${o[4]}" th:text="${o[1]}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tablediv" style="display: none;">
+                    <div class="table-responsive table-wrapper">
+                        <table class="table modern-table align-middle w-100" id="closetable">
+                            <thead>
+                            <tr>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 40%;">Program Name</th>
+                                <th style="width: 15%;">Program ID</th>
+                                <th style="width: 20%;">Description</th>
+                                <th style="width: 5%;" class="text-center">No. Of Phases</th>
+                                <th style="width: 5%;" class="text-center">View Phases</th>
+                                <th style="width: 10%;" class="text-center noExport">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                    </div>
+                <div class="modal-footer border-top-0 pt-0" id="feedbackModalFooter">
+                    </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

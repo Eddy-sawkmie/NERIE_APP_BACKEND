@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="blankattandanceparticipants" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="649e0b4d-697a-4168-903a-ad397657deb1">
+	<property name="ireport.zoom" value="1.1289478601075547"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="participantslist" uuid="6f0e2920-7da2-4a76-a595-a3af0c658fa4">
+		<parameter name="pphaseid" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[select distinct(a.usercode), a.applicationcode, a.phaseid, u.username
+FROM nerie.t_applications a, nerie.mt_userlogin u, nerie.mt_programdetails pd
+where a.phaseid=$P{pphaseid} and a.status='A' and u.usercode=a.usercode and a.phaseid=pd.phaseid]]>
+		</queryString>
+		<field name="usercode" class="java.lang.String"/>
+		<field name="applicationcode" class="java.lang.String"/>
+		<field name="phaseid" class="java.lang.String"/>
+		<field name="username" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="coordinator" uuid="941adaf0-dd7f-4368-869d-7b8c8463b44e">
+		<parameter name="ccphaseid" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT
+    x.usercode,
+    x.username,
+    x.designationname,
+    x.officeshortname
+FROM (
+    SELECT DISTINCT
+        UL.usercode,
+        UL.username,
+        D.designationname,
+        O.officeshortname,
+        CC.isheadcoordinator
+    FROM nerie.mt_program_members CC
+    INNER JOIN nerie.mt_programdetails C ON C.phaseid = CC.phaseid
+    INNER JOIN nerie.mt_userlogin UL ON CC.usercode = UL.usercode
+    INNER JOIN nerie.m_designations D ON D.designationcode = UL.designationcode
+    INNER JOIN nerie.m_offices O ON O.officecode = UL.officecode
+    INNER JOIN nerie.m_phases ph ON C.phaseid = ph.phaseid
+    WHERE C.phaseid = $P{ccphaseid}
+) x
+ORDER BY
+    CASE
+        WHEN x.isheadcoordinator = '1' THEN 0
+        ELSE 1
+    END,
+    x.username;]]>
+		</queryString>
+		<field name="usercode" class="java.lang.String"/>
+		<field name="username" class="java.lang.String"/>
+		<field name="designationname" class="java.lang.String"/>
+		<field name="officeshortname" class="java.lang.String"/>
+		<group name="usercode">
+			<groupExpression><![CDATA[$F{usercode}]]></groupExpression>
+		</group>
+		<group name="username">
+			<groupExpression><![CDATA[$F{username}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="phaseid" class="java.lang.String"/>
+	<parameter name="dynamicpath" class="java.lang.String"/>
+	<parameter name="participantstatus" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fystart" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fyend" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    /* Total unique applicants */
+    COUNT(DISTINCT a.usercode) AS total_applicants,
+
+    /* Unique attended participants */
+    COUNT(DISTINCT CASE WHEN a.status = 'A' THEN a.usercode END)
+        AS attended_participants,
+
+    /* Unique pending participants */
+    COUNT(DISTINCT CASE WHEN a.status IN ('P','T') THEN a.usercode END)
+        AS pending_participants,
+
+    /* Unique rejected participants */
+    COUNT(DISTINCT CASE WHEN a.status = 'R' THEN a.usercode END)
+        AS rejected_participants,
+
+    /* Programs conducted */
+    COUNT(DISTINCT CASE WHEN a.status = 'A' THEN a.phaseid END)
+        AS programs_conducted,
+
+    /* Acceptance rate (%) */
+    ROUND(
+        COUNT(DISTINCT CASE WHEN a.status = 'A' THEN a.usercode END)
+        * 100.0
+        /
+        NULLIF(COUNT(DISTINCT a.usercode), 0),
+    2) AS acceptance_rate
+
+FROM nerie.t_applications a
+
+WHERE a.entrydate >= to_date($P{fystart}, 'YYYY-MM')
+  AND a.entrydate <  (to_date($P{fyend}, 'YYYY-MM') + INTERVAL '1 month');
+]]>
+	</queryString>
+	<field name="total_applicants" class="java.lang.Long"/>
+	<field name="attended_participants" class="java.lang.Long"/>
+	<field name="pending_participants" class="java.lang.Long"/>
+	<field name="rejected_participants" class="java.lang.Long"/>
+	<field name="programs_conducted" class="java.lang.Long"/>
+	<field name="acceptance_rate" class="java.math.BigDecimal"/>
+	<title>
+		<band height="182" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="78dcd521-7e05-44b3-a84e-f65268f72f4e" x="0" y="0" width="555" height="56"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[North East Regional Institute of Education (NERIE)
+National Council of Educational Research and Training (NCERT)
+Umiam,Shillong, Meghalaya - 793103]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5a9685a3-6b6f-4163-9cf8-0d4e68601424" positionType="Float" isPrintRepeatedValues="false" x="0" y="126" width="555" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["TOTAL APPLICANTS: "+$F{total_applicants}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5e0c41c5-708a-4aca-b94f-5251778af1f1" x="271" y="87" width="284" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Date: ___/___/____]]></text>
+			</staticText>
+			<image>
+				<reportElement uuid="62f89cea-5a09-47e5-a82e-84cee8d3a9bd" x="30" y="0" width="100" height="56"/>
+				<imageExpression><![CDATA[$P{dynamicpath} + "/ncertlogo.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="5f3dcc48-a4e0-4ae1-86df-b593ec44c01b" x="55" y="56" width="427" height="19"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PARTICIPANT STATISTICS ("+$P{fystart}+"-01 TO "+ $P{fyend}+"-01 )"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="8f5888b9-70d3-48a7-b38e-bc7bb78d370a" positionType="Float" isPrintRepeatedValues="false" x="0" y="162" width="555" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["NO OF PARTICIPANTS WHO PARTICIPATED IN A PROGRAM: "+$F{attended_participants}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="70" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="29760366-ea60-41d9-9ae3-aee359c70231" positionType="Float" isPrintRepeatedValues="false" x="0" y="15" width="555" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["NO OF PENDING PARTICIPANTS : "+$F{pending_participants}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="2812ed61-3534-4089-b900-7474d785a0f7" positionType="Float" isPrintRepeatedValues="false" x="0" y="50" width="555" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["NO OF REJECTED PARTICIPANTS:"+$F{rejected_participants}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="79">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="585006b1-47f8-419b-8678-44bf0777ae56" positionType="Float" isPrintRepeatedValues="false" x="0" y="19" width="555" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["NO OF PROGRAMS CONDUCTED WITH PARTICIPANTS: "+ $F{programs_conducted}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="16d6f145-2e0d-4d82-9eef-bf47bb5cec25" positionType="Float" isPrintRepeatedValues="false" x="0" y="59" width="555" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["ACCEPTANCE RATE OF APPLICANTS: "+ $F{acceptance_rate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layouts/landing-layout}">
+<head>
+    <title>Faculty List - Under Construction</title>
+    <th:block layout:fragment="styles">
+        <link th:href="@{/css/facultyResearch.css}" rel="stylesheet">
+        
+        <style>
+            .under-construction-wrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                text-align: center;
+                padding: 3rem 1rem;
+                font-family: inherit;
+            }
+            .construction-icon {
+                font-size: 5rem;
+                margin-bottom: 1rem;
+            }
+            .construction-title {
+                font-size: 2.5rem;
+                color: #2c3e50;
+                margin-bottom: 1rem;
+                font-weight: 700;
+            }
+            .construction-text {
+                font-size: 1.1rem;
+                color: #555;
+                max-width: 500px;
+                margin-bottom: 2rem;
+                line-height: 1.6;
+            }
+            .return-home-btn {
+                display: inline-block;
+                padding: 0.75rem 1.5rem;
+                background-color: #0056b3; /* Adjust this to match your site's primary color */
+                color: #ffffff;
+                text-decoration: none;
+                border-radius: 4px;
+                font-weight: 600;
+                transition: background-color 0.3s ease;
+            }
+            .return-home-btn:hover {
+                background-color: #004494;
+                color: #ffffff;
+                text-decoration: none;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div layout:replace="~{fragments/lilypreloader :: preloader}"></div>
+
+    <div class="under-construction-wrapper">
+        <div class="construction-icon">🚧</div>
+        <h1 class="construction-title">Page Under Construction</h1>
+        <p class="construction-text">
+            We are currently gathering and organizing the faculty list. 
+            We're working hard to get this page ready, so please check back soon!
+        </p>
+        <a th:href="@{/}" class="return-home-btn">Return to Homepage</a>
+    </div>
+
+    <!-- <div class="fl-page">
+        <div class="container fl-container">
+
+           
+            <div class="fl-header">
+                <div class="fl-header__left">
+                    <span class="fl-header__eyebrow">NCERT · Academic Directory</span>
+                    <h2 class="fl-header__title">Faculty</h2>
+                    <p class="fl-header__sub">Browse faculty members, their designations and department affiliations.</p>
+                </div>
+                <div class="fl-header__icon-wrap">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+
+            <div class="fl-card">
+                <div class="table-responsive">
+                    <table class="fl-table" id="facultylist">
+                        <thead>
+                        <tr>
+                            <th class="fl-th fl-th--name">Name</th>
+                            <th class="fl-th fl-th--desig">Designation</th>
+                            <th class="fl-th fl-th--dept">Department</th>
+                            <th class="fl-th fl-th--action text-center">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr th:each="f, iStat : ${facultylist}" class="fl-row">
+                            <td class="fl-td fl-td--name">
+                                <div class="fl-faculty-name">
+                                    <div class="fl-avatar" th:data-name="${f[0]}">
+                                        <span th:text="${#strings.substring(f[0], 0, 1)}">A</span>
+                                    </div>
+                                    <span th:text="${f[0]}">Faculty Name</span>
+                                </div>
+                            </td>
+                            <td class="fl-td fl-td--desig">
+                                <span class="fl-badge" th:text="${f[1]}">Designation</span>
+                            </td>
+                            <td class="fl-td fl-td--dept" th:text="${f[2]}">Department</td>
+                            <td class="fl-td fl-td--action text-center">
+                                <a th:if="${#arrays.length(f) > 3}"
+                                   th:href="@{/faculties/research-details(aid=${f[3]}, fname=${f[0]})}"
+                                   class="fl-profile-btn btn-view-profile">
+                                    <i class="fas fa-user-circle"></i> View Profile
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(facultylist)}" class="fl-empty-row">
+                            <td colspan="4" class="fl-empty">
+                                <i class="fas fa-users-slash fl-empty__icon"></i>
+                                <p class="fl-empty__text">No Faculty Records Found</p>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div> -->
+    
+</div>
+
+<th:block layout:fragment="scripts"></th:block>
+</body>
+</html>

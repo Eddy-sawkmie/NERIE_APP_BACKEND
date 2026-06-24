@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+>
+<div layout:fragment="form">
+    <input id="urole" th:value="${userrole}" hidden="true"/>
+    <form action="#" method="" name="userloginfn" id="userloginfid" autocomplete="off">
+
+        <div class="row g-4 mb-4">
+
+            <div class="col-md-12" th:if="${userrole == 'S'}">
+                <label for="officecode" class="form-label-modern">Office <span class="text-danger">*</span></label>
+                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-building"></i></span>
+                    <select id="officecode" name="officecode" class="form-select modern-select border-start-0 ps-2" required="true">
+                        <option value="">-- Select Office --</option>
+                        <option th:each="o : ${officelist}" th:value="${o.officecode}" th:text="${o.officename}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="userid" class="form-label-modern">User Id <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-id-badge"></i></span>
+                    <input id="usercode" name="usercode" hidden="true" />
+                    <input id="userid" name="userid" class="form-control modern-input border-start-0 ps-2 space" required="true" placeholder="Enter User ID"/>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="username" class="form-label-modern">Full Name <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-user"></i></span>
+                    <input id="username" name="username" class="form-control modern-input border-start-0 ps-2 alphabets" required="true" maxlength="100" placeholder="e.g., John Doe"/>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-0 pt-0" id="pwddiv">
+                <div class="col-md-6">
+                    <label for="userpassword" class="form-label-modern">Password <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted rounded-end-0"><i class="fas fa-lock"></i></span>
+                        <input id="userpassword" name="userpassword" type="password" class="form-control modern-input border-start-0 border-end-0 ps-2 rounded-0" required="true" maxlength="512" placeholder="Create password"/>
+                        <span class="input-group-text bg-light border-start-0 text-muted toggle-password rounded-start-0" data-target="userpassword" style="cursor: pointer;">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                        <div class="colorbar" id="colorbar" style="height: 4px; border-radius: 4px; background-color: #e9ecef;"></div>
+                        <small class="Msg text-muted fw-bold d-block mt-1" id="results" style="font-size: 0.75rem;"></small>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="confirmpassword" class="form-label-modern">Confirm Password <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted rounded-end-0"><i class="fas fa-check-double"></i></span>
+                        <input id="confirmpassword" name="confirmpassword" type="password" class="form-control modern-input border-start-0 border-end-0 ps-2 rounded-0" required="true" maxlength="512" placeholder="Verify password"/>
+                        <span class="input-group-text bg-light border-start-0 text-muted toggle-password rounded-start-0" data-target="confirmpassword" style="cursor: pointer;">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <label for="userdescription" class="form-label-modern">Description <span class="text-danger">*</span></label>
+                <textarea id="userdescription" name="userdescription" class="form-control modern-input" required="true" maxlength="300" rows="2" placeholder="Brief description of the user's role or department..."></textarea>
+                <div class="text-end mt-1"><small id="charactercount" class="text-muted fw-medium">Characters left: 300</small></div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="designationcode" class="form-label-modern">Designation <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-briefcase"></i></span>
+                    <select id="designationcode" name="designationcode" class="form-select modern-select border-start-0 ps-2 selectpicker" data-live-search="true" title="-- Select Designation --" required="true">
+                        <option value="-1">-- Select --</option>
+                        <option th:each="d : ${designationlist}" th:value="${d.designationcode}" th:text="${d.designationname}"></option>
+                        <option value="others" id="other">Others</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6" id="dlist" style="display: none;">
+                <label for="dinput" class="form-label-modern">Enter Custom Designation <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-pen"></i></span>
+                    <input id="dinput" name="dinput" class="form-control modern-input border-start-0 ps-2 alphabets" placeholder="Type designation here..."/>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="usermobile" class="form-label-modern">Mobile No. <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-mobile-alt"></i></span>
+                    <input id="usermobile" name="usermobile" class="form-control modern-input border-start-0 ps-2 numbers" required="true" maxlength="10" placeholder="10-digit number"/>
+                </div>
+                <small id="msg1" class="text-danger mt-1 d-block fw-semibold"></small>
+            </div>
+
+            <div class="col-md-6">
+                <label for="emailid" class="form-label-modern">E-mail ID <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
+                    <input id="emailid" name="emailid" type="email" class="form-control modern-input border-start-0 ps-2" required="true" maxlength="50" placeholder="name@example.com"/>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="roleselectdiv" class="mb-4">
+            <label class="form-label-modern mb-2">Assign Access Role(s) <span class="text-danger">*</span></label>
+            <div class="bg-light p-4 rounded-3 border border-secondary border-opacity-25">
+
+                <div th:if="${userrole == 'S'}">
+                    <div class="form-check custom-checkbox">
+                        <input class="form-check-input mt-1" type="checkbox" id="principalCheckbox" name="role" value="PRINCIPAL_DIRECTOR" checked onclick="return false;">
+                        <label class="form-check-label fw-bold text-dark ms-1" for="principalCheckbox">Principal / Director</label>
+                    </div>
+                </div>
+
+                <div th:if="${userrole == 'Z'}">
+                    <div class="form-check custom-checkbox">
+                        <input class="form-check-input mt-1" type="checkbox" id="localAdminCheckbox" name="role" value="LOCAL_ADMIN" checked onclick="return false;">
+                        <label class="form-check-label fw-bold text-dark ms-1" for="localAdminCheckbox">Local Admin</label>
+                    </div>
+
+                    <div class="form-check form-switch mt-4 pt-3 border-top">
+                        <input class="form-check-input" type="checkbox" id="toggleLeaveRole" role="switch">
+                        <label class="form-check-label fw-bold text-primary ms-2" for="toggleLeaveRole">
+                            <i class="fas fa-user-shield me-1"></i> Assign Student Leave Approval Role (Warden / Dean / Chief Warden)
+                        </label>
+                    </div>
+                </div>
+
+                <div th:if="${userrole == 'A'}">
+                    <div class="d-flex flex-wrap gap-4 mb-3">
+                        <div class="form-check custom-checkbox">
+                            <input class="form-check-input mt-1" type="checkbox" id="coordinatorCheckbox" name="role" value="Coordinator">
+                            <label class="form-check-label fw-bold text-dark ms-1" for="coordinatorCheckbox">Coordinator</label>
+                        </div>
+                        <div class="form-check custom-checkbox">
+                            <input class="form-check-input mt-1" type="checkbox" id="facultyCheckbox" name="role" value="Faculty">
+                            <label class="form-check-label fw-bold text-dark ms-1" for="facultyCheckbox">Faculty</label>
+                        </div>
+                    </div>
+
+                    <div class="form-check form-switch mt-3 pt-3 border-top">
+                        <input class="form-check-input" type="checkbox" id="toggleLeaveRole" role="switch">
+                        <label class="form-check-label fw-bold text-primary ms-2" for="toggleLeaveRole">
+                            <i class="fas fa-user-shield me-1"></i> Assign Student Leave Approval Role (Warden / Dean / Chief Warden)
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="collapse mb-4" id="radio-container">
+            <div class="bg-white p-4 rounded-3 border border-success border-opacity-50 shadow-sm">
+                <h6 class="fw-bold text-dark mb-3"><i class="fas fa-sitemap text-success me-2"></i>Select Specific Authority Type:</h6>
+                <div class="d-flex flex-wrap gap-4">
+                    <div class="form-check custom-radio">
+                        <input class="form-check-input role-radio" type="radio" name="leaveRole" id="roleMaleWarden" value="1">
+                        <label class="form-check-label fw-medium text-dark" for="roleMaleWarden">Male Warden</label>
+                    </div>
+                    <div class="form-check custom-radio">
+                        <input class="form-check-input role-radio" type="radio" name="leaveRole" id="roleFemaleWarden" value="2">
+                        <label class="form-check-label fw-medium text-dark" for="roleFemaleWarden">Female Warden</label>
+                    </div>
+                    <div class="form-check custom-radio">
+                        <input class="form-check-input role-radio" type="radio" name="leaveRole" id="roleChiefWarden" value="4">
+                        <label class="form-check-label fw-medium text-dark" for="roleChiefWarden">Chief Warden</label>
+                    </div>
+                    <div class="form-check custom-radio">
+                        <input class="form-check-input role-radio" type="radio" name="leaveRole" id="roleDean" value="3">
+                        <label class="form-check-label fw-medium text-dark" for="roleDean">Dean</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-3 mt-4 pt-4 border-top">
+            <button type="button" class="btn btn-light border btn-modern px-5" data-action="reset">
+                <i class="fas fa-undo me-2"></i> Reset
+            </button>
+            <button id="submit" type="submit" name="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                <i class="fas fa-save me-2"></i> Save User
+            </button>
+        </div>
+    </form>
+</div>
+
+<div layout:fragment="table" class="tab-pane fade show" id="displayuser" role="tabpanel" aria-labelledby="displayuser-tab">
+    <div id="emptyTableMessage" style="display: none;">
+        <div class="text-center p-5 text-muted">
+            <i class="fas fa-users-slash fs-2 mb-3 d-block opacity-50"></i> No users found.
+        </div>
+    </div>
+
+    <div class="table-responsive table-wrapper mt-2">
+        <table class="table modern-table align-middle mb-0 w-100" id="usertable">
+            <thead>
+            <tr>
+                <th style="width: 5%;" class="text-center">#</th>
+                <th style="width: 15%;">User Name</th>
+                <th style="width: 10%;">User Id</th>
+                <th style="width: 15%;">Designation</th>
+                <th style="width: 10%;">Role</th>
+                <th style="width: 25%;">Contact</th>
+                <th style="width: 20%;" class="text-center noExport">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${userlist != null and not #lists.isEmpty(userlist)}" th:each="v, s : ${userlist}">
+                <td class="text-center fw-semibold text-muted" th:text="${s.index + 1}"></td>
+
+                <td>
+                    <span class="fw-bold text-dark d-block" th:text="${v[1]}"></span>
+                </td>
+
+                <td><span class="badge bg-light text-dark border" th:text="${v[3]}"></span></td>
+
+                <td class="small fw-medium text-secondary" th:text="${v[13]}"></td>
+
+                <td th:switch="${v[6]}">
+                    <span th:case="'A'" class="badge bg-primary bg-opacity-10 text-primary p-2">Local Admin</span>
+
+                    <span th:case="'U'" class="badge bg-primary bg-opacity-10 text-primary p-2"
+                          th:text="${(#strings.toString(v[8]) == '1' and #arrays.length(v) > 16 and #strings.toString(v[16]) == '1') ? 'Coordinator & Faculty' : (#strings.toString(v[8]) == '1' ? 'Faculty' : 'Coordinator')}">
+                    </span>
+
+                    <span th:case="'Z'" class="badge bg-primary bg-opacity-10 text-primary p-2">Principal</span>
+                    <span th:case="*" class="badge bg-dark bg-opacity-10 text-dark p-2">Unknown</span>
+                </td>
+
+                <td class="small">
+                    <span class="d-block mb-1"><i class="fas fa-phone-alt text-muted me-1"></i> <th:block th:text="${v[7]}"></th:block></span>
+                    <span class="d-block"><i class="fas fa-envelope text-muted me-1"></i> <th:block th:text="${v[9]}"></th:block></span>
+                </td>
+
+                <td class="text-center">
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <th:block th:if="${userrole == 'S' or userrole == 'Z' or userrole == 'A'}">
+                            <button class="btn btn-sm btn-primary btn-modern edit-link"
+                                    th:attr="data-value0=${v[0]}, data-value1=${v[1]}, data-value2=${v[2]}, data-value3=${v[3]}, data-value6=${v[6]}, data-value7=${v[7]}, data-value9=${v[9]}, data-value10=${v[10]}, data-value11=${v[11]}, data-value12=${v[12]}, data-leaverole=${v[14]}, data-roletype=${v[8]}, data-iscoordinator=${#arrays.length(v) > 16 ? v[16] : '0'}">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </button>
+                        </th:block>
+
+                        <button class="btn btn-sm btn-warning btn-modern reset-link"
+                                th:attr="data-value0=${v[0]}, data-value1=${v[1]}, data-value3=${v[3]}">
+                            <i class="fas fa-key me-1"></i> Reset Password
+                        </button>
+
+                        <button class="btn btn-sm btn-danger btn-modern disablebtn change-status-link"
+                                th:if="${v[5] == 1}"
+                                th:attr="data-value0=${v[0]}, data-value1=${v[1]}, data-value5=${v[5]}">
+                            <i class="fas fa-user-slash me-1"></i> Disable
+                        </button>
+
+                        <button class="btn btn-sm btn-success btn-modern enablebtn change-status-link"
+                                th:if="${v[5] == 0}"
+                                th:attr="data-value0=${v[0]}, data-value1=${v[1]}, data-value5=${v[5]}">
+                            <i class="fas fa-user-check me-1"></i> Enable
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/participant-layout}"
+>
+<head>
+  <title layout:fragment="title">My Programs</title>
+  <th:block layout:fragment="static-files">
+    <link th:href="@{/css/participantPrograms.css}" rel="stylesheet">
+  </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+  <div class="container py-5">
+
+    <div class="card border-0 modern-card mb-4">
+
+      <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+        <h4 class="mb-0 fw-bold d-flex align-items-center">
+          <i class="fas fa-book-reader me-3 fs-5"></i> My Enrolled Programs
+        </h4>
+      </div>
+
+      <div class="card-body p-4 p-md-5">
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+          <i class="fas fa-check-circle me-2"></i> <span th:text="${successMessage}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+          <i class="fas fa-exclamation-triangle me-2"></i> <span th:text="${errorMessage}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div id="emptyTableMessage" style="display: none;">
+          <div class="text-center p-5 text-muted">
+            <i class="fas fa-folder-open fs-2 mb-3 d-block opacity-50"></i>
+            No programs found.
+          </div>
+        </div>
+
+        <div class="table-responsive table-wrapper">
+          <table class="table modern-table align-middle mb-0 w-100" id="myProgramsTable">
+            <thead>
+            <tr>
+              <th style="width: 5%;" class="text-center">#</th>
+              <th style="width: 12%;">App Code</th>
+              <th style="width: 23%;">Program Name</th>
+              <th style="width: 10%;">Office</th>
+              <th style="width: 10%;">Venues</th>
+              <th style="width: 10%;">Coordinators</th>
+              <th style="width: 15%;" class="text-center noExport">Tasks & Actions</th>
+              <th style="width: 15%;" class="text-center noExport">View Logs</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${mprogramlist != null and not #lists.isEmpty(mprogramlist)}" th:each="v, iterStat : ${mprogramlist}">
+              <td class="text-center fw-semibold text-muted" th:text="${iterStat.count}"></td>
+              <td><span class="badge bg-light text-dark border px-2 py-1" th:text="${v[8]}"></span></td>
+              <td>
+                <span class="fw-bold text-dark d-block mb-1" th:text="${v[1]}"></span>
+                <span class="small text-muted" th:text="${v[2]}"></span>
+              </td>
+              <td class="small fw-medium" th:text="${v[7]}"></td>
+              <td class="small" th:text="${v[9]}"></td>
+              <td class="small text-secondary" th:text="${v[10]}"></td>
+
+              <td class="action-container align-middle">
+                <div class="d-flex flex-column gap-2 align-items-center justify-content-center">
+
+                  <button class="btn task-action-btn downloadbtn download-material-btn"
+                          th:data-phaseid="${v[11]}"
+                          data-bs-toggle="modal" data-bs-target="#modalmaterial-modal">
+                    <i class="fas fa-download me-1"></i> Material
+                  </button>
+
+                  <button class="btn task-action-btn feedbackbtn daily-feedback-btn"
+                          th:data-programcode="${v[0]}" th:data-phaseid="${v[11]}" th:data-programid="${v[2]}" th:data-programname="${v[1]}"
+                          data-bs-toggle="modal" data-bs-target="#daywisefeedbackmodal">
+                    <i class="fas fa-star me-1"></i> Daily Feedback
+                  </button>
+
+                  <th:block th:if="${v[5] != null and #dates.createNow().after(v[5])}">
+                    <a th:if="${v[13] == 0}"
+                       th:href="@{/participant/feedback/write-overall-feedback(aid=${v[11]})}"
+                       class="btn task-action-btn clickme-view-writeoverallfeedback">
+                      <i class="fas fa-edit me-1"></i> Overall Feedback
+                    </a>
+                    <a th:if="${v[13] == 1}"
+                       th:href="@{/participant/feedback/view-overall-feedback(aid=${v[11]})}"
+                       class="btn task-action-btn clickme-view">
+                      <i class="fas fa-eye me-1"></i> View Feedback
+                    </a>
+                  </th:block>
+
+                  <div th:if="((v[4] != null and now <= v[4]) or (v[5] != null and now >= v[5])) and ${v[17]} == 1">
+                    <a class="btn task-action-btn clickme-view-googletest"
+                       th:href="${v[18]}" target="_blank">
+                      <i class="fab fa-google me-1"></i> Google Test
+                    </a>
+                  </div>
+
+                  <div th:if="${v[4] != null and now <= v[4]} and ${v[14]} == 1 and ${v[15]} == 0">
+                    <a class="btn task-action-btn clickme-view-preposttest"
+                       th:href="@{'/pre-post-test/view'(test='pre', aid=${v[11]})}">
+                      <i class="fas fa-file-signature me-1"></i> Pre Test
+                    </a>
+                  </div>
+
+                  <div th:if="${v[5] != null and #dates.createNow() >= v[5] and v[14] == 1 and v[15] == 1 and v[16] == 0}">
+                    <a class="btn task-action-btn clickme-view-preposttest"
+                       th:href="@{'/pre-post-test/view'(test='post', aid=${v[11]})}">
+                      <i class="fas fa-file-signature me-1"></i> Post Test
+                    </a>
+                  </div>
+
+                  <div th:if="${v[5] != null and #dates.createNow() >= v[5] and v[15] == 1 and v[16] == 1}">
+                    <a class="btn task-action-btn clickme-view"
+                       th:href="@{'/pre-post-test/view-scores'(aid=${v[11]})}">
+                      <i class="fas fa-poll me-1"></i> View Scores
+                    </a>
+                  </div>
+
+                </div>
+              </td>
+
+              <td class="text-center align-middle">
+                <div class="d-flex flex-column gap-2 align-items-center">
+                  <button class="view-log-btn view-attendance-btn shadow-sm"
+                          th:data-phaseid="${v[11]}" th:data-programname="${v[1]}" th:data-programid="${v[2]}"
+                          data-bs-toggle="modal" data-bs-target="#modalattendance-modal">
+                    <i class="fas fa-user-check"></i>
+                    <span>Attendance</span>
+                  </button>
+
+                  <button class="view-log-btn view-timetable-btn shadow-sm"
+                          th:data-phaseid="${v[11]}" th:data-applicationcode="${v[8]}" th:data-programname="${v[1]}"
+                          data-bs-toggle="modal" data-bs-target="#modaltimetable-modal">
+                    <i class="far fa-calendar-alt"></i>
+                    <span>Timetable</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalmaterial-modal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-light border-0 px-4 py-3">
+            <h5 class="modal-title fw-bold text-dark"><i class="fas fa-file-download text-primary me-2"></i> Program Material</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="table-responsive table-wrapper" id="materialTableDiv">
+              <div class="text-center p-4 text-muted"><i class="fas fa-spinner fa-spin me-2"></i> Loading...</div>
+            </div>
+          </div>
+          <div class="modal-footer border-top-0 pt-0">
+            <button type="button" class="btn btn-secondary btn-modern px-4" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="daywisefeedbackmodal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-light border-0 px-4 py-3">
+            <h5 class="modal-title fw-bold text-dark" id="daywiseFeedbackModalLabel"><i class="fas fa-comments text-warning me-2"></i> Feedback For Today's Sessions</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="table-responsive table-wrapper">
+              <table class='table modern-table mb-0 w-100'>
+                <thead><tr><th>Subject / Topic</th><th>Feedback</th><th class="text-center">Action</th></tr></thead>
+                <tbody id="daywiseSubjectsTbody">
+                <tr><td colspan="3" class="text-center p-4 text-muted"><i class="fas fa-spinner fa-spin me-2"></i> Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer border-top-0 pt-0">
+            <button type="button" class="btn btn-secondary btn-modern px-4" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalattendance-modal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-light border-0 px-4 py-3">
+            <h5 class="modal-title fw-bold text-dark"><i class="fas fa-user-check text-success me-2"></i> Attendance Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="alert alert-primary bg-primary bg-opacity-10 border-0 mb-4">
+              <h6 id="attendanceProgramName" class="mb-0 fw-bold text-primary"><i class="fas fa-info-circle me-2"></i> Program: </h6>
+            </div>
+            <div id="attendanceTableDiv" class="table-responsive table-wrapper">
+              <div class="text-center p-4 text-muted"><i class="fas fa-spinner fa-spin me-2"></i> Loading...</div>
+            </div>
+          </div>
+          <div class="modal-footer border-top-0 pt-0">
+            <button type="button" class="btn btn-secondary btn-modern px-4" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modaltimetable-modal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-light border-0 px-4 py-3">
+            <h5 class="modal-title fw-bold text-dark"><i class="far fa-calendar-alt text-info me-2"></i> Program Timetable</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="alert alert-primary bg-primary bg-opacity-10 border-0 mb-4">
+              <h6 id="timetableProgramName" class="mb-0 fw-bold text-primary"><i class="fas fa-info-circle me-2"></i> Program: </h6>
+            </div>
+            <div id="timetableTableDiv" class="table-responsive table-wrapper">
+              <div class="text-center p-4 text-muted"><i class="fas fa-spinner fa-spin me-2"></i> Loading...</div>
+            </div>
+          </div>
+          <div class="modal-footer border-top-0 pt-0">
+            <button type="button" class="btn btn-secondary btn-modern px-4" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-light border-0 px-4 py-3">
+            <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+          </div>
+          <div class="modal-footer border-top-0 pt-0">
+            <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<th:block layout:fragment="scripts">
+  <script th:inline="javascript">
+    const API = {
+        attendance: [[@{/participant/attendance/program-attendance}]],
+        timetable: [[@{/timetable/program-timetable}]],
+        programMaterial: [[@{/program-materials/list}]],
+        programMaterialDownload: [[@{/program-materials/download-material}]],
+        participantDailyFeedback: [[@{/participant/feedback/daily-feedback}]],
+        participantSaveDailyFeedback: [[@{/participant/feedback/save-daily-feedback}]],
+        participantOverallFeedback: [[@{/participant/feedback/overall-feedback}]]
+    };
+  </script>
+  <script th:src="@{/js/participantPrograms.js}"></script>
+</th:block>
+</body>
+</html>

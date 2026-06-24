@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+>
+<head>
+    <!-- Meta -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="active-menu" th:content="${activeMenuItem}" />
+
+    <!-- shared styles -->
+    <link th:href="@{/css/common.css}" rel="stylesheet">
+    <link th:href="@{/css/header.css}" rel="stylesheet">
+    <link th:href="@{/css/footer.css}" rel="stylesheet">
+    <link th:href="@{/css/nav-bar.css}" rel="stylesheet">
+    <link th:href="@{/css/custom-main-page.css}" rel="stylesheet">
+    <style>
+        #layout-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        #layout-toggle-btn {
+            background-color:#0067cd;
+            /* border: 1px solid rgba(255, 255, 255, 0.4); */
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border-color: #0067cd;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        #layout-toggle-btn:hover {
+            background: #ffffff;
+            color: #003366; /* Match your NCERT blue */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
+
+    <!--
+      Apply saved nav mode BEFORE first paint to avoid layout flash.
+      Reads localStorage and adds the correct class to <body> immediately.
+    -->
+    <script>
+        (function() {
+          var mode = localStorage.getItem('navLayoutMode') || 'sidebar';
+          document.documentElement.classList.add('nav-mode-' + mode); // on <html> first
+          document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('nav-mode-' + mode);
+            document.documentElement.classList.remove('nav-mode-sidebar', 'nav-mode-topbar');
+          });
+        })();
+    </script>
+
+    <!-- Common scripts -->
+    <th:block th:replace="~{fragments/common-assets :: common-scripts}"></th:block>
+
+    <!-- page-specific CSS files -->
+    <div layout:fragment="static-files"></div>
+
+    <!-- page title -->
+    <title layout:fragment="title">Home</title>
+
+    <!--Loader JS-->
+    <script th:src="@{/js/loader.js}" defer></script>
+</head>
+
+<!-- body -->
+<body class="d-flex flex-column min-vh-100 bgcolor">
+<!-- sidebar hamburger button (only visible in sidebar mode on mobile) -->
+<th:block layout:fragment="hamburger-button"></th:block>
+<!-- header -->
+<header class="new-header">
+    <div class="header-logo-section">
+        <div class="d-flex align-items-center text-decoration-none">
+            <img th:src="@{/tempscripts/images/ncertlogo.png}"
+                 alt="NCERT Logo"
+                 class="header-logo-img"
+            >
+            <div class="logo-text">
+                <p class="main-title">NATIONAL COUNCIL OF EDUCATIONAL RESEARCH & TRAINING</p>
+                <p class="sub-title">राष्ट्रीय शैक्षिक अनुसंधान और प्रशिक्षण परिषद</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-center-text">
+        <div class="text-block">
+            <div class="gov-title-hi">भारत सरकार</div>
+            <div class="gov-title-en">Government of India</div>
+        </div>
+        <div class="separator"></div>
+        <div class="text-block">
+            <div class="gov-title-hi">शिक्षा मंत्रालय</div>
+            <div class="gov-title-en">Ministry of Education</div>
+        </div>
+    </div>
+
+    <!-- Symmetrical empty div for alignment -->
+    <div class="header-right-section"></div>
+</header>
+
+<!-- Layout Toggle Bar -->
+<div id="layout-toggle-container">
+    <button id="layout-toggle-btn" onclick="toggleNavLayout()" title="Switch between sidebar and top navigation">
+        <!-- Label is set dynamically by nav-bar.js -->
+        Switch Layout
+    </button>
+</div>
+
+<div layout:replace="~{fragments/spinner :: spinloader}" id="loader"></div>
+
+<!--
+  This wrapper switches between:
+    - flex-row  (sidebar mode): sidebar left, content right
+    - flex-col  (topbar mode):  navbar on top, content below
+  The CSS handles the direction switch via body class.
+-->
+<div class="d-flex flex-row flex-nowrap min-vh-100">
+
+    <!-- Navigation — Sidebar in sidebar mode, Topbar in topbar mode -->
+    <!-- This fragment is used in different user layouts -> /layouts -->
+    <nav layout:fragment="navigation"></nav>
+
+    <!-- Main Content -->
+    <!-- This fragment is used in different pages for all users -> /pages -->
+    <main layout:fragment="content" id="content" class="content container-fluid p-0"></main>
+</div>
+
+<!-- Footer -->
+<!-- <div class="footer-bs footer-style-1">
+  <footer class="container">
+    <div class="footer-content">
+      <div class="b-footer-credit">
+        <p class="m-2">
+          Copyright ©
+          <script>
+            document.write(new Date().getFullYear())
+          </script>
+          , designed, developed &amp; hosted by
+          <a th:href="@{https://meg.nic.in/}" target="_blank">
+            <strong>National Informatics Center, Meghalaya State Center, Shillong</strong>
+          </a>
+        </p>
+      </div>
+    </div>
+  </footer>
+</div> -->
+<!-- UX4G Accessibility Widget -->
+<script th:src="@{/js/accessibility-widget.js}" defer></script>
+<th:block layout:fragment="scripts"></th:block>
+<th:block layout:fragment="dynamic-menu"></th:block>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/landing-layout}"
+>
+<head>
+    <title>RIE Bhubaneshwar</title>
+    <th:block layout:fragment="styles">
+        <link rel="stylesheet" th:href="@{/css/blogs.css}">
+    </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+    <div layout:replace="~{fragments/lilypreloader :: preloader}"></div>
+    
+    <section class="bl-hero">
+        <img th:src="@{/lily/images/aboutus/ncert_building.jpg}"
+             alt="NCERT Building" class="bl-hero__bg">
+        <div class="bl-hero__overlay"></div>
+        <div class="container bl-hero__content">
+            <nav class="bl-breadcrumb" aria-label="breadcrumb">
+                <a th:href="@{/about}" class="bl-breadcrumb__home">NCERT Constituent Units</a>
+                <span class="bl-breadcrumb__sep">/</span>
+                <span class="bl-breadcrumb__current">RIE Bhubaneshwar</span>
+            </nav>
+            <h1 class="bl-hero__title">RIE Bhubaneshwar</h1>
+            <p class="bl-hero__sub">Regional Institute of Education, Bhubaneshwar (NCERT), Bhubaneswar, Odisha 751022</p>
+        </div>
+    </section>
+
+    <div class="bl-page">
+        <div class="container">
+            <div class="bl-layout">
+                <article class="bl-article">
+                    <div class="bl-article__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/RIE Bhubaneswar.jpg}"
+                             alt="RIE Bhubaneswar" class="bl-article__img">
+                    </div>
+                    <div class="bl-article__body">
+                        <h2 class="bl-article__title">About RIE Bhubaneshwar</h2>
+                        <div class="bl-title-rule"></div>
+                        <p class="bl-article__text">
+                            The Regional Institute of Education, Bhubaneswar is a constituent unit of National Council of Educational Research and Training (NCERT), New Delhi. The RIE, Bhubaneswar is equipped with all infrastructure facilities including Computer Application Centre and Video-conferencing Hall. The Institute offers innovative Pre-service Professional Training Programmes to prepare School Teachers and Teacher Educators of Elementary Training Institutes. The Institute is actively engaged in In-service Teacher Education Programmes catering to the needs of Eastern states and the Union Territory of Andaman and Nicobar Islands. It also provides expertise for programmes organized by the states under its jurisdiction and other educational agencies like SCERTs, DIETs, SIEMAT, DPEP, SSA. The Institute is also engaged in Research and Developmental activities in different areas of school education. All the programmes of the Institute are geared to keep pace with the changing educational needs of the region at school level.
+                        </p>
+                        <p class="bl-article__text">
+                            This Institute stands on Sachivalaya marg, Bhubaneswar about 5 km away from the city Railway Station and 7 km away from Biju Pattnaik International Airport. Known as “Temple City of India” for its rich heritage of temples like the Lingaraj, Mukteswar, Rajarani, Kedar Gouri and Baital, etc. Bhubaneswar is famous for their art, sculpture, architecture and sanctity as well. It also prides over the renowned and ancient monuments like Khandagiri, Udaygiri and Dhauli, to name a few. Declared as the 1st Smart City by the Government of India in 2016, Bhubaneswar has a glorious past where the historic Kalinga war was fought in 261 BC along the banks of the river Daya, which led to a miraculous transformation of Emperor Ashoka from Chandashoka to Dharmashoka in the path of peace and non-violence.
+                        </p>
+                    </div>
+                </article>
+
+                <aside class="bl-sidebar">
+                    <div class="bl-info-card">
+                        <h3 class="bl-info-card__heading">Institute Details</h3>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-user-tie"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Principal</span>
+                                <span class="bl-info-row__value">Prof. Prakash Chandra Agarwal</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-university"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Institute</span>
+                                <span class="bl-info-row__value">Regional Institute of Education, RIE Bhubaneswar (NCERT)</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-sitemap"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Parent Organisation</span>
+                                <span class="bl-info-row__value">National Council of Educational Research and Training</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-map-marker-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Address</span>
+                                <span class="bl-info-row__value">DM School Road, Near BDA NICCO Park, UNIT- 9, Bhubaneswar, Odisha 751022</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-external-link-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Website</span>
+                                <a href="https://www.riebbs.ac.in/" target="_blank" class="bl-info-row__link">
+                                    riebbs.ac.in
+                                </a>
+                            </div>
+                        </div>
+                        <a th:href="@{/about}" class="bl-back-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Units
+                        </a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

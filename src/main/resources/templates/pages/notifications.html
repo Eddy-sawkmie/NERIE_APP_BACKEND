@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://thymeleaf.org"
+    layout:decorate="~{${layoutPath}}">
+    <div layout:fragment="static-files">
+        <!-- Ajax -->
+        <script th:inline="javascript">
+            function redirect(path) {
+                window.location.href = BASE + path;
+            }
+        </script>
+        <script th:src="@{/lily/js/customajax.js}"></script>
+        <script th:inline="javascript">
+            const API = {
+                toggleNotification: [[@{/notifications/toggle}]],
+                markAllNotificationsAsRead: [[@{/notifications/markAllAsRead}]]
+            };
+        </script>
+        <script th:src="@{/js/notifications.js}"></script>
+
+        <style>
+            /* Default for mobile: almost full width */
+            .custom-modal-width {
+                max-width: 100%;
+            }
+
+            /* For tablets and desktops (screens larger than 768px) */
+            @media (min-width: 768px) {
+                .custom-modal-width {
+                    max-width: 70%;
+                }
+            }
+
+            /* .notification-table th {
+                font-size: 14px;
+                text-transform: uppercase;
+            }
+
+            .notification-table td {
+                vertical-align: middle;
+                font-size: 14px;
+            }
+
+            .unread-row {
+                background-color: #f8f9ff;
+            } */
+
+            .notification-card {
+                border-radius: 16px;
+                border: none;
+                background: #ffffff;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            }
+
+            .notification-card .card-header {
+                background: #f8f9fc;
+                border-bottom: 1px solid #e3e6f0;
+                padding: 1rem 1.5rem;
+            }
+
+            .notification-card .card-body {
+                padding: 0;
+            }
+
+            .unread-row {
+                background-color: #f4f7ff;
+                font-weight: 500;
+            }
+
+            .table thead th {
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                background-color: #f8f9fc;
+            }
+
+            .mark-all-btn {
+                border-radius: 20px;
+            }
+
+            /* .notification-text:hover {
+                color: #65afff;
+            } */
+
+            /* Card Styling */
+            .notification-wrapper {
+                padding: 2rem;
+            }
+
+            .notification-card {
+                border: none;
+                border-radius: 20px;
+                background: #ffffff;
+                box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
+                padding: 2rem;
+            }
+
+            /* Header Gradient */
+            .notification-header {
+                background-color:#0067cd;
+                border-radius: 16px;
+                padding: 1.5rem 2rem;
+                color: #fff;
+            }
+
+            /* Table Styling */
+            .table thead th {
+                font-size: 13px;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                border: none;
+            }
+
+            .table tbody tr {
+                transition: all 0.2s ease-in-out;
+            }
+
+            .table tbody tr:hover {
+                background-color: #f9f9ff;
+                /* transform: scale(1.01); */
+            }
+
+            /* Unread Highlight */
+            .unread-row {
+                background-color: #eef2ff !important;
+                border-left: 4px solid #56acf1;
+            }
+
+            /* Badge */
+            .status-badge {
+                padding: 6px 14px;
+                font-weight: 500;
+                border-radius: 50px;
+            }
+
+            /* Buttons */
+            .btn-modern {
+                border-radius: 50px;
+                padding: 6px 16px;
+                font-weight: 500;
+            }
+
+            /* Empty State */
+            .empty-state {
+                padding: 4rem 1rem;
+                color: #9ca3af;
+            }
+        </style>
+    </div>
+
+    <title layout:fragment="title">Manage Notification</title>
+
+    <main layout:fragment="content">
+    <div class="container notification-wrapper">
+
+        <div class="notification-card">
+
+            <!-- Gradient Header -->
+            <div class="notification-header d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-semibold mb-0">
+                    <i class="fas fa-bell me-2"></i>
+                    Manage Notifications
+                </h4>
+
+                <button type="button" id="mark-all-read-btn"
+                        class="btn btn-light btn-modern shadow-sm">
+                    <i class="fas fa-check-double me-1"></i>
+                    Mark All as Read
+                </button>
+            </div>
+
+            <div class="toast-container position-fixed top-0 end-0 p-3">
+                <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-check-circle me-2"></i> All notifications marked as read!
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${sidebarnotifications == null or #lists.isEmpty(sidebarnotifications)}"
+                 class="text-center empty-state">
+                <i class="fas fa-bell-slash fa-3x mb-3 opacity-50"></i>
+                <p class="fs-5 mb-0">You're all caught up 🎉</p>
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive"
+                 th:unless="${sidebarnotifications == null or #lists.isEmpty(sidebarnotifications)}">
+
+                <table class="table align-middle mb-0">
+
+                    <thead class="text-muted">
+                        <tr>
+                            <th>#</th>
+                            <th>Message</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="nr, iterStat : ${sidebarnotifications}"
+                            th:id="'row-' + ${nr.notification.notificationid}"
+                            th:classappend="${!nr.read} ? 'unread-row fw-semibold'">
+
+                            <td class="py-4"
+                                th:text="${iterStat.count}"></td>
+
+                            <td class="py-4">
+                                <div class="d-flex flex-column">
+                                    <span class="fs-6 text-dark"
+                                          th:text="${nr.notification.notification}">
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td class="py-4 text-muted"
+                                th:text="${#dates.format(nr.notification.entrydate, 'dd-MM-yyyy')}">
+                            </td>
+
+                            <td class="py-4">
+                                <span class="badge status-badge"
+                                      th:classappend="${nr.read} ? 'text-success' : 'text-danger'"
+                                      th:text="${nr.read} ? 'Read' : 'Unread'">
+                                </span>
+                            </td>
+
+                            <td class="py-4 text-end">
+                                <button type="button"
+                                        class="btn btn-modern toggle-btn"
+                                        th:classappend="${nr.read} ? 'btn-secondary' : 'btn-primary shadow-sm'"
+                                        th:text="${nr.read} ? 'Mark Unread' : 'Mark Read'"
+                                        th:attr="data-id=${nr.notification.notificationid}">
+                                </button>
+                            </td>
+
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+</main>
+</html>

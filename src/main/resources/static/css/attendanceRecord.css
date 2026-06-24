@@ -1,0 +1,47 @@
+/* Custom styles for the summary cards */
+.summary-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out;
+}
+.summary-card:hover {
+    transform: translateY(-5px);
+}
+.summary-card .icon-container {
+    font-size: 2rem;
+    margin-right: 1.25rem;
+    opacity: 0.9;
+    width: 40px;
+    text-align: center;
+}
+.summary-card .info-container {
+    display: flex;
+    flex-direction: column;
+}
+.summary-card .info-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.summary-card .info-count {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+/* Card background colors with gradients */
+.bg-present { background: linear-gradient(135deg, #28a745, #218838); }
+.bg-absent { background: linear-gradient(135deg, #dc3545, #c82333); }
+.bg-total { background: linear-gradient(135deg, #17a2b8, #138496); }
+
+/* Chart container styling */
+#attendanceChartContainer {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}

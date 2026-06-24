@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/landing-layout}"
+>
+<head>
+    <title>CIET</title>
+    <th:block layout:fragment="styles">
+        <link rel="stylesheet" th:href="@{/css/blogs.css}">
+    </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+    <div layout:replace="~{fragments/lilypreloader :: preloader}"></div>
+    <!-- ── Hero ── -->
+    <section class="bl-hero">
+        <img th:src="@{/lily/images/aboutus/ncert_building.jpg}"
+             alt="NCERT Building" class="bl-hero__bg">
+        <div class="bl-hero__overlay"></div>
+        <div class="container bl-hero__content">
+            <nav class="bl-breadcrumb" aria-label="breadcrumb">
+                <a th:href="@{/about}" class="bl-breadcrumb__home">NCERT Constituent Units</a>
+                <span class="bl-breadcrumb__sep">/</span>
+                <span class="bl-breadcrumb__current">CIET</span>
+            </nav>
+            <h1 class="bl-hero__title">CIET</h1>
+            <p class="bl-hero__sub">Central Institute of Educational Technology</p>
+        </div>
+    </section>
+    <!-- ── Main content ── -->
+    <div class="bl-page">
+        <div class="container">
+            <div class="bl-layout">
+                <!-- Left: article -->
+                <article class="bl-article">
+                    <!-- Feature image -->
+                    <div class="bl-article__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/CIET_NCERT.jpg}"
+                             alt="CIET NCERT" class="bl-article__img">
+                    </div>
+                    <!-- Body -->
+                    <div class="bl-article__body">
+                        <h2 class="bl-article__title">About CIET</h2>
+                        <div class="bl-title-rule"></div>
+                        <p class="bl-article__text">
+                            Central Institute of Educational Technology (CIET), a constituent unit of NCERT,
+                            came into existence in the year 1984 with the merger of Center for Educational
+                            Technology (CET) and Department of Teaching Aids (DTA). CIET is a premiere national
+                            institute of educational technology. Its major aim is to promote utilization of
+                            educational technologies viz. radio, TV, films, satellite communications and cyber
+                            media either separately or in combinations. The institute undertakes activities to
+                            widen educational opportunities, promote equity and improve quality of educational
+                            processes at school level.
+                        </p>
+                        <p class="bl-article__text">
+                            The mission of Central Institute of Educational Technology (CIET) is to act as a
+                            nodal resource centre for school education media software acquired through national,
+                            regional and international sources for reference and research; achieve excellence in
+                            design, research and production of educational software for children and teachers,
+                            including parents; contribute to teacher education through the convergence of
+                            appropriate technologies; build capacities of teachers/educators for quality
+                            improvement roles in school education; and constructively inform educational policy
+                            makers and to critically appraise educational technology (ICT related) policy in India.
+                        </p>
+                    </div>
+                </article>
+                <!-- Right: info sidebar -->
+                <aside class="bl-sidebar">
+                    <div class="bl-info-card">
+                        <h3 class="bl-info-card__heading">Institute Details</h3>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-user-tie"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Joint Director</span>
+                                <span class="bl-info-row__value">Dr. Amarendra P Behera</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-university"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Institute</span>
+                                <span class="bl-info-row__value">Central Institute of Educational Technology (CIET)</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-sitemap"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Parent Organisation</span>
+                                <span class="bl-info-row__value">National Council of Educational Research and Training</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-map-marker-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Address</span>
+                                <span class="bl-info-row__value">Sri Aurobindo Marg, New Delhi – 110016</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-external-link-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Website</span>
+                                <a href="https://ciet.nic.in/" target="_blank" class="bl-info-row__link">
+                                    ciet.nic.in
+                                </a>
+                            </div>
+                        </div>
+                        <a th:href="@{/about}" class="bl-back-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Units
+                        </a>
+                    </div>
+                </aside>
+            </div><!-- /.bl-layout -->
+        </div>
+    </div>
+</div>
+</body>
+</html>

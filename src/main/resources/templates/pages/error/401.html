@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"
+    xmlns:th="http://thymeleaf.org"
+>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link th:href="@{/tempscripts/css/404.css}" rel="stylesheet" type="text/css"/>
+        <title>ERROR 401</title>
+
+        <!-- Google font -->
+        <link href="https://fonts.googleapis.com/css?family=Cabin:400,700" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:900" rel="stylesheet">
+
+        <link type="text/css" rel="stylesheet" th:href="@{/lily/css/style.css}" />
+
+        <script th:inline="javascript">
+            function goToAuthenticationPage() {
+                window.location.href = [[@{/login}]]
+            }
+        </script>
+    </head>
+    <body>
+        <div id="notfound">
+            <div class="notfound">
+                <div class="notfound-404">
+                    <h3>Oops! You are Unauthenticated</h3>
+                    <h1><span>4</span><span>0</span><span>1</span></h1>
+                </div>
+                <div id="msg" th:if="${msg != null}" >
+                    <pre th:text="${msg}"></pre>
+                </div>
+                <div>
+                    <p style="font-weight: bold;">
+                        Kindly login again
+                    </p>
+                    <button class="btn" onclick="goToAuthenticationPage()">Login</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

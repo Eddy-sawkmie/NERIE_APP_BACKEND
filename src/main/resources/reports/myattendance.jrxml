@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="myattendance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.2100000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="applicationcode" class="java.lang.String"/>
+	<parameter name="phaseid" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT to_char(TT.programdate,'dd-MM-yyyy') AS programdate, COALESCE(PA.attendance,'-') AS attendance,
+A.usercode AS pusercode,U.username AS pusername, P.programname, P.programid, ph.phaseno, ph.phasedescription ,A.applicationcode,
+to_char(C.startdate,'dd-MM-yyyy') AS startdate,to_char(C.enddate,'dd-MM-yyyy') As enddate,
+C.enddate-C.startdate+1 As noofdays,
+ array_to_string
+                   (
+                   ARRAY(
+                   SELECT V.venuename FROM nerie.mt_programvenues P
+                              INNER JOIN nerie.m_venues V ON V.venuecode=P.venuecode
+                   WHERE P.phaseid=C.phaseid
+                   ), ', '
+                   ) AS venues,
+                   array_to_string
+                   (
+                   ARRAY(
+                   SELECT U.username FROM nerie.mt_program_members P
+                              INNER JOIN nerie.mt_userlogin U ON U.usercode=P.usercode
+                   WHERE P.phaseid=C.phaseid
+                   ), ', '
+                   ) AS programcoordinators ,
+                                      array_to_string
+                   (
+                   ARRAY(
+                   SELECT T1.subject FROM nerie.t_programtimetable T1
+                    WHERE T1.programdate=TT.programdate AND T1.subject!='BREAK'
+                   ), ', '
+                   ) AS subjects,
+                   array_to_string
+                   (
+                   ARRAY(
+                   SELECT DISTINCT T1.rpname FROM nerie.mt_resourcepersons T1
+                   INNER JOIN nerie.mt_programttresourceperson U ON U.rpslno=T1.rpslno
+                    WHERE U.programtimetablecode=TT.programtimetablecode
+                   ), ', '
+                   ) AS rpname
+
+ FROM nerie.m_phases ph
+ INNER JOIN nerie.t_programtimetable TT ON ph.phaseid=TT.phaseid
+ INNER JOIN nerie.t_applications A ON A.phaseid=ph.phaseid
+ INNER JOIN nerie.t_participantattendance PA ON PA.programtimetablecode=TT.programtimetablecode
+ AND PA.applicationcode=A.applicationcode AND PA.phaseid=A.phaseid
+ INNER JOIN nerie.mt_programdetails C on C.phaseid=TT.phaseid
+ INNER JOIN nerie.mt_programttresourceperson RP ON TT.programtimetablecode=RP.programtimetablecode
+ INNER JOIN nerie.mt_resourcepersons R ON R.rpslno=RP.rpslno
+ INNER JOIN nerie.mt_userlogin U ON A.usercode=U.usercode
+ INNER JOIN nerie.m_programs P ON P.programcode=ph.programcode
+ INNER JOIN nerie.mt_resourcepersoncoursemap RPC ON RPC.rpslno=R.rpslno AND RPC.phaseid=C.phaseid AND RPC.rpslno=RP.rpslno
+ WHERE TT.phaseid=$P{phaseid}]]>
+	</queryString>
+	<field name="programdate" class="java.lang.String"/>
+	<field name="attendance" class="java.lang.String"/>
+	<field name="pusercode" class="java.lang.String"/>
+	<field name="pusername" class="java.lang.String"/>
+	<field name="programname" class="java.lang.String"/>
+	<field name="programid" class="java.lang.String"/>
+	<field name="phaseno" class="java.lang.String"/>
+	<field name="phasedescription" class="java.lang.String"/>
+	<field name="applicationcode" class="java.lang.String"/>
+	<field name="startdate" class="java.lang.String"/>
+	<field name="enddate" class="java.lang.String"/>
+	<field name="noofdays" class="java.lang.Integer"/>
+	<field name="venues" class="java.lang.String"/>
+	<field name="programcoordinators" class="java.lang.String"/>
+	<field name="subjects" class="java.lang.String"/>
+	<field name="rpname" class="java.lang.String"/>
+	<variable name="coursedate_1" class="java.lang.Integer" resetType="Column" calculation="Count">
+		<variableExpression><![CDATA[$F{programdate}]]></variableExpression>
+	</variable>
+	<variable name="present" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{attendance}.equals("P")?1:0]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="absent" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{attendance}.equals("A")?1:0]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="85" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="85"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[North East Regional Institute of Education (NERIE)
+National Council of Educational Research and Training (NCERT)
+Umiam,Shillong, Meghalaya - 793103]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="188" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="61" width="555" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{startdate}+" to "+$F{enddate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="41" width="555" height="20"/>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Duration : "+$F{noofdays}+" days"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="83" width="226" height="56"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Coordinators: "+$F{programcoordinators}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="351" y="83" width="180" height="56"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Venues: "+$F{venues}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="139" width="226" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Name: "+$F{pusername}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="159" width="226" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Application No: "+$F{applicationcode}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="407" y="139" width="30" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Float"><![CDATA[((Float.valueOf($V{present}.toString())/Float.valueOf($V{coursedate_1}.toString()))*100)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="351" y="139" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[Attendance:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="437" y="139" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1" y="21" width="555" height="20"/>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Phase No: " + $F{phaseno} + "Phase Description: " + $F{phasedescription}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="1" width="555" height="20"/>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Attendance for  " + $F{programname}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<staticText>
+				<reportElement x="100" y="16" width="175" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Subjects]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="16" width="100" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Attendance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="275" y="16" width="180" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Resource Persons]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="16" width="100" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="0" width="99" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{programdate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="175" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{subjects}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="275" y="0" width="180" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{rpname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="0" width="100" height="20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{attendance}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="64" y="22" width="64" height="20"/>
+				<textElement/>
+				<text><![CDATA[Total Classes: ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="135" y="22" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{coursedate_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="235" y="22" width="16" height="20"/>
+				<textElement/>
+				<text><![CDATA[Pr: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="359" y="22" width="16" height="20"/>
+				<textElement/>
+				<text><![CDATA[Ab: ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="251" y="22" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{present}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="375" y="22" width="62" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{absent}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

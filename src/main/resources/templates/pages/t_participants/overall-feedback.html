@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{${layoutPath}}">
+<head>
+  <title>Program Feedback</title>
+  <th:block layout:fragment="static-files">
+    <style>
+      /* Modern Compact Styling */
+      .modern-card {
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        background: #ffffff;
+      }
+      
+      .modern-card-header {
+        background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+        border-top-left-radius: 0.75rem !important;
+        border-top-right-radius: 0.75rem !important;
+      }
+
+      .modern-input {
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+        transition: all 0.2s ease-in-out;
+        background-color: #fcfcfc;
+      }
+      
+      .modern-input:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        background-color: #ffffff;
+      }
+
+      .btn-modern {
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        padding: 0.5rem 1.5rem;
+      }
+
+      /* Compact Program Details Box */
+      .details-box {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        font-size: 0.85rem;
+      }
+
+      .details-label {
+        color: #6c757d;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.1rem;
+      }
+      
+      .details-value {
+        color: #212529;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Modern Rating Pills */
+      .rating-question {
+        font-weight: 600;
+        color: #343a40;
+        font-size: 0.9rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .rating-pill {
+        border-radius: 50rem !important;
+        padding: 0.25rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      /* Reduce margin for compact look */
+      .compact-mb {
+        margin-bottom: 1.25rem;
+      }
+    </style>
+  </th:block>
+</head>
+<body>
+
+<main layout:fragment="content">
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10">
+        
+        <div class="card border-0 modern-card">
+          <div class="card-header modern-card-header text-white py-3 px-4 border-0">
+            <h5 class="mb-0 fw-bold d-flex align-items-center">
+              <i class="fas fa-comment-dots me-3 fs-5"></i> Program Feedback
+            </h5>
+          </div>
+
+          <div class="card-body p-3 p-md-4">
+
+            <div class="details-box mb-4">
+              <div th:each="v : ${mprogramlist}">
+                <div class="row g-2">
+                  <div class="col-md-6 col-lg-4">
+                    <div class="details-label">Program Title</div>
+                    <div class="details-value text-primary text-truncate" th:title="${v[1]}" th:text="${v[1]}"></div>
+                  </div>
+                  <div class="col-md-6 col-lg-4">
+                    <div class="details-label">Organised By</div>
+                    <div class="details-value">NERIE-NCERT, Shillong</div>
+                  </div>
+                  <div class="col-md-6 col-lg-4">
+                    <div class="details-label">Coordinator</div>
+                    <div class="details-value text-truncate" th:title="${v[10]}" th:text="${v[10]}"></div>
+                  </div>
+                  <div class="col-md-6 col-lg-4">
+                    <div class="details-label">Venue</div>
+                    <div class="details-value text-truncate" th:title="${v[9]}" th:text="${v[9]}"></div>
+                  </div>
+                  <div class="col-md-6 col-lg-4">
+                    <div class="details-label">Date</div>
+                    <div class="details-value"><span th:text="${v[4]}"></span> to <span th:text="${v[5]}"></span></div>
+                  </div>
+                  <div class="col-md-12 col-lg-4">
+                    <div class="details-label">Participant</div>
+                    <div class="details-value"><span th:text="${login.username}"></span> (<span th:text="${login.emailid}"></span>)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <form th:object="${tpfeedback}" method="POST" id="tpfeedback" role="form" autocomplete="off">
+
+              <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="fas fa-star text-warning me-2"></i>Rating Assessment</h6>
+
+              <div class="row g-3">
+                <div class="col-md-6 compact-mb">
+                  <div class="rating-question">1. Overall quality of the program? <span class="text-danger">*</span></div>
+                  <div class="d-flex flex-wrap gap-2">
+                    <input type="radio" class="btn-check" th:field="*{q1}" value="1" id="q1_1" required>
+                    <label class="btn btn-outline-danger rating-pill" for="q1_1">Poor</label>
+                    <input type="radio" class="btn-check" th:field="*{q1}" value="2" id="q1_2" required>
+                    <label class="btn btn-outline-warning rating-pill" for="q1_2">Average</label>
+                    <input type="radio" class="btn-check" th:field="*{q1}" value="3" id="q1_3" required>
+                    <label class="btn btn-outline-info rating-pill" for="q1_3">Good</label>
+                    <input type="radio" class="btn-check" th:field="*{q1}" value="4" id="q1_4" required>
+                    <label class="btn btn-outline-success rating-pill" for="q1_4">Excellent</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 compact-mb">
+                  <div class="rating-question">2. Satisfaction with program materials? <span class="text-danger">*</span></div>
+                  <div class="d-flex flex-wrap gap-2">
+                    <input type="radio" class="btn-check" th:field="*{q2}" value="1" id="q2_1" required>
+                    <label class="btn btn-outline-danger rating-pill" for="q2_1">Poor</label>
+                    <input type="radio" class="btn-check" th:field="*{q2}" value="2" id="q2_2" required>
+                    <label class="btn btn-outline-warning rating-pill" for="q2_2">Average</label>
+                    <input type="radio" class="btn-check" th:field="*{q2}" value="3" id="q2_3" required>
+                    <label class="btn btn-outline-info rating-pill" for="q2_3">Good</label>
+                    <input type="radio" class="btn-check" th:field="*{q2}" value="4" id="q2_4" required>
+                    <label class="btn btn-outline-success rating-pill" for="q2_4">Excellent</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 compact-mb">
+                  <div class="rating-question">3. Did the program meet expectations? <span class="text-danger">*</span></div>
+                  <div class="d-flex flex-wrap gap-2">
+                    <input type="radio" class="btn-check" th:field="*{q3}" value="1" id="q3_1" required>
+                    <label class="btn btn-outline-danger rating-pill" for="q3_1">Poor</label>
+                    <input type="radio" class="btn-check" th:field="*{q3}" value="2" id="q3_2" required>
+                    <label class="btn btn-outline-warning rating-pill" for="q3_2">Average</label>
+                    <input type="radio" class="btn-check" th:field="*{q3}" value="3" id="q3_3" required>
+                    <label class="btn btn-outline-info rating-pill" for="q3_3">Good</label>
+                    <input type="radio" class="btn-check" th:field="*{q3}" value="4" id="q3_4" required>
+                    <label class="btn btn-outline-success rating-pill" for="q3_4">Excellent</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 compact-mb">
+                  <div class="rating-question">4. Support from coordinators & resources? <span class="text-danger">*</span></div>
+                  <div class="d-flex flex-wrap gap-2">
+                    <input type="radio" class="btn-check" th:field="*{q4}" value="1" id="q4_1" required>
+                    <label class="btn btn-outline-danger rating-pill" for="q4_1">Poor</label>
+                    <input type="radio" class="btn-check" th:field="*{q4}" value="2" id="q4_2" required>
+                    <label class="btn btn-outline-warning rating-pill" for="q4_2">Average</label>
+                    <input type="radio" class="btn-check" th:field="*{q4}" value="3" id="q4_3" required>
+                    <label class="btn btn-outline-info rating-pill" for="q4_3">Good</label>
+                    <input type="radio" class="btn-check" th:field="*{q4}" value="4" id="q4_4" required>
+                    <label class="btn btn-outline-success rating-pill" for="q4_4">Excellent</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 compact-mb">
+                  <div class="rating-question">5. Use of educational/technological aids? <span class="text-danger">*</span></div>
+                  <div class="d-flex flex-wrap gap-2">
+                    <input type="radio" class="btn-check" th:field="*{q5}" value="1" id="q5_1" required>
+                    <label class="btn btn-outline-danger rating-pill" for="q5_1">Poor</label>
+                    <input type="radio" class="btn-check" th:field="*{q5}" value="2" id="q5_2" required>
+                    <label class="btn btn-outline-warning rating-pill" for="q5_2">Average</label>
+                    <input type="radio" class="btn-check" th:field="*{q5}" value="3" id="q5_3" required>
+                    <label class="btn btn-outline-info rating-pill" for="q5_3">Good</label>
+                    <input type="radio" class="btn-check" th:field="*{q5}" value="4" id="q5_4" required>
+                    <label class="btn btn-outline-success rating-pill" for="q5_4">Excellent</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 compact-mb">
+                  <div class="rating-question">6. Program logistics (accommodation/food)? <span class="text-danger">*</span></div>
+                  <div class="d-flex flex-wrap gap-2">
+                    <input type="radio" class="btn-check" th:field="*{q6}" value="1" id="q6_1" required>
+                    <label class="btn btn-outline-danger rating-pill" for="q6_1">Poor</label>
+                    <input type="radio" class="btn-check" th:field="*{q6}" value="2" id="q6_2" required>
+                    <label class="btn btn-outline-warning rating-pill" for="q6_2">Average</label>
+                    <input type="radio" class="btn-check" th:field="*{q6}" value="3" id="q6_3" required>
+                    <label class="btn btn-outline-info rating-pill" for="q6_3">Good</label>
+                    <input type="radio" class="btn-check" th:field="*{q6}" value="4" id="q6_4" required>
+                    <label class="btn btn-outline-success rating-pill" for="q6_4">Excellent</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 compact-mb">
+                  <div class="rating-question">7. Confidence in training others? <span class="text-danger">*</span></div>
+                  <div class="d-flex flex-wrap gap-2">
+                    <input type="radio" class="btn-check" th:field="*{q7}" value="1" id="q7_1" required>
+                    <label class="btn btn-outline-danger rating-pill" for="q7_1">Poor</label>
+                    <input type="radio" class="btn-check" th:field="*{q7}" value="2" id="q7_2" required>
+                    <label class="btn btn-outline-warning rating-pill" for="q7_2">Average</label>
+                    <input type="radio" class="btn-check" th:field="*{q7}" value="3" id="q7_3" required>
+                    <label class="btn btn-outline-info rating-pill" for="q7_3">Good</label>
+                    <input type="radio" class="btn-check" th:field="*{q7}" value="4" id="q7_4" required>
+                    <label class="btn btn-outline-success rating-pill" for="q7_4">Excellent</label>
+                  </div>
+                </div>
+              </div>
+
+              <h6 class="fw-bold text-dark mt-4 mb-3 border-bottom pb-2"><i class="fas fa-pen text-info me-2"></i>Subjective Feedback</h6>
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="q8" class="rating-question mb-1">8. Which sessions did you like? Why?</label>
+                  <textarea th:field="*{q8}" id="q8" maxlength="250" rows="2" class="form-control modern-input"></textarea>
+                </div>
+                
+                <div class="col-md-6">
+                  <label for="q9" class="rating-question mb-1">9. Which sessions did you not like? Why?</label>
+                  <textarea th:field="*{q9}" id="q9" maxlength="250" rows="2" class="form-control modern-input"></textarea>
+                </div>
+                
+                <div class="col-md-6">
+                  <label for="q10" class="rating-question mb-1">10. Topics to be covered in greater detail?</label>
+                  <textarea th:field="*{q10}" id="q10" maxlength="250" rows="2" class="form-control modern-input"></textarea>
+                </div>
+                
+                <div class="col-md-6">
+                  <label for="q11" class="rating-question mb-1">11. Best and worst part of this program?</label>
+                  <textarea th:field="*{q11}" id="q11" maxlength="250" rows="2" class="form-control modern-input"></textarea>
+                </div>
+                
+                <div class="col-12">
+                  <label for="q12" class="rating-question mb-1">12. Suggestions for improving the program further.</label>
+                  <textarea th:field="*{q12}" id="q12" maxlength="250" rows="2" class="form-control modern-input"></textarea>
+                </div>
+              </div>
+
+              <div class="text-end mt-4 pt-3 border-top">
+                <button type="submit" id="submitBtn" class="btn btn-primary btn-modern px-5">
+                  <i class="fas fa-paper-plane me-2"></i> Submit Feedback
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light border-0">
+          <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+          </div>
+        <div class="modal-footer border-top-0 pt-0" id="feedbackModalFooter">
+          </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<th:block layout:fragment="scripts">
+  <script th:inline="javascript">
+    
+    // --- Modern Bootstrap 5 Modal Helper ---
+    function showModalAlert(message, title = 'Message', onOkCallback) {
+        $('#feedbackModalLabel').text(title);
+        $('#feedbackModalBody').html(message);
+
+        const okButton = $('<button type="button" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>');
+
+        const modalElement = document.getElementById('feedbackModal');
+        
+        // Fix for Bootstrap 5 dimming/backdrop bug
+        if (modalElement.parentNode !== document.body) {
+            document.body.appendChild(modalElement);
+        }
+
+        const myModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+        okButton.on('click', function() {
+            myModal.hide();
+            if (typeof onOkCallback === 'function') {
+                setTimeout(onOkCallback, 200);
+            }
+        });
+
+        $('#feedbackModalFooter').empty().append(okButton);
+        myModal.show();
+    }
+
+
+    $(document).ready(function () {
+        const phid = /*[[${phaseid}]]*/ null;
+        const viewmode = /*[[${view}]]*/ false;
+
+        // View Mode Logic (Disabling form)
+        if (viewmode === true) {
+            const q8Value = /*[[${tpfeedback.q8}]]*/ '';
+            const q9Value = /*[[${tpfeedback.q9}]]*/ '';
+            const q10Value = /*[[${tpfeedback.q10}]]*/ '';
+            const q11Value = /*[[${tpfeedback.q11}]]*/ '';
+            const q12Value = /*[[${tpfeedback.q12}]]*/ '';
+
+            $('#q8').val(q8Value);
+            $('#q9').val(q9Value);
+            $('#q10').val(q10Value);
+            $('#q11').val(q11Value);
+            $('#q12').val(q12Value);
+
+            $('#tpfeedback').find('input, textarea, select').prop('disabled', true);
+            $('#submitBtn').hide();
+        }
+
+        // Form Submission Logic
+        $("#tpfeedback").submit(function (event) {
+            event.preventDefault();
+
+            // Visual Loading state on the button
+            const $btn = $('#submitBtn');
+            const originalText = $btn.html();
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i> Submitting...');
+
+            const formData = new FormData(this);
+            const postUrl = [[@{/participant/feedback/save-overall-feedback}]];
+            const redirectUrl = [[@{/program/my-programs}]];
+
+            $.ajax({
+                type: "POST",
+                url: postUrl + "?phid=" + phid,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $btn.prop('disabled', false).html(originalText);
+                    
+                    if (data === '-1') {
+                        showModalAlert("Error. Something went wrong. Please try again.", "Error");
+                    } else {
+                        showModalAlert(
+                            "<i class='fas fa-check-circle text-success fs-4 d-block mb-2'></i> Feedback Successfully Uploaded.",
+                            "Success",
+                            function() {
+                                window.location.href = redirectUrl;
+                            }
+                        );
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $btn.prop('disabled', false).html(originalText);
+                    const errorMessage = "An error occurred: " + textStatus + " - " + errorThrown;
+                    showModalAlert(errorMessage, "Request Failed");
+                    console.error("AJAX Error:", textStatus, errorThrown);
+                }
+            });
+        });
+    });
+  </script>
+</th:block>
+
+</body>
+</html>

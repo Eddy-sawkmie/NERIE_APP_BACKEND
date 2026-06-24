@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title layout:fragment="title">Create User</title>
+    <div layout:fragment="static-files">
+        <link rel="stylesheet" th:href="@{/css/userCreationForm.css}" />
+<!--        <link rel="stylesheet" th:href="@{/css/ux4g/ux4g.css}" />-->
+        
+        <script th:inline="javascript">
+            const API = {
+                saveUser: [[@{/users/save}]],
+                redirectURL: [[@{/users/manage}]],
+                checkEmail: [[@{/users/check-email}]],
+                checkUser: [[@{/users/check-user}]],
+                getProcesses: [[@{/processes/getuprocess}]],
+                resetPassword: [[@{/users/reset-password}]],
+                changeUserStatus: [[@{/users/change-user-status}]],
+            };
+        </script>
+        <script th:src="@{/js/userCreationForm.js}"></script>
+    </div>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+        
+        <div class="card border-0 modern-card mb-4">
+            
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-user-plus me-3 fs-5"></i>
+                    <th:block th:if="${userrole == 'S'}">Create Principal / Director</th:block>
+                    <th:block th:if="${userrole == 'A'}">Create Co-ordinator / Faculty</th:block>
+                    <th:block th:if="${userrole == 'Z'}">Create Local Admin</th:block>
+                </h4>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                
+                <ul class="nav nav-pills nav-pills-modern mb-4" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="userdetails-tab" data-bs-toggle="pill" data-bs-target="#userdetails" type="button" role="tab" aria-controls="userdetails" aria-selected="true">
+                            <i class="fas fa-user-edit me-2"></i> User Details
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="displayuser-tab" data-bs-toggle="pill" data-bs-target="#displayuser" type="button" role="tab" aria-controls="displayuser" aria-selected="false">
+                            <i class="fas fa-users me-2"></i> Display Users
+                        </button>
+                    </li>
+                </ul>
+                
+                <hr class="text-muted opacity-25 mb-4">
+
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="userdetails" role="tabpanel" aria-labelledby="userdetails-tab">
+                        <div layout:replace="~{fragments/userCreationForm :: form}"></div>
+                    </div>
+                    <div class="tab-pane fade" id="displayuser" role="tabpanel" aria-labelledby="displayuser-tab">
+                        <div layout:replace="~{fragments/userCreationForm :: table}"></div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                    </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</main>
+</body>
+</html>

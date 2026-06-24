@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layouts/landing-layout}">
+<head>
+    <title>Faculty Details</title>
+    <th:block layout:fragment="styles">
+        <link th:href="@{/css/facultyResearch.css}" rel="stylesheet">
+    </th:block>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div layout:replace="~{fragments/lilypreloader :: preloader}"></div>
+
+    <div class="fl-page">
+        <div class="container fl-container">
+
+            <div class="fl-header align-items-center">
+                <div class="fl-header__left">
+                    <span class="fl-header__eyebrow">NCERT · Academic Directory</span>
+                    <h2 class="fl-header__title" th:text="${facultyName}">Faculty Profile</h2>
+                    <p class="fl-header__sub">Detailed research, qualifications, and academic portfolio.</p>
+                </div>
+                <div class="fl-header__right">
+                    <a th:href="@{/faculties/research-list}" class="fl-profile-btn">
+                        <i class="fas fa-arrow-left"></i> Back to Directory
+                    </a>
+                </div>
+            </div>
+
+            <div class="fl-card mb-5">
+                <div class="fl-card-header">
+                    <h3 class="fl-card-title"><i class="fas fa-user-tie mr-2"></i> Academic Information</h3>
+                </div>
+                <div class="fl-card-body">
+                    <div class="fl-detail-list">
+
+                        <div class="fl-detail-row">
+                            <div class="fl-detail-label">Academic Qualification</div>
+                            <div class="fl-detail-value" th:text="${prof.academicqualification}"></div>
+                        </div>
+
+                        <div class="fl-detail-row">
+                            <div class="fl-detail-label">Area of Specialization</div>
+                            <div class="fl-detail-value">
+                                <span class="fl-badge" th:text="${prof.areaofspecialization}"></span>
+                            </div>
+                        </div>
+
+                        <div class="fl-detail-row">
+                            <div class="fl-detail-label">Area of Interest</div>
+                            <div class="fl-detail-value" th:text="${prof.areaofinterest}"></div>
+                        </div>
+
+                        <div class="fl-detail-row">
+                            <div class="fl-detail-label">Brief Profile</div>
+                            <div class="fl-detail-value" th:text="${prof.briefprofile}"></div>
+                        </div>
+
+                        <th:block th:if="${prof.gscholarlink != null and !#strings.isEmpty(prof.gscholarlink) and prof.gscholarlink != 'No Details Available Yet'}">
+                            <div class="fl-detail-row">
+                                <div class="fl-detail-label">Google Scholar</div>
+                                <div class="fl-detail-value">
+                                    <a th:href="${prof.gscholarlink}" target="_blank" class="fl-link">
+                                        <i class="fas fa-external-link-alt mr-1"></i> <span th:text="${prof.gscholarlink}"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </th:block>
+
+                        <th:block th:if="${prof.orcid != null and !#strings.isEmpty(prof.orcid) and prof.orcid != 'No Details Available Yet'}">
+                            <div class="fl-detail-row">
+                                <div class="fl-detail-label d-flex align-items-center">
+                                    <img th:src="@{/lily/images/faculty/orcid-logo.svg}" alt="ORCID" style="height: 18px;" class="mr-2">
+                                </div>
+                                <div class="fl-detail-value font-weight-bold text-dark" th:text="${prof.orcid}"></div>
+                            </div>
+                        </th:block>
+
+                        <div class="fl-detail-row">
+                            <div class="fl-detail-label">Research Projects</div>
+                            <div class="fl-detail-value" th:text="${prof.researchprojects}"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="fl-card">
+                <div class="fl-card-header">
+                    <h3 class="fl-card-title"><i class="fas fa-book-open mr-2"></i> Published Research Papers</h3>
+                </div>
+
+                <div class="p-5 text-center" th:if="${rpMessage != null}">
+                    <i class="fas fa-file-alt fl-empty__icon"></i>
+                    <p class="fl-empty__text" th:text="${rpMessage}"></p>
+                </div>
+
+                <div class="table-responsive" th:if="${rpList != null and !rpList.isEmpty()}">
+                    <table class="fl-table">
+                        <thead>
+                        <tr>
+                            <th class="fl-th">Title</th>
+                            <th class="fl-th">Journal</th>
+                            <th class="fl-th">Category</th>
+                            <th class="fl-th">Publisher</th>
+                            <th class="fl-th">Authors</th>
+                            <th class="fl-th">Year</th>
+                            <th class="fl-th text-center">Link</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="paper : ${rpList}" class="fl-row">
+                            <td class="fl-td font-weight-bold" style="color: #1e3a8a;" th:text="${paper.title}"></td>
+                            <td class="fl-td" th:text="${paper.journal}"></td>
+                            <td class="fl-td">
+                                <span class="fl-badge" style="background: #f1f5f9; color: #475569; border-color: #cbd5e1;" th:text="${paper.category}"></span>
+                            </td>
+                            <td class="fl-td" th:text="${paper.publisher}"></td>
+                            <td class="fl-td" th:text="${paper.authors}"></td>
+                            <td class="fl-td font-weight-bold" th:text="${paper.year}"></td>
+                            <td class="fl-td text-center">
+                                <a th:if="${paper.link != null}" th:href="${paper.link}" target="_blank" class="fl-profile-btn" style="padding: 0.3rem 0.6rem; font-size: 0.7rem;">
+                                    View <i class="fas fa-external-link-alt ml-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="fl-card mt-4 mb-5">
+                <div class="fl-card-header">
+                    <h3 class="fl-card-title">
+                        <i class="fas fa-graduation-cap mr-2"></i> PMIS Programs
+                    </h3>
+                </div>
+
+                <div class="p-5 text-center" th:if="${programMessage != null}">
+                    <i class="fas fa-info-circle fl-empty__icon"></i>
+                    <p class="fl-empty__text" th:text="${programMessage}"></p>
+                </div>
+
+                <div class="table-responsive" th:if="${programList != null and !programList.isEmpty()}">
+                    <table class="fl-table">
+                        <thead>
+                        <tr>
+                            <th class="fl-th">Program</th>
+                            <th class="fl-th">Program Type</th>
+                            <th class="fl-th">Program ID</th>
+                            <th class="fl-th">Phase</th>
+                            <th class="fl-th">Program Date</th>
+                            <th class="fl-th text-center">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="program : ${programList}" class="fl-row">
+                            <td class="fl-td font-weight-bold" th:text="${program[0]}"></td>
+                            <td class="fl-td" th:text="${program[1]}"></td>
+                            <td class="fl-td">
+                                    <span class="fl-badge"
+                                          style="background:#f1f5f9;color:#475569;border-color:#cbd5e1;"
+                                          th:text="${program[2]}">
+                                    </span>
+                            </td>
+                            <td class="fl-td" th:text="${program[3]}"></td>
+                            <td class="fl-td" th:text="${program[4]}"></td>
+                            <td class="fl-td text-center">
+                                <button class="fl-profile-btn view-program-btn"
+                                        th:data-program-code="${program.length > 5 ? program[5] : program[2]}">
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- My Program Details Modal -->
+    <div class="modal fade modal-fullscreen-xl" id="MyProgramDetailsModal" tabindex="-1" role="dialog" aria-labelledby="programDetailsTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header position-relative">
+                    <h5 class="modal-title" id="programDetailsTitle">Program Details</h5>
+                    <button type="button" class="btn-modal-close position-absolute" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="phaseListBody">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-12 mb-2 bg-dark mb-2">
+                                <h5 id="officeNameDetailsModal" class="text-white mb-0 py-2 px-2"></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5>Program ID: <span class="programIDDetailsModal" id="programID"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5>Program Status: <span id="programStatusDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5>Program Category: <span id="programCategoryDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <h6 id="programTitleDetailsModal" class="font-weight-bold"></h6>
+                                <p id="programDescDetailsModal" class="mt-2"></p>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-sm-12">
+                                <h5>Phases in <span class="programID" id="programID2"></span></h5>
+                            </div>
+                            <div class="col-sm-12">
+                                <table id="phaselisttable" class="table table-bordered">
+                                    <thead class="bg-light">
+                                    <tr>
+                                        <th>Phase No.</th>
+                                        <th>Phase Description</th>
+                                        <th>Date</th>
+                                        <th>Venues</th>
+                                        <th>Resource Persons</th>
+                                        <th>Program Coordinators</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="phaseListDetailsModal">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHASE MORE DETAILS MODAL -->
+    <div class="modal fade modal-fullscreen-xl" id="PhaseMoreDetailsModal" tabindex="-1" role="dialog" aria-labelledby="PhaseMoreDetailsModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header position-relative">
+                    <h5 class="modal-title text-center" id="activityprogramDetailsTitle"><span id="PhaseMoreDetailsprogramname"></span></h5>
+                    <button type="button" class="btn-modal-close position-absolute" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="PhaseMoreDetailsListBody">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-12 mb-2 bg-dark mb-2">
+                                <h5 id="PhaseMoreDetailsofficeNameDetailsModal" class="text-white mb-0 py-2 px-2"></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5>Program ID: <span class="PhaseMoreDetailsprogramIDDetailsModal" id="PhaseMoreDetailsprogramID"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5>Program Status: <span id="PhaseMoreDetailsprogramStatusDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5>Program Category: <span id="PhaseMoreDetailsprogramCategoryDetailsModal"></span></h5>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-12 mb-3"><h6 class="font-weight-bold">Objectives:</h6><div class="scrollable-text" id="PhaseMoreDetailsObjectives"></div></div>
+                            <div class="col-12 mb-3"><h6 class="font-weight-bold">Methodology:</h6><div class="scrollable-text" id="PhaseMoreDetailsMethodology"></div></div>
+                            <div class="col-12 mb-3"><h6 class="font-weight-bold">Tools:</h6><div class="scrollable-text" id="PhaseMoreDetailsTools"></div></div>
+                            <div class="col-12 mb-3"><h6 class="font-weight-bold">KP Indicators:</h6><div class="scrollable-text" id="PhaseMoreDetailsKPIndicators"></div></div>
+                            <div class="col-12 mb-3"><h6 class="font-weight-bold">Outcomes:</h6><div class="scrollable-text" id="PhaseMoreDetailsOutcomes"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTIVITIES MODAL -->
+    <div class="modal fade modal-fullscreen-xl" id="ActivitiesModal" tabindex="-1" role="dialog" aria-labelledby="ActivitiesModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header position-relative">
+                    <h5 class="modal-title text-center" id="activityprogramDetailsTitle">Activities in <span id="activityprogramname"></span></h5>
+                    <button type="button" class="btn-modal-close position-absolute" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="ActivityListBody">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-12 mb-2 bg-dark mb-2">
+                                <h5 id="activityofficeNameDetailsModal" class="text-white mb-0 py-2 px-2"></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5>Program ID: <span class="activityprogramIDDetailsModal" id="activityprogramID"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5>Program Status: <span id="activityprogramStatusDetailsModal"></span></h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <h5>Program Category: <span id="activityprogramCategoryDetailsModal"></span></h5>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-sm-12">
+                                <table id="activitylistlisttable" class="table table-bordered">
+                                    <thead class="bg-light">
+                                    <tr>
+                                        <th>SL No.</th>
+                                        <th>Activity Name</th>
+                                        <th>Activity Description</th>
+                                        <th>Date</th>
+                                        <th>Expenditure</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="activityListDetailsModal"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROGRAM MATERIALS MODAL -->
+    <div class="modal fade modal-fullscreen-xl" id="ProgramMaterialsModal" tabindex="-1" role="dialog" aria-labelledby="ProgramMaterialsModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header position-relative">
+                    <h5 class="modal-title text-center" id="activityprogramDetailsTitle">Program Materials</h5>
+                    <button type="button" class="btn-modal-close position-absolute" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="ActivityListBody">
+                    <div class="container-fluid">
+                        <div class="row mt-4">
+                            <div class="col-sm-12">
+                                <table id="programMaterialsListTable" class="table table-bordered">
+                                    <thead class="bg-light">
+                                    <tr>
+                                        <th>SL No.</th>
+                                        <th>Material Description</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="programMaterialsTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        var getAllProgramDetailsBasedOnProgramCode = [[@{/program-details/getAllProgramDetailsBasedOnProgramCode}]];
+        var getPhaseMoreDetailsBasedOnPhaseId = [[@{/phase-more-details/getPhaseMoreDetailsBasedOnPhaseId}]];
+        var getActivityBasedOnPhaseId = [[@{/activities/getActivityBasedOnPhaseId}]];
+        var getProgramMaterialsBasedOnPhaseId = [[@{/program-materials/list}]];
+    </script>
+    <script th:src="@{/js/facultyResearchDetails.js}"></script>
+</th:block>
+</body>
+</html>

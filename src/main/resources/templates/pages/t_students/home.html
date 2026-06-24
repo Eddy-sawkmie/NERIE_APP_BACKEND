@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/student-layout}"
+>
+<head>
+    <title>Student Home</title>
+    <th:block layout:fragment="static-files">
+        <!-- Main Home Style -->
+        <link th:href="@{/css/home.css}" rel="stylesheet">
+        <!-- Font Awesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <!-- Calendar Style -->
+        <link th:href="@{/lily/jquery-mini-event-calendar/mini-event-calendar.min.css}" rel="stylesheet" type="text/css"/>
+    </th:block>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <div class="dashboard-container">
+        <div class="dashboard-container-card">
+
+            <div class="profile-header">
+                <div class="profile-header-main">
+                    <div class="profile-avatar">
+                        <img th:if="${studentImage != null}" th:src="'data:image/jpeg;base64,' + ${studentImage}" alt="Student Photo"/>
+                        <img th:unless="${studentImage != null}" th:src="@{/tempscripts/images/participant_photo.png}" alt="Default Student Photo"/>
+                    </div>
+                    <div class="profile-info">
+                        <div class="welcome-line">
+                            <h4 class="welcome-text" th:text="${myinfo.fname} + ' ' + ${myinfo.mname} + ' ' + ${myinfo.lname}">Student Name</h4>
+                        </div>
+                        <div class="role-info">
+                            <span class="badge user-badge">STUDENT</span>
+                        </div>
+                        <div class="contact-details">
+                            <!-- Course -->
+                            <div title="Course" class="contact-item btn-course">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span th:text="${myinfo.coursecode.coursename}">Course Name</span>
+                            </div>
+                            <!-- Roll No -->
+                            <div title="Roll No" class="contact-item btn-rollno">
+                                <i class="fas fa-id-badge"></i>
+                                <span th:text="${myinfo.rollno}">Roll Number</span>
+                            </div>
+                            <!-- Mobile -->
+                            <div title="Mobile" class="contact-item btn-phone" th:if="${myinfo.mobileno}">
+                                <i class="fas fa-phone-alt"></i>
+                                <span th:text="${myinfo.mobileno}">Mobile</span>
+                            </div>
+                            <!-- Email -->
+                            <div title="Email" class="contact-item btn-mail" th:if="${myinfo.email}">
+                                <i class="fas fa-envelope"></i>
+                                <span th:text="${myinfo.email}">Email</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Server Date/Time -->
+                <div class="server-info-container">
+                    <div layout:replace="~{fragments/server-info :: date-time}"></div>
+                </div>
+            </div>
+
+            <hr class="content-separator">
+
+            <div class="row">
+                <!-- Left Column: Calendar -->
+                <div class="col-lg-5 mb-4 mb-lg-0">
+                    <div class="calendar-card h-100">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Notifications & Assignments -->
+                <div class="col-lg-7">
+                    <!-- Notifications Card -->
+                    <!-- <div class="info-card clickable-card" data-url="/notifications/mynotifications">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bell"></i>Notifications</h5>
+                        </div>
+                        <div class="card-body scrollable-content">
+                            <div th:if="${sidebarnotifications == null or #lists.isEmpty(sidebarnotifications)}">
+                                <p class="text-muted">No new notifications.</p>
+                            </div>
+                            <ul class="notification-list" th:unless="${sidebarnotifications == null or #lists.isEmpty(sidebarnotifications)}">
+                                <li th:each="n, iterStat : ${sidebarnotifications}" th:if="${iterStat.index < 2}" class="notification-item">
+
+                                    
+                                    <a th:if="${n.notification.link != null and !#strings.isEmpty(n.notification.link)}"
+                                       th:href="@{${n.notification.link}}"
+                                       target="_blank"
+                                       class="notification-text notification-link"
+                                       onclick="event.stopPropagation();">
+                                        <i class="fas fa-link fa-xs mr-1"></i> <span th:text="${n.notification.notification}"></span>
+                                    </a>
+
+                                    
+                                    <p th:unless="${n.notification.link != null and !#strings.isEmpty(n.notification.link)}"
+                                       class="notification-text"
+                                       th:text="${n.notification.notification}">
+                                    </p>
+
+                                    <small class="notification-date" th:text="|Date: ${#dates.format(n.notification.entrydate, 'dd-MM-yyyy')}|"></small>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer" th:if="${sidebarnotifications != null and #lists.size(sidebarnotifications) > 2}">
+                        <span class="footer-link">
+                            ... and <span th:text="${#lists.size(sidebarnotifications) - 2}"></span> more. Click to view all.
+                        </span>
+                        </div>
+                    </div> -->
+
+                    
+                    <div class="info-card clickable-card navigate-to-url" th:attr="data-url=@{/assignments/viewassignments}">
+                        <div class="card-header">
+                            <h5><i class="fas fa-tasks"></i>Pending Assignments</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table modern-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Assignment Name</th>
+                                        <th>Subject</th>
+                                        <th>Uploaded Date</th>
+                                        <th>Submission Date</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:if="${pendingAssignments == null or #lists.isEmpty(pendingAssignments)}">
+                                        <td colspan="4" class="text-center text-muted py-4">No pending assignments found.</td>
+                                    </tr>
+                                    <tr th:each="a, iterStat : ${pendingAssignments}" th:if="${iterStat.index < 2}">
+                                        <td th:text="${a[1]}"></td>
+                                        <td th:text="${a[0]}"></td>
+                                        <td th:text="${a[2]}"></td>
+                                        <td th:text="${a[3]}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer" th:if="${#lists.size(pendingAssignments) > 2}">
+                            <span class="footer-link">
+                               ... and <span th:text="${#lists.size(pendingAssignments) - 2}"></span> more. Click to view all.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="notificationsModal" tabindex="-1" role="dialog" aria-labelledby="notificationsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationsModalLabel">All Notifications</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="all-notifications-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/serverDateTime.js}"></script>
+    <script th:src="@{/js/home.js}"></script>
+    <script th:src="@{/lily/jquery-mini-event-calendar/mini-event-calendar.min.js}" type="text/javascript"></script>
+
+    <!-- This script passes data from Thymeleaf to JavaScript -->
+    <script th:inline="javascript">
+        // Make notification data available to the studentHome.js script
+        window.pageData = {
+            notifications: /*[[${notifications}]]*/ []
+        };
+    </script>
+</th:block>
+</body>
+</html>

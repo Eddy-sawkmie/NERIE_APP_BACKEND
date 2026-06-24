@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/admin-layout}"
+>
+  <head>
+    <title layout:fragment="title">Report List</title>
+    <th:block layout:fragment="static-files"></th:block>
+  </head>
+  <body>
+    <main layout:fragment="content">
+      <div class="container py-5">
+        
+        <div class="row justify-content-center">
+          <div class="col-12 col-lg-8 col-xl-7">
+            
+            <div class="card border-0 modern-card mb-4">
+              
+              <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-file-alt me-3 fs-5"></i> 
+                    <span th:text="${reportTitle}">Report Configuration</span>
+                </h4>
+              </div>
+              
+              <div class="card-body p-4 p-md-5">
+                <form method="POST" th:object="${moffices}" name="mofficesfn" id="mofficesfid" role="form" autocomplete="off">
+                  
+                  <div class="row g-4 mb-5">
+                    
+                    <div class="col-12">
+                      <label for="reportstatus" class="form-label-modern">Report Type <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-clipboard-list"></i></span>
+                        <select name="reportstatus" id="reportstatus" class="form-select modern-select border-start-0 ps-2" required="true">
+                          <option value="-1">-- Select Report Type --</option>
+                          <th:block th:switch="${reportType}">
+                            <option th:case="1" value="1" th:text="'Office Wise Details List'"></option>
+                            <option th:case="2" value="2" th:text="'Office Wise Coordinator List'"></option>
+                            <th:block th:case="3">
+                              <option value="3" th:text="'List of Completed Program'"></option>
+                              <option value="4" th:text="'List of Ongoing Program'"></option>
+                              <option value="5" th:text="'List of Upcoming Program'"></option>
+                            </th:block>
+                          </th:block>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="officecode" class="form-label-modern">Office <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-building"></i></span>
+                        <select th:field="*{officecode}" id="officecode" class="form-select modern-select border-start-0 ps-2" required="true">
+                          <option value="-1">-- Select Office --</option>
+                          <option th:each="o : ${officelist}"
+                                  th:value="${o.officecode}"
+                                  th:text="${o.officename}">
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="finyear" class="form-label-modern">Financial Year</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="far fa-calendar-alt"></i></span>
+                        <select name="finyear" id="finyear" class="form-select modern-select border-start-0 ps-2">
+                          <option value="">-- Select --</option>
+                        </select>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+                    <button type="reset" class="btn btn-light border btn-modern px-4">Reset</button>
+                    <button id="submit" type="button" class="btn btn-primary btn-modern px-5">
+                      <i class="fas fa-download me-2"></i> Generate Report
+                    </button>
+                  </div>
+
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                    </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+      </div>
+
+    </main>
+    
+    <th:block layout:fragment="scripts">
+      <script th:inline="javascript">
+        const API = {
+            getReportFinancialYear: [[@{/reports/get-report-financialyear}]],
+            getReport: [[@{/reports/Report}]]
+        };
+      </script>
+      <script th:src="@{/js/reportList.js}"></script>
+    </th:block>
+  </body>
+</html>

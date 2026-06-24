@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{${layoutname}}"
+>
+<head>
+    <title layout:fragment="title">Manage Students</title>
+
+    <div layout:fragment="static-files">
+        <link th:href="@{/lily/js/select2/select2.min.css}" rel="stylesheet" type="text/css"/>
+        <script th:src="@{/lily/js/select2/select2.min.js}" type="text/javascript"></script>
+
+        <link th:href="@{/tempscripts/duallistbox/bootstrap-duallistbox.css}" rel="stylesheet" type="text/css"/>
+        <script th:src="@{/tempscripts/duallistbox/jquery.bootstrap-duallistbox.js}" type="text/javascript"></script>
+
+        <link th:href="@{/tempscripts/bootstrap-select/bootstrap-select.min.css}" rel="stylesheet" type="text/css"/>
+        <script th:src="@{/tempscripts/bootstrap-select/bootstrap-select.min.js}" type="text/javascript"></script>
+
+        <link rel="stylesheet" th:href="@{/css/userCreationForm.css}" />
+        <script th:inline="javascript">
+            const API = {
+                saveStudents: [[@{/students/save}]],
+                getStudent: [[@{/students/student}]],
+                promoteStudents: [[@{/students/student/promotion}]],
+                getCoursesBasedOnDepartment: [[@{/course-academics/coursesbasedondepartment}]],
+                getStudentSubjects: [[@{/subjects/student-subjects}]],
+                generateAcademicYearByDuration: [[@{/course-academics/generateacademicyearbyduration}]],
+                checkUserExist: [[@{/users/check-user}]],
+                getStudentByUsercode: [[@{/students/student}]],
+                getStudentSubject: [[@{/student-subject}]],
+                resetPassword: [[@{/users/reset-password}]],
+                changeUserStatus: [[@{/users/change-user-status}]],
+                redirectURL: [[@{/students/manage}]]
+            };
+        </script>
+        <script th:src="@{/js/createStudent.js}"></script>
+    </div>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-user-graduate me-3 fs-5"></i> Register Students
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <form name="tstudentsid" id="tstudentsid" role="form" autocomplete="off">
+                    <input name="studentid" id="studentid" type="hidden" readonly />
+                    <input name="usercode" id="usercode" type="hidden" readonly />
+
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label for="rollno" class="form-label-modern mb-0">
+                                Auto-generated Roll No:<br />
+                                <small class="text-danger fw-normal">Only for already registered students</small>
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-id-card"></i></span>
+                                <input name="rollno" id="rollno" type="text" placeholder="Roll No" class="form-control modern-input border-start-0 ps-2" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label for="username" class="form-label-modern mb-0">User Id: <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-user"></i></span>
+                                <input name="username" id="username" placeholder="User Id" class="form-control modern-input border-start-0 ps-2" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label for="fname" class="form-label-modern mb-0">First Name: <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-font"></i></span>
+                                <input name="fname" id="fname" placeholder="First Name" class="form-control modern-input border-start-0 ps-2 name" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label for="mname" class="form-label-modern mb-0">Middle Name:</label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-font"></i></span>
+                                <input name="mname" id="mname" placeholder="Middle Name" class="form-control modern-input border-start-0 ps-2 name" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label for="lname" class="form-label-modern mb-0">Last Name: <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-font"></i></span>
+                                <input name="lname" id="lname" placeholder="Last Name" class="form-control modern-input border-start-0 ps-2 name" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label for="gender" class="form-label-modern mb-0">Gender: <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-venus-mars"></i></span>
+                                <select name="gender" id="gender" class="form-select modern-input border-start-0 ps-2" required>
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="O">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label for="email" class="form-label-modern mb-0">Email-Id: <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
+                                <input type="email" name="email" id="email" placeholder="Email Id" class="form-control modern-input border-start-0 ps-2 iemail" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label for="mobileno" class="form-label-modern mb-0">Mobile No: <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-phone-alt"></i></span>
+                                <input name="mobileno" id="mobileno" placeholder="Mobile Number" maxlength="10" class="form-control modern-input border-start-0 ps-2 mobile number" required />
+                            </div>
+                            <small id="msgMobile" class="text-danger d-block mt-1"></small>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label for="departmentcode" class="form-label-modern mb-0">Department <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-building"></i></span>
+                                <select name="departmentcode" id="departmentcode" class="form-select modern-input border-start-0 ps-2" required>
+                                    <option value="-1" disabled selected>-- Select Department --</option>
+                                    <option th:each="d : ${departments}" th:value="${d.departmentcode}" th:text="${d.departmentname}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-3">
+                            <label for="isshortterm_toggle" class="form-label-modern mb-0">Short Term Course? <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="hidden" id="isshortterm" name="isshortterm" value="0" />
+                            <label class="switch mb-0 align-middle">
+                                <input type="checkbox" id="isshortterm_toggle" onchange="toggleViz();">
+                                <span class="slider round shadow-sm"></span>
+                            </label>
+                            <span class="ms-3 fw-bold text-muted align-middle" id="isshortterm_label">No</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center" id="semesterdiv">
+                        <div class="col-md-3">
+                            <label for="semestercode" class="form-label-modern mb-0">Semester: <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-layer-group"></i></span>
+                                <select name="semestercode" id="semestercode" class="form-select modern-input border-start-0 ps-2">
+                                    <option value="" disabled selected>Select</option>
+                                    <option th:each="o : ${semesterList}" th:value="${o.semestercode}" th:text="${o.semestername}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center" id="phasediv" style="display:none;">
+                        <div class="col-md-3">
+                            <label for="sphaseid" class="form-label-modern mb-0">Phases: <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-stream"></i></span>
+                                <select name="sphaseid" id="sphaseid" class="form-select modern-input border-start-0 ps-2">
+                                    <option value="" disabled selected>Select</option>
+                                    <option th:each="s : ${sphaseList}" th:value="${s.sphaseid}" th:text="${s.sphasename}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label for="coursecode" class="form-label-modern mb-0">Select Course <span class="text-danger">*</span></label>
+                            <p class="text-primary fs-12 mb-0 mt-1"><i class="fas fa-info-circle"></i> Add course first if not available.</p>
+                        </div>
+                        <div class="col-md-5 align-self-center">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book-open"></i></span>
+                                <select name="coursecode" id="coursecode" class="form-select modern-input border-start-0 ps-2" required>
+                                    <option value="-1" disabled selected>Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label class="form-label-modern mb-0">Compulsory Subjects</label>
+                        </div>
+                        <div class="col-md-5">
+                            <div id="compulsorylist" class="compulsorylist p-3 bg-light border rounded shadow-sm"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label for="optionalsubjects" class="form-label-modern mb-0">Select Optional Subject(s): <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select name="optionalsubjects" id="optionalsubjects" class="form-control shadow-sm" multiple="multiple" required>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5 align-items-center">
+                        <div class="col-md-3">
+                            <label for="academicyear" class="form-label-modern mb-0">Academic Year: <span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-calendar-alt"></i></span>
+                                <select name="academicyear" id="academicyear" class="form-select modern-input border-start-0 ps-2" required>
+                                    <option value="" disabled selected>Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4 pt-4 border-top">
+                        <div class="col-12 d-flex justify-content-center gap-3">
+                            <button type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                                <i class="fas fa-save me-2"></i> Submit
+                            </button>
+                            <button type="reset" class="btn btn-light border btn-modern px-5">
+                                <i class="fas fa-undo me-2"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="table-responsive table-wrapper mt-5 pt-3 border-top">
+                    <table class="table modern-table align-middle mb-0 w-100" id="usertable">
+                        <thead>
+                        <tr>
+                            <th>Roll No.</th>
+                            <th>Student Name</th>
+                            <th>Department</th>
+                            <th>Subjects</th>
+                            <th>Semester/Phase</th>
+                            <th class="noExport text-center">Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody th:if="${allstudents != null}">
+                        <tr th:each="student : ${allstudents}">
+                            <td class="fw-semibold">
+                                <a href="#" class="load-student-link text-decoration-none" th:data-student-id="${student[1]}"
+                                   th:text="${student[16]}">
+                                </a>
+                            </td>
+                            <td><span class="fw-bold text-dark d-block" th:text="${student[2] + ' ' + student[3] + ' ' + student[4]}"></span></td>
+                            <td class="text-muted" th:text="${student[5]}"></td>
+                            <td th:text="${student[6]}"></td>
+                            <td th:text="${student[15] == 1 ? student[14] : student[13]}"></td>
+                            <td class="text-center white-space-nowrap">
+                                <a class="btn btn-sm btn-primary btn-modern edit-student mb-1"
+                                   th:data-student-id="${student[0]}">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </a>
+                                <a class="btn btn-sm btn-secondary btn-modern resetbtn mb-1"
+                                   th:data-user-id="${student[0]}"
+                                   th:data-email="${student[8]}"
+                                   th:data-phone="${student[9]}">
+                                    <i class="fas fa-sync-alt me-1"></i> Reset
+                                </a>
+                                <a th:if="${student[10] == 1}"
+                                   class="btn btn-sm btn-danger btn-modern disablebtn mb-1"
+                                   th:data-user-id="${student[0]}"
+                                   th:data-email="${student[8]}"
+                                   th:data-status="${student[10]}">
+                                    <i class="fas fa-ban me-1"></i> Disable
+                                </a>
+                                <a th:if="${student[10] == 0}"
+                                   class="btn btn-sm btn-success btn-modern disablebtn mb-1"
+                                   th:data-user-id="${student[0]}"
+                                   th:data-email="${student[8]}"
+                                   th:data-status="${student[10]}">
+                                    <i class="fas fa-check me-1"></i> Enable
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal fade" id="studentdetailsModal" tabindex="-1" aria-labelledby="studentdetailsLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg">
+                            <div class="modal-header bg-light border-0 px-4 py-3">
+                                <h5 class="modal-title fw-bold text-dark" id="studentdetailsLabel"><i class="fas fa-user-circle me-2 text-primary"></i> Student Detail</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4" id="modalBody">
+                                <div class="container-fluid">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-3">
+                                            <label for="inputYearid" class="form-label-modern">Academic Year</label>
+                                            <input type="text" class="form-control bg-light" id="inputYearid" readonly>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <label for="inputStudentid" class="form-label-modern">Roll No.</label>
+                                            <input type="text" class="form-control bg-light" id="inputStudentid" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-4">
+                                            <label for="inputFname" class="form-label-modern">First Name</label>
+                                            <input type="text" class="form-control bg-light" id="inputFname" readonly>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="inputMname" class="form-label-modern">Middle Name</label>
+                                            <input type="text" class="form-control bg-light" id="inputMname" readonly>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="inputLname" class="form-label-modern">Last Name</label>
+                                            <input type="text" class="form-control bg-light" id="inputLname" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label for="inputEmail" class="form-label-modern">Email Id</label>
+                                            <input type="email" class="form-control bg-light" id="inputEmail" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="inputMobile" class="form-label-modern">Mobile No</label>
+                                            <input type="text" class="form-control bg-light" id="inputMobile" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label for="inputDepartment" class="form-label-modern">Department</label>
+                                            <input type="text" class="form-control bg-light" id="inputDepartment" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="inputCourse" class="form-label-modern">Course</label>
+                                            <input type="text" class="form-control bg-light" id="inputCourse" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="inputSP" id="inputSPLabel" class="form-label-modern">Current Semester</label>
+                                            <input id="inputSP" class="form-control bg-light" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-top-0 pt-0">
+                                <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg">
+                            <div class="modal-header bg-light border-0 px-4 py-3">
+                                <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                            </div>
+                            <div class="modal-footer border-top-0 pt-0">
+                                <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

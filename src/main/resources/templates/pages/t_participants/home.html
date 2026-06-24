@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/participant-layout}"
+>
+<head>
+    <title>Participant Home</title>
+    <th:block layout:fragment="static-files">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link th:href="@{/lily/jquery-mini-event-calendar/mini-event-calendar.min.css}" rel="stylesheet" type="text/css"/>
+        <link th:href="@{/css/home.css}" rel="stylesheet">
+
+        <style>
+            .modern-card {
+                border-radius: 1rem;
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+                background: #ffffff;
+                overflow: hidden;
+                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            }
+
+            .clickable-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+                cursor: pointer;
+            }
+
+            /* Dashboard Profile Header Styling */
+            .profile-welcome-card {
+                background: linear-gradient(to right, #ffffff, #f8f9fc);
+                border-left: 5px solid #0d6efd;
+            }
+
+            .profile-avatar-wrapper {
+                position: relative;
+                display: inline-block;
+                flex-shrink: 0;
+            }
+
+            .profile-avatar-img {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border: 4px solid #fff;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                border-radius: 50%;
+                background-color: #f8f9fa;
+            }
+
+            .contact-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.4rem 1rem;
+                border-radius: 50rem;
+                background-color: #f1f3f5;
+                color: #495057;
+                font-size: 0.85rem;
+                font-weight: 500;
+                transition: all 0.2s;
+                cursor: pointer;
+                border: 1px solid transparent;
+            }
+
+            .contact-pill:hover {
+                background-color: #e9ecef;
+                border-color: #dee2e6;
+                transform: translateY(-1px);
+            }
+
+            .role-badge {
+                background-color: rgba(13, 110, 253, 0.1);
+                color: #0d6efd;
+                border: 1px solid rgba(13, 110, 253, 0.2);
+                padding: 0.4rem 1rem;
+                border-radius: 0.5rem;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                font-size: 0.75rem;
+            }
+
+            /* Notifications List Styling */
+            .notification-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .notification-item {
+                padding: 1rem 0;
+                border-bottom: 1px solid #f1f3f5;
+            }
+            
+            .notification-item:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+
+            .notification-link {
+                text-decoration: none;
+                color: #0d6efd;
+                font-weight: 600;
+                transition: color 0.2s;
+            }
+            
+            .notification-link:hover {
+                color: #0a58ca;
+                text-decoration: underline;
+            }
+
+            /* Modern Table Styling */
+            .modern-table {
+                margin-bottom: 0;
+                border-collapse: separate;
+                border-spacing: 0;
+            }
+            
+            .modern-table thead th {
+                background-color: #f8f9fc;
+                color: #5c636a;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.5px;
+                padding: 1rem;
+                border-bottom: 2px solid #e9ecef;
+                border-top: none;
+            }
+            
+            .modern-table tbody td {
+                padding: 1rem;
+                border-bottom: 1px solid #f1f3f5;
+                vertical-align: middle;
+                color: #495057;
+                font-size: 0.9rem;
+            }
+
+            .modern-table tbody tr {
+                transition: all 0.2s ease-in-out;
+            }
+            
+            .modern-table tbody tr:hover {
+                background-color: #f8f9fa;
+            }
+
+            .table-wrapper {
+                border: 1px solid #e9ecef;
+                border-radius: 0.75rem;
+                overflow: hidden;
+            }
+
+            .mini-cal{
+                background-color: #22252e!important;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+        
+        <div class="card border-0 modern-card profile-welcome-card mb-4">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+                    
+                    <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-4">
+                        <div class="profile-avatar-wrapper">
+                            <img th:if="${participantImage != null}" th:src="'data:image/jpeg;base64,' + ${participantImage}" class="profile-avatar-img" alt="Participant Photo" />
+                            <img th:unless="${participantImage != null}" th:src="@{/tempscripts/images/participant_photo.png}" class="profile-avatar-img" alt="Default Participant Photo" />
+                        </div>
+                        
+                        <div>
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <h3 class="fw-bold text-dark mb-0" th:text="'Welcome, ' + ${myinfo.username}">Welcome, User</h3>
+                                <div>
+                                    <span class="role-badge">PARTICIPANT</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <div title="Click to copy Email" class="contact-pill btn-mail" th:if="${myinfo.emailid}">
+                                    <i class="fas fa-envelope text-primary"></i>
+                                    <span th:text="${myinfo.emailid}">Email</span>
+                                </div>
+                                <div title="Click to copy Mobile" class="contact-pill btn-phone" th:if="${myinfo.usermobile}">
+                                    <i class="fas fa-phone-alt text-success"></i>
+                                    <span th:text="${myinfo.usermobile}">Mobile</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="server-info-container text-md-end bg-white p-3 rounded-3 border shadow-sm">
+                        <div layout:replace="~{fragments/server-info :: date-time}"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            
+            <div class="col-lg-5">
+                <div class="card border-0 modern-card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-dark mb-4"><i class="far fa-calendar-alt text-primary me-2"></i> Event Calendar</h5>
+                        <div id="calendar" class="w-100"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7 d-flex flex-column gap-4">
+                
+                <!-- <div class="card border-0 modern-card clickable-card" data-url="/notifications/mynotifications">
+                    <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-bell text-warning me-2"></i> Notifications</h5>
+                        <span class="badge bg-danger rounded-pill" th:if="${sidebarnotifications != null and not #lists.isEmpty(sidebarnotifications)}" th:text="${#lists.size(sidebarnotifications)}"></span>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <div th:if="${sidebarnotifications == null or #lists.isEmpty(sidebarnotifications)}">
+                            <div class="text-center text-muted py-3">
+                                <i class="far fa-bell-slash fs-3 mb-2 d-block opacity-50"></i>
+                                No new notifications.
+                            </div>
+                        </div>
+                        
+                        <ul class="notification-list" th:unless="${sidebarnotifications == null or #lists.isEmpty(sidebarnotifications)}">
+                            <li th:each="n, iterStat : ${sidebarnotifications}" th:if="${iterStat.index < 2}" class="notification-item">
+
+                                <a th:if="${n.notification.link != null and !#strings.isEmpty(n.notification.link)}"
+                                   th:href="@{${n.notification.link}}"
+                                   target="_blank"
+                                   class="notification-link d-block mb-1"
+                                   onclick="event.stopPropagation();">
+                                    <i class="fas fa-external-link-alt fa-xs me-1"></i> <span th:text="${n.notification.notification}"></span>
+                                </a>
+
+                                <p th:unless="${n.notification.link != null and !#strings.isEmpty(n.notification.link)}"
+                                   class="text-dark fw-medium mb-1"
+                                   th:text="${n.notification.notification}">
+                                </p>
+
+                                <div class="small text-muted"><i class="far fa-clock me-1"></i> <span th:text="|${#dates.format(n.notification.entrydate, 'dd-MMM-yyyy')}|"></span></div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-footer bg-light border-top text-center py-2" th:if="${#lists.size(sidebarnotifications) > 2}">
+                        <span class="text-primary small fw-semibold">
+                            View all notifications (<span th:text="${#lists.size(sidebarnotifications)}"></span>) <i class="fas fa-arrow-right ms-1"></i>
+                        </span>
+                    </div>
+                </div> -->
+
+                <div class="card border-0 modern-card clickable-card navigate-to-url" th:attr="data-url=@{/program/apply-for-programs}">
+                    <div class="card-header bg-white border-bottom py-3 px-4">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-tasks text-success me-2"></i> Available Programs</h5>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <div class="table-responsive table-wrapper shadow-sm border-0">
+                            <table class="table modern-table mb-0 w-100" id="programsTable">
+                                <thead>
+                                <tr>
+                                    <th style="width: 25%;">Program Name</th>
+                                    <th style="width: 35%;">Description</th>
+                                    <th style="width: 20%;">Venues</th>
+                                    <th style="width: 20%;">Duration</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${mcourselist == null or #lists.isEmpty(mcourselist)}">
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="fas fa-folder-open fs-3 mb-2 d-block opacity-50"></i>
+                                        No available programs currently.
+                                    </td>
+                                </tr>
+                                <tr th:each="v, iterStat : ${mcourselist}" th:if="${iterStat.index < 5}">
+                                    
+                                    <td class="fw-semibold text-dark">
+                                        <span th:if="${#strings.length(v[1]) > 30}">
+                                            <span class="less" th:text="${#strings.substring(v[1], 0, 20)} + '...'"></span>
+                                            <span class="more display-none" th:text="${v[1]}"></span>
+                                            <a href="#more" class="showmore ms-1 small text-decoration-none"><i class="fas fa-chevron-down"></i> more</a>
+                                        </span>
+                                        <span th:unless="${#strings.length(v[1]) > 30}" th:text="${v[1]}"></span>
+                                    </td>
+
+                                    <td>
+                                        <span th:with="fullDesc=${v[2] + ': ' + v[3]}">
+                                            <span th:if="${#strings.length(fullDesc) > 30}">
+                                                <span class="less" th:text="${#strings.substring(fullDesc, 0, 30)} + '...'"></span>
+                                                <span class="more display-none" th:text="${fullDesc}"></span>
+                                                <a href="#more" class="showmore ms-1 small text-decoration-none"><i class="fas fa-chevron-down"></i> more</a>
+                                            </span>
+                                            <span th:unless="${#strings.length(fullDesc) > 30}" th:text="${fullDesc}"></span>
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="badge bg-light text-dark border fw-medium" th:if="${#strings.length(v[10]) > 30}">
+                                            <span class="less" th:text="${#strings.substring(v[10], 0, 15)} + '...'"></span>
+                                            <span class="more display-none" th:text="${v[10]}"></span>
+                                            <a href="#more" class="showmore ms-1"><i class="fas fa-chevron-down"></i></a>
+                                        </span>
+                                        <span class="badge bg-light text-dark border fw-medium" th:unless="${#strings.length(v[10]) > 30}" th:text="${v[10]}"></span>
+                                    </td>
+
+                                    <td class="small">
+                                        <span class="d-block text-success fw-semibold"><i class="far fa-calendar-check me-1"></i> <th:block th:text="${v[4] != null ? #temporals.format(v[4], 'dd-MMM-yy') : 'N/A'}"></th:block></span>
+                                        <span class="d-block text-danger fw-semibold mt-1"><i class="far fa-calendar-times me-1"></i> <th:block th:text="${v[5] != null ? #temporals.format(v[5], 'dd-MMM-yy') : 'N/A'}"></th:block></span>
+                                    </td>
+                                    
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light border-top text-center py-2" th:if="${mcourselist != null and #lists.size(mcourselist) > 5}">
+                        <span class="text-primary small fw-semibold">
+                            View all programs (<span th:text="${#lists.size(mcourselist)}"></span>) <i class="fas fa-arrow-right ms-1"></i>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="notificationsModal" tabindex="-1" aria-labelledby="notificationsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="notificationsModalLabel"><i class="fas fa-bell text-warning me-2"></i> All Notifications</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div id="all-notifications-list"></div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-secondary btn-modern px-4" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/serverDateTime.js}"></script>
+    <script th:src="@{/js/home.js}"></script>
+    <script th:src="@{/lily/jquery-mini-event-calendar/mini-event-calendar.min.js}" type="text/javascript"></script>
+    <script th:inline="javascript">
+        window.pageData = {
+            notifications: /*[[${notificationsp}]]*/ []
+        };
+    </script>
+</th:block>
+</body>
+</html>

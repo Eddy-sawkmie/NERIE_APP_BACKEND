@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+        xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <title layout:fragment="title">Program Time Table</title>
+
+    <div layout:fragment="static-files">
+        <script th:inline="javascript">
+            const BASE = [[@{/}]];
+
+            function redirect(path) {
+                window.location.href = BASE + path;
+            }
+        </script>
+        <script th:src="@{/lily/js/customajax.js}"></script>
+        <script th:src="@{/lily/js/utility.js}"></script>
+
+        <script th:src="@{/tempscripts/vendor/charts/moment.min.js}" type="text/javascript"></script>
+        <script th:src="@{/lily/js/datepicker/datepicker.min.js}" type="text/javascript"></script>
+        <script th:src="@{/lily/js/datepicker/jquery.mask.min.js}" type="text/javascript"></script>
+        <link th:href="@{/lily/js/datepicker/datepicker.min.css}" type="text/css" media="screen" rel="stylesheet" />
+        <script th:src="@{/lily/js/select2/select2.min.js}" type="text/javascript"></script>
+        <link th:href="@{/lily/js/select2/select2.min.css}" rel="stylesheet" type="text/css" />
+
+        <script th:src="@{/lily/js/datepicker1/bootstrap-datetimepicker.min.js}" type="text/javascript"></script>
+        <link th:href="@{/lily/js/datepicker1/bootstrap-datetimepicker.min.css}" type="text/css" media="screen" rel="stylesheet" />
+
+        <link th:href="@{/tempscripts/bootstrap-select/bootstrap-select.min.css}" rel="stylesheet" type="text/css" />
+        <script th:src="@{/tempscripts/bootstrap-select/bootstrap-select.min.js}" type="text/javascript"></script>
+
+        <link rel="stylesheet" th:href="@{/css/createProgramTimetable.css}" />
+        <script th:inline="javascript">
+            const API = {
+                listPhases: [[@{/phases/list}]],
+                listVenues: [[@{/venues/list}]],
+                listProgramDetails: [[@{/program-details/list}]],
+                listCoursePhases: [[@{/resource-persons/list/course-phase}]],
+                listVenueRooms: [[@{/venue-rooms/list}]],
+                saveProgramTimeTable: [[@{/timetable/program-timetable/save}]],
+                listProgramTimeTable: [[@{/program-details/list/timetable}]]
+            };
+        </script>
+        <script th:src="@{/js/createProgramTimetable.js}"></script>
+    </div>
+</head>
+
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+
+        <div class="card border-0 modern-card mb-4">
+            <div class="card-header modern-card-header text-white py-3 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-calendar-alt me-3 fs-5"></i> Create Schedule
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <form name="programtt" id="tprogramttform" role="form" autocomplete="off">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="programs" class="form-label-modern">Program <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-graduation-cap"></i></span>
+                                <select name="programcode" id="programs" class="form-select modern-input border-start-0 select2-search" required="true">
+                                    <option value="">Select Program</option>
+                                    <option th:each="p : ${programlist}" th:value="${p[0]}" th:text="${p[1]}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label for="phaseno" class="form-label-modern">Phase No <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-layer-group"></i></span>
+                                <select name="phaseid" id="phaseno" class="form-select modern-input border-start-0" required="true">
+                                    <option value="">Select Phase</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label for="programday" class="form-label-modern">Day <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-sun"></i></span>
+                                <select name="programday" id="programday" class="form-select modern-input border-start-0" required="true">
+                                    <option value="">Select Day</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label for="venuecode" class="form-label-modern">Venues <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-building"></i></span>
+                                <select name="venuecode" id="venuecode" class="form-select modern-input border-start-0" required="true">
+                                    <option value="">Select Venue</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label for="roomcode" class="form-label-modern">Room <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-door-open"></i></span>
+                                <input type="text" name="programdate" id="programdate" data-language="en" class="form-control datepicker-here" hidden="true" />
+                                <input name="programtimetablecode" id="programtimetablecode" class="form-control" hidden="true" />
+                                <select name="roomcode" id="roomcode" class="form-select modern-input border-start-0" required="true">
+                                    <option value="">Select Room</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label-modern">Time Duration <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-clock"></i></span>
+                                <input type="text" name="starttime" id="starttime" maxlength="8" class="form-control modern-input border-start-0 border-end-0 text-center" placeholder="Start Time" required="true"/>
+                                <span class="input-group-text bg-light text-muted border-start-0 border-end-0">To</span>
+                                <input type="text" name="endtime" id="endtime" maxlength="8" class="form-control modern-input border-start-0 text-center" placeholder="End Time" required="true"/>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label-modern d-block">Type <span class="text-danger">*</span></label>
+                            <div class="d-flex align-items-center mt-2 px-2">
+                                <div class="form-check form-check-inline me-4">
+                                    <input class="form-check-input" type="radio" name="breakclass" id="inlineRadio1" value="option1">
+                                    <label class="form-check-label" for="inlineRadio1">Break</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="breakclass" id="inlineRadio2" value="option2" checked="true">
+                                    <label class="form-check-label" for="inlineRadio2">Class</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4" id="subinput">
+                            <label for="subject" class="form-label-modern">Subject <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book-open"></i></span>
+                                <input name="subject" id="subject" class="form-control modern-input border-start-0" required="true" maxlength="70" placeholder="Enter Subject"/>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mb-4" id="rpinput">
+                            <label for="rpslno" class="form-label-modern">Resource Person <span class="text-danger">*</span></label>
+                            <div class="shadow-sm" style="border-radius: 0.5rem;">
+                                <select name="rpslno" id="rpslno" class="form-control modern-input" multiple="multiple" required="true">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 mt-4 pt-4 border-top">
+                        <button type="reset" class="btn btn-light border btn-modern px-4 shadow-sm">
+                            <i class="fas fa-undo me-2"></i> Reset
+                        </button>
+                        <button id="submit" type="submit" name="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                            <i class="fas fa-save me-2"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card border-0 modern-card">
+            <div class="card-header modern-card-header text-white py-3 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-list-alt me-3 fs-5"></i> Schedule Details
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <div class="table-responsive table-wrapper mt-2" id="tablediv">
+                    <table class="table modern-table align-middle mb-0 w-100" id="programtable">
+                        <thead>
+                        <tr>
+                            <th style="width: 20%;">Program Details</th>
+                            <th style="width: 15%;">Start Time</th>
+                            <th style="width: 15%;">End Time</th>
+                            <th style="width: 25%;">Subject</th>
+                            <th style="width: 15%;">Resource Person</th>
+                            <th style="width: 10%;" class="text-center noExport">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div class="row mt-4" id="errordiv">
+                    <div class="col-12 text-center">
+                        <div class="alert alert-light border shadow-sm d-inline-block px-4 py-2 text-muted" role="alert">
+                            <i class="fas fa-info-circle me-2 text-primary"></i>
+                            <span id="errorspan">Select a program day to display the schedule</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

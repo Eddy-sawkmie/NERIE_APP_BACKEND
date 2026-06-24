@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layouts/principal-director-layout}"
+>
+<head>
+    <title layout:fragment="title">Home</title>
+
+    <div layout:fragment="static-files">
+        <link th:href="@{/lily/jquery-mini-event-calendar/mini-event-calendar.min.css}" rel="stylesheet" type="text/css"/>
+        <script th:src="@{/lily/jquery-mini-event-calendar/mini-event-calendar.min.js}" type="text/javascript"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link rel="stylesheet" th:href="@{/css/home.css}">
+        <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    </div>
+</head>
+
+<body>
+<main layout:fragment="content">
+    <div class="dashboard-container">
+        <div class="dashboard-container-card">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-header-main">
+                    <div class="profile-avatar">
+                        <img th:if="${myinfo.userphotograph != null}" th:src="'data:image/jpeg;base64,' + ${profilePicture}" class="img-thumbnail" />
+                        <img th:unless="${profilepic != null}" id="previewfile1" class="img-thumbnail"
+                             th:src="@{/tempscripts/images/defaultprofile.jpg}" alt="Default Profile Picture"/>
+                    </div>
+                    <div class="profile-info">
+                        <div class="welcome-line">
+                            <h4 class="welcome-text" th:text="'Welcome, ' + ${myinfo.username}">Welcome, User</h4>
+                        </div>
+                        <div class="role-info" th:switch="${myinfo.userrole}">
+                            <div th:case="'Z'">
+                                <span class="badge user-badge" th:if="${myinfo.isfaculty == '0'}">Principal</span>
+                            </div>
+                        </div>
+                        <div class="contact-details">
+                            <div title="Email" class="contact-item btn-mail" th:if="${myinfo.emailid}">
+                                <i class="fas fa-envelope"></i>
+                                <span th:text="${myinfo.emailid}">email@example.com</span>
+                            </div>
+                            <div title="Mobile" class="contact-item btn-phone" th:if="${myinfo.usermobile}">
+                                <i class="fas fa-phone-alt"></i>
+                                <span th:text="${myinfo.usermobile}">1234567890</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="server-info-container">
+                    <div layout:replace="~{fragments/server-info :: date-time}"></div>
+                </div>
+            </div>
+
+            <hr class="content-separator">
+
+            <div class="row">
+                <!-- Left Column: Calendar -->
+                <div class="col-lg-5 mb-4 mb-lg-0">
+                    <div class="calendar-card h-100">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Stats -->
+                <div class="col-lg-7">
+                    <!-- Row 1: Depts, Faculty, Students, Alumni -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-4">
+                            <div class="stat-card bg-department">
+                                <div class="stat-icon"><i class="fas fa-university"></i></div>
+                                <div class="stat-info">
+                                    <p class="stat-title">Total Departments</p>
+                                    <span class="stat-count" th:text="${departmentsCount}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="stat-card bg-faculty">
+                                <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                                <div class="stat-info">
+                                    <p class="stat-title">Faculties Registered</p>
+                                    <span class="stat-count" th:text="${facultiesCount}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4 mb-md-0">
+                            <div class="stat-card bg-student">
+                                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                                <div class="stat-info">
+                                    <p class="stat-title">Students Registered</p>
+                                    <span class="stat-count" th:text="${studentsCount}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stat-card bg-alumni">
+                                <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+                                <div class="stat-info">
+                                    <p class="stat-title">Alumni Registered</p>
+                                    <span class="stat-count" th:text="${alumniCount}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Row 2: Coordinators & Participants -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-4 mb-md-0">
+                            <div class="stat-card bg-coordinator">
+                                <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                                <div class="stat-info">
+                                    <p class="stat-title">Coordinators Registered</p>
+                                    <span class="stat-count" th:text="${coordinatorsCount}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stat-card bg-participant">
+                                <div class="stat-icon"><i class="fas fa-user-friends"></i></div>
+                                <div class="stat-info">
+                                    <p class="stat-title">Participants Registered</p>
+                                    <span class="stat-count" th:text="${participantsCount}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Completed Programs (Current & Previous) -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-4 mb-md-0">
+                            <div class="stat-card bg-completedp">
+                                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                                <div class="stat-info">
+                                    <p class="stat-title" style="margin-bottom: 2px;">Completed Programs</p>
+                                    <p class="stat-title-small">Current Year</p>
+                                    <span class="stat-count" th:text="${completedofficeprograms}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stat-card bg-completedp-prev">
+                                <div class="stat-icon"><i class="fas fa-history"></i></div>
+                                <div class="stat-info">
+                                    <p class="stat-title" style="margin-bottom: 2px;">Completed Programs</p>
+                                    <p class="stat-title-small">Previous Year</p>
+                                    <span class="stat-count" th:text="${completedofficeprogramsprevyear}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Closed Programs (Current & Previous) -->
+                    <div class="row">
+                        <div class="col-md-6 mb-4 mb-md-0">
+                            <div class="stat-card bg-closedp">
+                                <div class="stat-icon"><i class="fas fa-archive"></i></div>
+                                <div class="stat-info">
+                                    <p class="stat-title">Closed Programs</p>
+                                    <p class="stat-title-small" style="margin-bottom: 2px;">Current Year</p>
+                                    <span class="stat-count" th:text="${closedofficeprograms}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stat-card bg-closedp-prev">
+                                <div class="stat-icon"><i class="fas fa-history"></i></div>
+                                <div class="stat-info">
+                                    <p class="stat-title" style="margin-bottom: 2px;">Closed Programs</p>
+                                    <p class="stat-title-small">Previous Year</p>
+                                    <span class="stat-count" th:text="${closedofficeprogramsprevyear}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/home.js}"></script>
+    <script th:src="@{/js/principalDirectorHome.js}"></script>
+    <script th:src="@{/js/serverDateTime.js}"></script>
+</th:block>
+</body>
+</html>

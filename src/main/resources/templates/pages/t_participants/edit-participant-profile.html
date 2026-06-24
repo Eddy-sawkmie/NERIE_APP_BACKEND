@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/participant-layout}">
+<head>
+    <title>Update Participant Profile</title>
+    <th:block layout:fragment="static-files">
+        <style>
+            .modern-card {
+                border-radius: 1rem;
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+                background: #ffffff;
+            }
+            
+            .modern-card-header {
+                background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+                border-top-left-radius: 1rem !important;
+                border-top-right-radius: 1rem !important;
+            }
+
+            .modern-input, .modern-select {
+                border-radius: 0.5rem;
+                border: 1px solid #dee2e6;
+                padding: 0.75rem 1rem;
+                font-size: 0.95rem;
+                transition: all 0.2s ease-in-out;
+            }
+            
+            .modern-input:focus, .modern-select:focus {
+                border-color: #86b7fe;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+            }
+
+            .form-label-modern {
+                font-weight: 600;
+                color: #6c757d;
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 0.5rem;
+                display: block;
+            }
+
+            .btn-modern {
+                border-radius: 0.5rem;
+                font-weight: 500;
+                transition: all 0.2s;
+                padding: 0.6rem 1.5rem;
+            }
+
+            .section-title {
+                font-weight: 700;
+                color: #212529;
+                font-size: 1.1rem;
+                border-bottom: 2px solid #f1f3f5;
+                padding-bottom: 0.5rem;
+                margin-top: 2rem;
+                margin-bottom: 1.5rem;
+            }
+
+            /* Select2 Overrides for Modern Styling */
+            .select2-container--default .select2-selection--multiple {
+                border-radius: 0.5rem !important;
+                border: 1px solid #dee2e6 !important;
+                padding: 0.3rem 0.5rem !important;
+                min-height: calc(1.5em + 1.5rem + 2px);
+            }
+            .select2-container--default.select2-container--focus .select2-selection--multiple {
+                border-color: #86b7fe !important;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15) !important;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <div class="container py-5">
+        <input type="hidden" id="ismodified-data" value="[[${ismodified}]]" />
+        
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-10">
+                <div class="card border-0 modern-card mb-4">
+                    
+                    <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+                        <h4 class="mb-0 fw-bold d-flex align-items-center">
+                            <i class="fas fa-user-edit me-3 fs-5"></i> Update Participant Profile
+                        </h4>
+                    </div>
+                    
+                    <div class="card-body p-4 p-md-5">
+                        <form th:object="${tparticipant}" th:action="@{/participant/update-profile}" method="POST" name="tparticipantfn" id="tparticipantfid" role="form" autocomplete="off">
+                            <input type="hidden" th:field="*{usercode}" id="usercodeH"/>
+
+                            <h5 class="fw-bold text-primary mb-4"><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="emailid" class="form-label-modern">Email ID <span class="text-danger">*</span></label>
+                                    <input type="email" name="emailid" id="emailid" class="form-control modern-input" required="required" maxlength="50"
+                                           th:value="${currentUserDetails != null ? currentUserDetails.userid : ''}" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="username" class="form-label-modern">Participant Name <span class="text-danger">*</span></label>
+                                    <input type="text" name="username" id="username" class="form-control modern-input alphabets" required="required" maxlength="50"
+                                           th:value="${currentUserDetails != null ? currentUserDetails.username : ''}"/>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="qualificationcode" class="form-label-modern">Qualification <span class="text-danger">*</span></label>
+                                    <select th:field="*{mqualifications.qualificationcode}" id="qualificationcode" class="form-select modern-select" required="required">
+                                        <option value="">-- Select --</option>
+                                        <option th:each="o : ${mqualificationlist}" th:value="${o.qualificationcode}" th:text="${o.qualificationname}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="qualificationsubjectcode" class="form-label-modern">Specialized Subject</label>
+                                    <select th:field="*{mqualificationsubjects.qualificationsubjectcode}" id="qualificationsubjectcode" class="form-select modern-select">
+                                        <option value="0">Not Applicable</option>
+                                        <th:block th:if="${mqualificationsubjectlist != null}">
+                                            <option th:each="o : ${mqualificationsubjectlist}" th:value="${o[0]}" th:text="${o[1]}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="designationcode" class="form-label-modern">Designations <span class="text-danger">*</span></label>
+                                    <select id="designationcode" name="designationcode" class="form-select modern-select selectpicker" data-live-search="true" title="Select Designation" required="required">
+                                        <option value="">-- Select --</option>
+                                        <option th:each="o : ${mdesignationlist}"
+                                                th:value="${o.designationcode}"
+                                                th:text="${o.designationname}"
+                                                th:selected="${tparticipant.mdesignations != null && tparticipant.mdesignations.designationcode == o.designationcode}"></option>
+                                        <option value="others" id="otherText" th:selected="${tparticipant.mdesignations != null && tparticipant.mdesignations.designationcode == 'others'}">Others</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="gender" class="form-label-modern">Gender <span class="text-danger">*</span></label>
+                                    <select th:field="*{gender}" id="gender" class="form-select modern-select" required="required">
+                                        <option value="">-- Select --</option>
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+                                        <option value="O">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 d-none" id="dlist">
+                                    <label for="dinput" class="form-label-modern">Enter Custom Designation <span class="text-danger">*</span></label>
+                                    <input id="dinput" class="form-control modern-input alphabets" name="dinput" placeholder="Type designation here..."/>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="participantteachingsubjects" class="form-label-modern">Subject of Teaching</label>
+                                    <input type="text" th:field="*{participantteachingsubjects}" id="participantteachingsubjects" class="form-control modern-input" maxlength="50" placeholder="e.g., Mathematics"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="categorycode" class="form-label-modern">Category <span class="text-danger">*</span></label>
+                                    <select th:field="*{mcategories.categorycode}" id="categorycode" class="form-select modern-select" required="required">
+                                        <option value="">-- Select --</option>
+                                        <option th:each="o : ${mcategorylist}" th:value="${o.categorycode}" th:text="${o.categoryname}"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="section-title"><i class="fas fa-briefcase me-2 text-secondary"></i>Professional Experience</div>
+                            <div class="alert alert-success border-0 bg-success bg-opacity-10 d-flex align-items-center mb-4">
+                                <i class="fas fa-lightbulb text-success fs-4 me-3"></i>
+                                <span class="small text-success">If you have 1 year and 4 months of experience, please enter <strong>1</strong> in Experience (years) and <strong>4</strong> in Experience (months).</span>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="participantexperienceyears" class="form-label-modern">Experience (Years) <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{participantexperienceyears}" id="participantexperienceyears" class="form-control modern-input numberspl defaultval" required="required" maxlength="3" placeholder="Year(s)"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="participantexperiencemonths" class="form-label-modern">Experience (Months) <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{participantexperiencemonths}" id="participantexperiencemonths" class="form-control modern-input numberspl defaultval" required="required" maxlength="3" placeholder="Months"/>
+                                </div>
+                            </div>
+
+                            <div class="section-title"><i class="fas fa-building me-2 text-secondary"></i>Office Address</div>
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <label for="participantofficestatecode" class="form-label-modern">State <span class="text-danger">*</span></label>
+                                    <select th:field="*{mstatesparticipant.statecode}" id="participantofficestatecode" class="form-select modern-select" required="required">
+                                        <option value="">-- Select --</option>
+                                        <option th:each="o : ${statelist}" th:value="${o.statecode}" th:text="${o.statename}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-8">
+                                    <label for="participantofficeaddress" class="form-label-modern">Address <span class="text-danger">*</span></label>
+                                    <textarea th:field="*{participantofficeaddress}" id="participantofficeaddress" maxlength="100" class="form-control modern-input" required="required" rows="1" placeholder="Full office address..."></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="participantofficetypecode" class="form-label-modern">Office Type <span class="text-danger">*</span></label>
+                                    <select th:field="*{mparticipantofficetypes.participantofficetypecode}" id="participantofficetypecode" class="form-select modern-select" required="required">
+                                        <option value="">-- Select --</option>
+                                        <option th:each="o : ${participantofficetypelist}" th:value="${o.participantofficetypecode}" th:text="${o.participantofficetypename}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 otherparticipantofficetypediv d-none">
+                                    <label for="otherparticipantofficetype" class="form-label-modern">Other Office Type Name <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{otherparticipantofficetype}" id="otherparticipantofficetype" class="form-control modern-input alphabets" placeholder="Please specify">
+                                </div>
+                            </div>
+
+                            <div class="section-title"><i class="fas fa-home me-2 text-secondary"></i>Residential Address</div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="statecode" class="form-label-modern">State <span class="text-danger">*</span></label>
+                                    <select th:field="*{mstates.statecode}" id="statecode" class="form-select modern-select" required="required">
+                                        <option value="">-- Select --</option>
+                                        <option th:each="o : ${statelist}" th:value="${o.statecode}" th:text="${o.statename}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="districtcode" class="form-label-modern">District <span class="text-danger">*</span></label>
+                                    <select th:field="*{mdistricts.districtcode}" id="districtcode" class="form-select modern-select selectcheckstate" required="required">
+                                        <option value="">-- Select --</option>
+                                        <th:block th:if="${districtlist != null}">
+                                            <option th:each="d : ${districtlist}" th:value="${d.districtcode}" th:text="${d.districtname}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="addressline1" class="form-label-modern">Address Line 1 <span class="text-danger">*</span></label>
+                                    <textarea th:field="*{addressline1}" id="addressline1" class="form-control modern-input" required="required" maxlength="100" rows="1"></textarea>
+                                </div>
+                                <div class="col-md-8">
+                                    <label for="addressline2" class="form-label-modern">Address Line 2</label>
+                                    <textarea th:field="*{addressline2}" id="addressline2" class="form-control modern-input" maxlength="100" rows="1"></textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="pincode" class="form-label-modern">Pincode <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{pincode}" id="pincode" class="form-control modern-input numbers" required="required" maxlength="6"/>
+                                </div>
+                            </div>
+
+                            <div class="section-title"><i class="fas fa-address-book me-2 text-secondary"></i>Contact & Additional Details</div>
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <label for="usermobile" class="form-label-modern">Mobile No. <span class="text-danger">*</span></label>
+                                    <input type="text" name="usermobile" id="usermobile" class="form-control modern-input numbers" required="required" maxlength="10" th:value="${currentUserDetails != null ? currentUserDetails.usermobile : ''}"/>
+                                    <small id="msg1" class="text-danger mt-1 d-block fw-semibold"></small>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="officephoneno" class="form-label-modern">Office Phone</label>
+                                    <input type="text" th:field="*{officephoneno}" id="officephoneno" maxlength="13" class="form-control modern-input numberspl" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="landlineno" class="form-label-modern">Residence Phone</label>
+                                    <input type="text" th:field="*{landlineno}" id="landlineno" maxlength="13" class="form-control modern-input numberspl" />
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="locality" class="form-label-modern">Locality / Region <span class="text-danger">*</span></label>
+                                    <select th:field="*{locality}" id="locality" class="form-select modern-select" required="required">
+                                        <option value="">-- Select --</option>
+                                        <option value="U">Urban</option>
+                                        <option value="R">Rural</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-8">
+                                    <label for="isdifferentlyabled" class="form-label-modern">Belongs to Differently Abled Group? <span class="text-danger">*</span></label>
+                                    <select th:field="*{isdifferentlyabled}" id="isdifferentlyabled" class="form-select modern-select w-50" required="required">
+                                        <option value="">-- Select --</option>
+                                        <option value="N">No</option>
+                                        <option value="Y">Yes</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6" id="differentlyableddetails" th:style="*{isdifferentlyabled == 'Y'} ? '' : 'display:none'">
+                                    <label class="form-label-modern">Disability Details <span class="text-danger">*</span></label>
+                                    <select class="form-select modern-select" id="disabilityType" name="disabilitytype" multiple="multiple" style="width:100%;">
+                                        <option value="Visual Impairment">Visual Impairment</option>
+                                        <option value="Hearing Impairment">Hearing Impairment</option>
+                                        <option value="Locomotor Disability">Locomotor Disability</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" id="differentlyableddetailsVal" th:value="*{differentlyableddetails}">
+                                
+                                <div class="col-md-6" id="otherDisabilityDiv" th:style="*{differentlyableddetails != null and #strings.contains(differentlyableddetails, 'Other (')} ? '' : 'display:none'">
+                                    <label class="form-label-modern">Specify Disability <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control modern-input" id="otherDisability" name="otherdisability" placeholder="Enter disability details">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="isminority" class="form-label-modern">Belongs to Religious Minority? <span class="text-danger">*</span></label>
+                                    <select th:field="*{isminority}" id="isminority" class="form-select modern-select" required="required">
+                                        <option value="">-- Select --</option>
+                                        <option value="N">No</option>
+                                        <option value="Y">Yes</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-4 d-none" id="ifminoritydiv">
+                                    <label for="minoritycode" class="form-label-modern">Minority Type <span class="text-danger">*</span></label>
+                                    <select th:field="*{mminorities.minoritycode}" id="minoritycode" class="form-select modern-select">
+                                        <option value=''>-- Select --</option>
+                                        <option th:each="o : ${mminoritylist}" th:value="${o.minoritycode}" th:text="${o.minorityname}"></option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-4 d-none" id="ifotherminority">
+                                    <label for="others" class="form-label-modern">Specify Other Minority <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{others}" id="others" class="form-control modern-input alphabets" maxlength="30" placeholder="Please specify"/>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
+                                <button id="cancelbtn" type="button" class="btn btn-light border btn-modern px-5"><i class="fas fa-undo me-2"></i> Reset Form</button>
+                                <button id="submitBtn" type="submit" name="submit" class="btn btn-primary btn-modern px-5"><i class="fas fa-save me-2"></i> Save Profile</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                    </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            updateProfile: [[@{/participant/update-profile}]],
+            getDistricts: [[@{/districts/get-districts}]],
+            getQualificationSubjects: [[@{/qualification-subjects/get-subjects}]],
+            checkUserEmail: [[@{/participant/check-existing-email}]],
+            redirectAfterUpdate: [[${redirectAfterUpdateUrl} ?: @{/participant/edit-profile}]]
+        };
+    </script>
+    <script th:src="@{/lily/js/notiflix/notiflix.js}"></script>
+    <script th:src="@{/js/editParticipantProfile.js}"></script>
+</th:block>
+</body>
+</html>

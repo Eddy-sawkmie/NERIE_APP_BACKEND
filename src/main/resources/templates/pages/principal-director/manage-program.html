@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layouts/principal-director-layout}"
+>
+<head>
+    <title layout:fragment="title">Manage Programs</title>
+
+    <div layout:fragment="static-files">
+        <script th:inline="javascript">
+            const API = {
+                acceptPrograms: [[@{/program-details/principal-director/accept}]],
+                rejectPrograms: [[@{/program-details/principal-director/reject}]],
+                deletePrograms: [[@{/program-details/principal-director/delete}]]
+            };
+        </script>
+        <script th:src="@{/js/principalManageProgram.js}"></script>
+    </div>
+</head>
+
+<body>
+<main layout:fragment="content">
+    
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+            
+            <div class="card-header modern-card-header text-white py-3 px-4 border-0">
+                <h5 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-tasks me-3 fs-5"></i> Manage Programs (Approve / Reject / Delete)
+                </h5>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                
+                <div id="emptyTableMessage" style="display: none;">
+                    <div class="text-center p-4 text-muted">
+                        <i class="fas fa-folder-open fs-2 mb-3 d-block opacity-50"></i>
+                        No programs currently pending approval.
+                    </div>
+                </div>
+
+                <div class="table-responsive table-wrapper">
+                    <table class="table modern-table align-middle w-100" id="approveprogram">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 15%;">Category</th>
+                                <th style="width: 25%;">Program Name & Details</th>
+                                <th style="width: 15%;">Phase Details</th>
+                                <th style="width: 10%;">Timeline</th>
+                                <th style="width: 15%;">Venues & Coordinators</th>
+                                <th style="width: 15%;" class="text-center noExport">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="v, s : ${mprogramListForApproval}">
+                                <td class="text-center fw-semibold text-muted" th:text="${s.count}"></td>
+                                
+                                <td>
+                                    <span class="text-dark px-2 py-1" th:text="${v[3]}"></span>
+                                </td>
+                                
+                                <td>
+                                    <div class="fw-bold text-dark mb-1" th:text="${v[0]}"></div>
+                                    <div class="small mb-1" th:text="'ID: ' + ${v[2]}"></div>
+                                    <div class="small text-secondary" th:text="${v[1]}"></div>
+                                </td>
+                                
+                                <td>
+                                    <div class="fw-medium text-dark" th:text="'Phase: ' + ${v[8]}"></div>
+                                    <div class="small text-muted" th:text="${v[9] != null ? v[9] : 'No Phase Description'}"></div>
+                                </td>
+                                
+                                <td class="small">
+                                    <span class="d-block text-success fw-semibold" th:if="${v[4] != null}"><i class="far fa-calendar-check me-1"></i> <th:block th:text="${#dates.format(v[4], 'dd-MMM-yyyy')}"></th:block></span>
+                                    <span class="d-block text-danger fw-semibold mt-1" th:if="${v[5] != null}"><i class="far fa-calendar-times me-1"></i> <th:block th:text="${#dates.format(v[5], 'dd-MMM-yyyy')}"></th:block></span>
+                                    <span class="d-block text-warning text-dark fw-semibold mt-2pt-1"><i class="fas fa-hourglass-half me-1"></i> 
+                                        <th:block th:text="${v[6] != null ? #dates.format(v[6], 'dd-MMM-yyyy') : 'Not Finalized'}"></th:block>
+                                    </span>
+                                </td>
+                                
+                                <td>
+                                    <div class="fw-medium text-dark mb-1"><i class="fas fa-map-marker-alt text-muted me-1"></i> <th:block th:text="${v[10] != null ? v[10] : 'Not Finalized'}"></th:block></div>
+                                    <div><i class="fas fa-users text-muted me-1"></i> <th:block th:text="${v[11]}"></th:block></div>
+                                </td>
+                                
+                                <td class="text-center">
+                                    <div class="d-flex flex-column gap-2">
+                                        <button class="acceptbtn btn btn-sm btn-success btn-modern w-100"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalaccept-modal"
+                                                th:attr="data-program-id=${v[19]}, data-some-value=${v[0]}">
+                                            <i class="fas fa-check me-1"></i> Approve
+                                        </button>
+
+                                        <button class="rejectbtn btn btn-sm btn-warning btn-modern w-100 text-dark"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalreject-modal"
+                                                th:attr="data-program-id=${v[19]}, data-some-value=${v[0]}">
+                                            <i class="fas fa-times me-1"></i> Reject
+                                        </button>
+
+                                        <button class="detetebtn btn btn-sm btn-danger btn-modern w-100"
+                                                th:attr="data-program-id=${v[16]}, data-some-value=${v[0]}">
+                                            <i class="fas fa-trash-alt me-1"></i> Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalaccept-modal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="acceptModalLabel"><i class="fas fa-check-circle text-success me-2"></i> Approve Program</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4 p-md-5">
+                    <form method="POST" name="acceptprogramfn" id="acceptprogramfid" role="form" autocomplete="off" enctype="multipart/form-data">
+                        <input id="aprogramdetailid" name="aprogramdetailid" type="hidden" />
+                        
+                        <div class="mb-4">
+                            <label class="form-label-modern">Selected Program</label>
+                            <div class="p-3 bg-light rounded border text-dark fw-bold" id="acceptprogramname"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="file1" class="form-label-modern">Upload Approval Letter <span class="text-danger">*</span></label>
+                            <input type="file" name="file1" id="file1" class="form-control modern-input" accept=".pdf,.jpg,.jpeg" required onchange="checkapprovedoctype()" />
+                            <small class="text-muted mt-1 d-block"><i class="fas fa-info-circle me-1"></i> Accepted formats: PDF, JPG, JPEG.</small>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">Cancel</button>
+                            <button id="submitAcceptBtn" type="submit" name="submit" class="btn btn-success btn-modern px-5"><i class="fas fa-upload me-2"></i> Submit Approval</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalreject-modal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark" id="rejectModalLabel"><i class="fas fa-times-circle text-warning me-2"></i> Reject Program</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4 p-md-5">
+                    <form method="POST" name="rejectprogramfn" id="rejectprogramfid" role="form" autocomplete="off" enctype="multipart/form-data">
+                        <input id="rejectprogramcode" name="rejectprogramcode" type="hidden" />
+                        <input id="rprogramdetailid" name="rprogramdetailid" type="hidden" />
+                        
+                        <div class="mb-4">
+                            <label class="form-label-modern">Selected Program</label>
+                            <div class="p-3 bg-light rounded border text-dark fw-bold" id="rejectprogramname"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="rejectremark" class="form-label-modern">Rejection Remark <span class="text-danger">*</span></label>
+                            <textarea class="form-control modern-input" id="rejectremark" name="rejectremark" rows="3" required placeholder="Provide reason for rejection..."></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="file2" class="form-label-modern">Upload Rejection Letter <span class="text-danger">*</span></label>
+                            <input type="file" name="file2" id="file2" class="form-control modern-input" accept=".pdf,.jpg,.jpeg" required onchange="checkrejectdoctype()" />
+                            <small class="text-muted mt-1 d-block"><i class="fas fa-info-circle me-1"></i> Accepted formats: PDF, JPG, JPEG.</small>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">Cancel</button>
+                            <button id="submitRejectBtn2" type="submit" name="submit" class="btn btn-warning btn-modern text-dark px-5"><i class="fas fa-upload me-2"></i> Submit Rejection</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                    </div>
+                <div class="modal-footer border-top-0 pt-0" id="feedbackModalFooter">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

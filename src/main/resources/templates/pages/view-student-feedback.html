@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/coordinator-faculty-layout}"
+>
+<head>
+  <title>Feedbacks</title>
+  <th:block layout:fragment="static-files"></th:block>
+</head>
+<body>
+
+<div id="loader">
+  <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container py-5">
+
+    <div class="card border-0 modern-card mb-4">
+      <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+        <h4 class="mb-0 fw-bold d-flex align-items-center">
+          <i class="fas fa-comment-dots me-3 fs-5"></i> Student Feedback
+        </h4>
+      </div>
+
+      <div class="card-body p-4 p-md-5">
+        <p class="text-muted mb-4"><i class="fas fa-info-circle me-1 text-primary"></i> Select the subject to view the Feedbacks</p>
+
+        <div class="row g-4">
+          <div class="col-md-6">
+            <label for="subjectcode" class="form-label-modern">Select Subject <span class="text-danger">*</span></label>
+            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book"></i></span>
+              <select id="subjectcode" class="form-select modern-input border-start-0 ps-2">
+                <option value="-1">-- Select Subject --</option>
+                <th:block th:if="${subjectlist != null}">
+                  <option th:each="i : ${subjectlist}" th:value="${i[0]}" th:text="${i[1]}"></option>
+                </th:block>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-3 d-flex align-items-end">
+            <button type="button" class="btn btn-primary btn-modern w-100 shadow-sm py-2" id="viewstudentfeedback">
+              <i class="fas fa-search me-2"></i> View Feedback
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 modern-card mb-4">
+      <div class="card-header bg-white border-bottom py-3 px-4">
+        <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-comments text-primary me-2"></i> Feedbacks</h5>
+      </div>
+      <div class="card-body p-4 p-md-5">
+        <div class="table-responsive table-wrapper">
+          <table class="table modern-table align-middle mb-0 w-100" id="feedbacktable">
+            <thead>
+            <tr>
+              <th style="width: 15%" class="text-center">Student ID</th>
+              <th style="width: 20%">Student Name</th>
+              <th style="width: 50%">Feedback</th>
+              <th style="width: 15%" class="text-center">Date</th>
+            </tr>
+            </thead>
+            <tbody id="feedbacktablebody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light border-0">
+          <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+        </div>
+        <div class="modal-footer border-top-0 pt-0">
+          <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<th:block layout:fragment="scripts">
+  <script th:inline="javascript">
+    const API = {
+        getFeedbackListBasedOnSubjectCode: [[@{/feedbacks/getFeebackListBasedOnSubjectCode}]],
+    };
+  </script>
+  <script th:src="@{/js/viewStudentFeedback.js}"></script>
+</th:block>
+</body>
+</html>

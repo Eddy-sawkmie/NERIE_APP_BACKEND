@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://thymeleaf.org"
+      layout:decorate="~{${layoutPath}}">
+<head>
+    <title layout:fragment="title">Resource Persons</title>
+
+    <div layout:fragment="static-files">
+        <script th:src="@{/lily/js/customajax.js}"></script>
+        <script th:inline="javascript">
+            const API = {
+                resourcePersonsData: [[@{/resource-persons/data}]]
+            };
+        </script>
+        <script th:src="@{/js/resource-persons.js}"></script>
+        <style>
+            /* For tablets and desktops (screens larger than 768px) */
+            @media (min-width: 768px) {
+                .custom-modal-width {
+                    max-width: 70%;
+                }
+            }
+        </style>
+    </div>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-users me-3 fs-5"></i>Resource Persons
+                </h4>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <div id="">
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2 mt-2">
+                        <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-list-ul me-2 text-primary"></i> Resource Persons List</h5>
+                    </div>
+                    <div class="table-responsive table-wrapper mt-4" id="tablediv">
+                        <table class="table modern-table align-middle mb-0 w-100 display" id="resourcePersonsTable" >
+                            <thead>
+                                <tr>
+                                <!-- <th>User Code</th> -->
+                                <th>Name</th>
+                                <th>Email ID</th>
+                                <th>Designation</th>
+                                <th>Qualification</th>
+                                <th>Office Address</th>
+                                </tr>
+                                </thead>
+                        </table>
+                        <div id="compiled-div" class="text-center mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,172 @@
+/**
+*  CUSTOM NEW STYLE
+*/
+/* Custom Tab Styling*/
+.nav-pills .nav-link {
+    border-radius: 0.5rem;
+    font-weight: 600;
+    color: #5c636a;
+    margin-right: 5px;
+    padding: 10px 15px;
+    transition: all 0.2s ease-in-out;
+}
+.nav-pills .nav-link.active, .nav-pills .nav-link.active:hover {
+    background-color: #0d6efd; /* Primary Blue */
+    color: #fff;
+    box-shadow: 0 4px 6px rgba(13, 110, 253, 0.3);
+}
+.nav-pills .nav-link:hover {
+    background-color: #e9ecef;
+    color: #0d6efd;
+}
+
+/* Modern UI Overrides */
+.modern-card {
+    border-radius: 1rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    background: #ffffff;
+}
+
+.modern-card-header {
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+    border-top-left-radius: 1rem !important;
+    border-top-right-radius: 1rem !important;
+}
+
+.btn-modern {
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+/* DataTable Global Overrides */
+.modern-table {
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    /* Darkened outer border */
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, 0.05);
+}
+
+/* Header */
+.modern-table thead th {
+    background-color: #f8f9fc;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+    /* Darkened internal header borders */
+    border-bottom: 2px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+}
+
+/* Remove last header right border */
+.modern-table thead th:last-child {
+    border-right: none;
+}
+
+/* Body cells */
+.modern-table tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    vertical-align: middle;
+    color: #495057;
+    font-size: 0.9rem;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+
+.modern-table tbody td:last-child {
+    border-right: none;
+}
+
+.modern-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table.modern-table tbody tr:nth-of-type(even) > * {
+    background-color: #ffffff !important;
+}
+
+.table.modern-table tbody tr:nth-of-type(odd) > * {
+    background-color: #f1f3f5 !important;
+}
+
+/* Hover effect */
+.modern-table tbody tr:hover {
+    background-color: #eef4ff;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Remove bottom border from last row */
+.modern-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Form Elements */
+.form-label-modern {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+.modern-input {
+    border-radius: 0 0.5rem 0.5rem 0 !important;
+    border: 1px solid #ced4da;
+}
+.input-group-text {
+    border-radius: 0.5rem 0 0 0.5rem !important;
+    border: 1px solid #ced4da;
+}
+
+/* FORCE SELECT2 TO MATCH MODERN INPUT STYLE */
+.select2-container .select2-selection--single {
+    height: 38px !important; /* Match Bootstrap form-control height */
+    border: 1px solid #ced4da !important;
+    border-radius: 0.5rem !important; /* Match your modern-input radius */
+    padding: 5px 0;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important; /* shadow-sm */
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px !important;
+    right: 5px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 28px !important;
+    padding-left: 12px !important;
+    color: #495057 !important;
+}
+
+/*Select 2 Style*/
+.input-group > .select2-container {
+    flex: 1 1 auto;
+    width: 1% !important;
+}
+
+.input-group > .select2-container .select2-selection--single {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-left: 0 !important; /* Removes the double border in the middle */
+    height: 100% !important;
+    display: flex;
+    align-items: center;
+}
+
+.input-group > .select2-container .select2-selection__rendered {
+    width: 100%;
+}
+.input-group > .select2-container .select2-selection__arrow {
+    height: 100% !important;
+    top: 0 !important;
+}

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layouts/student-layout}"
+        xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <div layout:fragment="static-files">
+        <link th:href="@{/css/attendanceRecord.css}" rel="stylesheet">
+        
+        <script th:src="@{/lily/js/chartjs/chart.min.js}"></script>
+        
+        <script th:inline="javascript">
+            const API = {
+                studentAttendance: [[@{/attendance/getattendance}]],
+            };
+        </script>
+        <script th:src="@{/js/attendanceRecord.js}"></script>
+
+        <style>
+            .status-pill {
+                padding: 0.35rem 0.75rem;
+                border-radius: 50rem;
+                font-size: 0.75rem;
+                font-weight: 600;
+                display: inline-block;
+            }
+
+            .pill-danger { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+            .pill-success { background-color: rgba(25, 135, 84, 0.1); color: #198754; }
+
+            /* Custom Summary Cards for the Chart Section */
+            .summary-card {
+                border-radius: 0.75rem;
+                padding: 1.25rem;
+                display: flex;
+                align-items: center;
+                margin-bottom: 1rem;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+                border: 1px solid rgba(0,0,0,0.05);
+                transition: transform 0.2s ease-in-out;
+                background: #fff;
+            }
+
+            .summary-card:hover { transform: translateY(-3px); }
+
+            .bg-present { border-left: 4px solid #198754; }
+            .bg-absent { border-left: 4px solid #dc3545; }
+            .bg-total { border-left: 4px solid #0d6efd; }
+
+            .icon-container { font-size: 2rem; margin-right: 1.25rem; width: 45px; text-align: center; }
+            .bg-present .icon-container { color: rgba(25, 135, 84, 0.8); }
+            .bg-absent .icon-container { color: rgba(220, 53, 69, 0.8); }
+            .bg-total .icon-container { color: rgba(13, 110, 253, 0.8); }
+
+            .info-label { display: block; font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: #a1a5b7; letter-spacing: 0.5px;}
+            .info-count { font-size: 1.75rem; font-weight: 800; color: #181c32; line-height: 1; margin-top: 0.2rem; display: block;}
+
+            #attendanceChartContainer { position: relative; height: 280px; width: 100%; }
+        </style>
+    </div>
+    <title layout:fragment="title">View My Attendance</title>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <div class="container py-5">
+        
+        <div class="card border-0 modern-card mb-4">
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-calendar-check me-3 fs-5"></i>
+                    My Attendance Record
+                </h4>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                <div class="mb-4">
+                    <h5 class="fw-bold text-dark mb-1">Attendance Report</h5>
+                    <p class="text-muted small">Select a subject and month to view your attendance statistics and chart.</p>
+                </div>
+                
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-5 col-lg-4">
+                        <label for="subjectcode" class="form-label form-label-modern">Filter by Subject</label>
+                        <select id="subjectcode" class="form-select modern-select bg-light">
+                            <option value="-1">-- Select Subject --</option>
+                            <option th:each="i : ${sublist}" th:value="${i[1]}" th:text="${i[0]}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-3">
+                        <label for="month" class="form-label form-label-modern">Filter by Month</label>
+                        <select id="month" class="form-select modern-select bg-light">
+                            <option value="">All Months</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-lg-2">
+                        <button type="button" class="btn btn-primary btn-modern w-100 py-2" id="viewattendance">
+                            <i class="fas fa-search me-2"></i> View
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 modern-card" style="display:none;" id="divChart">
+            <div class="card-body p-4 p-md-5">
+                
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-chart-pie text-primary me-2"></i> Attendance Overview
+                    </h5>
+                    <button class="btn btn-outline-primary btn-modern btn-sm px-3" data-bs-toggle="modal" data-bs-target="#detailedAttendanceModal">
+                        <i class="fas fa-table me-1"></i> View Detailed Table
+                    </button>
+                </div>
+
+                <div class="row align-items-center">
+                    <div class="col-md-7 mb-4 mb-md-0">
+                        <div id="attendanceChartContainer">
+                            <canvas id="attendanceChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-5 px-md-4">
+                        <div class="summary-card bg-present">
+                            <div class="icon-container">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="info-container">
+                                <span class="info-label">Present Days</span>
+                                <span class="info-count" id="countPresent">0</span>
+                            </div>
+                        </div>
+                        <div class="summary-card bg-absent">
+                            <div class="icon-container">
+                                <i class="fas fa-user-times"></i>
+                            </div>
+                            <div class="info-container">
+                                <span class="info-label">Absent Days</span>
+                                <span class="info-count" id="countAbsent">0</span>
+                            </div>
+                        </div>
+                        <div class="summary-card bg-total mb-0">
+                            <div class="icon-container">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="info-container">
+                                <span class="info-label">Total Classes</span>
+                                <span class="info-count" id="countTotal">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="detailedAttendanceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark"><i class="fas fa-list-alt text-primary me-2"></i> Detailed Attendance Register</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="table-responsive table-wrapper">
+                        <table class="table modern-table align-middle mb-0" id="attendancetable" style="width:100%;">
+                            <thead>
+                            <tr>
+                                <th style="width: 10%;" class="text-center">#</th>
+                                <th style="width: 20%;" class="text-center">Status</th>
+                                <th style="width: 30%;">Date</th>
+                                <th style="width: 40%;">Class Timing</th>
+                            </tr>
+                            </thead>
+                            <tbody id="atttablebody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts"></th:block>
+
+</body>
+</html>

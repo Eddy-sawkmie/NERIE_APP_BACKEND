@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/coordinator-faculty-layout}"
+>
+<head>
+    <title>Study Materials</title>
+    <th:block layout:fragment="static-files">
+    </th:block>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+
+    <div class="container py-5">
+
+        <div class="card border-0 modern-card mb-4">
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-file-upload me-3 fs-5"></i> Upload Study Materials
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <form th:object="${studymaterials}" method="POST"
+                      th:action="@{/study-materials/upload-study-materials}" name="studymat"
+                      id="studymaterials" enctype="multipart/form-data" role="form" autocomplete="off" novalidate>
+
+                    <input type="hidden" th:field="*{studymaterialid}" id="studymaterialid" />
+
+                    <div class="row g-4">
+                        <div class="col-sm-12 col-md-6">
+                            <label for="subject" class="form-label-modern">Subject <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book-open"></i></span>
+                                <select id="subject" class="form-select modern-input border-start-0 ps-2" th:field="*{subjectcode.subjectcode}" required>
+                                    <option value="-1">-- Select Subject --</option>
+                                    <th:block th:each="d : ${subs}">
+                                        <option th:if="${d.length > 1}" th:value="${d[0]}">
+                                            <span th:if="${d.length > 2 and d[2] != null}" th:text="${d[2]} + ' - '"></span>
+                                            <span th:text="${d[1]}"></span>
+                                        </option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-6">
+                            <label for="assignmentName" class="form-label-modern">Study Material Title <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-heading"></i></span>
+                                <input type="text" class="form-control modern-input border-start-0 ps-2" id="assignmentName" th:field="*{title}"
+                                       required="required" placeholder="e.g., Lesson 1 Notes" maxlength="200"/>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-12">
+                            <label for="file1" class="form-label-modern">Upload Study Material <span class="text-danger small">(Only PDF allowed)</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-file-pdf"></i></span>
+                                <input type="file" accept=".pdf" name="file1" id="file1" class="form-control modern-input border-start-0 ps-2 py-2"
+                                       onchange="assignmentfile()"/>
+                            </div>
+                            <div class="mt-2" id="filemessage"></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4 pt-4 border-top">
+                        <button type="submit" class="btn btn-primary btn-modern px-5 shadow-sm py-2">
+                            <i class="fas fa-cloud-upload-alt me-2"></i> Upload Material
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card border-0 modern-card mb-4">
+            <div class="card-header bg-white border-bottom py-3 px-4">
+                <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-list-ul text-primary me-2"></i> Study Materials List</h5>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <div class="table-responsive table-wrapper">
+                    <table class="table modern-table align-middle mb-0 w-100" id="assignmentslist">
+                        <thead>
+                        <tr>
+                            <th style="width: 35%;">Material Name</th>
+                            <th style="width: 15%;" class="text-center noExport">File</th>
+                            <th style="width: 25%;" class="text-center">Upload Date</th>
+                            <th style="width: 25%;" class="text-center noExport">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="i : ${allmaterials}">
+                            <td><span class="fw-bold text-dark d-block" th:text="${i.title}"></span></td>
+                            <td class="text-center">
+                                <a class="btn btn-sm btn-light btn-modern text-primary shadow-sm border"
+                                   th:href="@{/study-materials/viewStudyMaterialDocument(sid=${i.studymaterialid})}"
+                                   target="_blank">
+                                    <i class="fas fa-eye me-1"></i> View
+                                </a>
+                            </td>
+                            <td class="text-center text-muted" th:text="${#dates.format(i.uploaddate, 'dd-MMM-yyyy HH:mm:ss')}"></td>
+                            <td class="text-center text-nowrap">
+                                <button class="btn btn-sm btn-primary btn-modern shadow-sm edit-study-material"
+                                        th:attr="data-id=${i.studymaterialid}, data-title=${i.title}, data-subject=${i.subjectcode?.subjectcode}">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            getStudyMaterialsListSubject: [[@{/study-materials/getStudyMaterialsListSubject}]]
+        };
+    </script>
+    <script th:src="@{/js/uploadStudyMaterials.js}"></script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="phaseid" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select DISTINCT  cc.coursecategorycode,cc.coursecategoryname,p.programcode,p.programname,p.programid,p.programdescription,ph.phaseno,ph.phasedescription,
+                   TO_CHAR(pd.startdate,'dd/MM/yyyy') AS startdate,TO_CHAR(pd.enddate,'dd/MM/yyyy') AS enddate,p.officecode,pd.finalized,ph.phaseid,p.programid,TO_CHAR(pd.lastdate,'dd/MM/yyyy') AS lastdate,p.closed,f.officename,TO_CHAR(pd.courseclosedate,'dd/MM/yyyy') AS courseclosedate ,pd.enddate-pd.startdate + 1 || ' days ' AS duration
+
+                   FROM nerie.mt_programdetails pd
+                   INNER JOIN nerie.m_programs p ON pd.programcode=p.programcode
+                   INNER JOIN nerie.m_coursecategories cc ON cc.coursecategorycode=p.coursecodecategory
+                   INNER JOIN nerie.m_offices f ON p.officecode=f.officecode
+                   INNER JOIN nerie.m_phases ph ON ph.phaseid=pd.phaseid
+WHERE  pd.finalized='Y'
+AND TO_CHAR(pd.startdate,'yyyy-MM-dd')<=TO_CHAR(now(),'yyyy-MM-dd') AND TO_CHAR(pd.lastdate,'yyyy-MM-dd')>=TO_CHAR(now(),'yyyy-MM-dd') AND pd.phaseid=$P{phaseid}]]>
+	</queryString>
+	<field name="coursecategorycode" class="java.lang.String"/>
+	<field name="coursecategoryname" class="java.lang.String"/>
+	<field name="programcode" class="java.lang.String"/>
+	<field name="programname" class="java.lang.String"/>
+	<field name="programid" class="java.lang.String"/>
+	<field name="programdescription" class="java.lang.String"/>
+	<field name="phaseno" class="java.lang.String"/>
+	<field name="phasedescription" class="java.lang.String"/>
+	<field name="startdate" class="java.lang.String"/>
+	<field name="enddate" class="java.lang.String"/>
+	<field name="officecode" class="java.lang.String"/>
+	<field name="finalized" class="java.lang.String"/>
+	<field name="phaseid" class="java.lang.String"/>
+	<field name="lastdate" class="java.lang.String"/>
+	<field name="closed" class="java.lang.String"/>
+	<field name="officename" class="java.lang.String"/>
+	<field name="courseclosedate" class="java.lang.String"/>
+	<field name="duration" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="81" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="33" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[National Council Of Educational Research And Training]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="33" width="555" height="37"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[List of Ongoing Programs]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="116" splitType="Stretch">
+			<staticText>
+				<reportElement x="110" y="10" width="90" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Program Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="10" width="70" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Office]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="351" y="10" width="107" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Phase Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="10" width="104" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Program Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="304" y="10" width="47" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Phase No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="10" width="30" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Slno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="458" y="10" width="55" height="49"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Duration]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="10" y="59" width="30" height="51"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{COLUMN_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="59" width="70" height="51"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{officename}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="59" width="90" height="51"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{programname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="59" width="104" height="51"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{programdescription}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="304" y="59" width="47" height="51"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{phaseno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="351" y="59" width="107" height="51"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{phasedescription}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="458" y="59" width="55" height="51"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{duration} +" ("+$F{startdate}+" to "+$F{enddate}+")"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

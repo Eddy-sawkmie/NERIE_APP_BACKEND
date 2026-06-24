@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layouts/admin-layout}"
+>
+<head>
+    <title>Home</title>
+    <div layout:fragment="static-files">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link rel="stylesheet" th:href="@{/css/home.css}">
+        <link rel="stylesheet" th:href="@{/css/adminHome.css}">
+
+        <style>
+            .modern-card {
+                border-radius: 1rem;
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+                background: #ffffff;
+                overflow: hidden;
+            }
+
+            /* Dashboard Profile Header Styling */
+            .profile-welcome-card {
+                background: linear-gradient(to right, #ffffff, #f8f9fc);
+                border-left: 5px solid #0d6efd;
+            }
+
+            .profile-avatar-wrapper {
+                position: relative;
+                display: inline-block;
+            }
+
+            .profile-avatar-img {
+                width: 90px;
+                height: 90px;
+                object-fit: cover;
+                border: 3px solid #fff;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                border-radius: 50%;
+                background-color: #f8f9fa;
+            }
+
+            .contact-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.4rem 1rem;
+                border-radius: 50rem;
+                background-color: #f1f3f5;
+                color: #495057;
+                font-size: 0.85rem;
+                font-weight: 500;
+                transition: all 0.2s;
+                cursor: pointer;
+                border: 1px solid transparent;
+            }
+
+            .contact-pill:hover {
+                background-color: #e9ecef;
+                border-color: #dee2e6;
+                transform: translateY(-1px);
+            }
+
+            .role-badge {
+                background-color: rgba(13, 110, 253, 0.1);
+                color: #0d6efd;
+                border: 1px solid rgba(13, 110, 253, 0.2);
+                padding: 0.4rem 1rem;
+                border-radius: 0.5rem;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                font-size: 0.75rem;
+            }
+
+            /* Modern Table Styling */
+            .modern-table {
+                margin-bottom: 0;
+                border-collapse: separate;
+                border-spacing: 0;
+            }
+            
+            .modern-table thead th {
+                background-color: #f8f9fc;
+                color: #5c636a;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.5px;
+                padding: 1rem;
+                border-bottom: 2px solid #e9ecef;
+                border-top: none;
+                vertical-align: middle;
+            }
+            
+            .modern-table tbody td, .modern-table tfoot td {
+                padding: 1rem;
+                border-bottom: 1px solid #f1f3f5;
+                vertical-align: middle;
+                color: #495057;
+            }
+
+            .modern-table tbody tr {
+                transition: all 0.2s ease-in-out;
+            }
+            
+            .modern-table tbody tr:hover {
+                background-color: #f8f9fa;
+            }
+
+            .modern-table tfoot td {
+                font-weight: 700;
+                color: #212529;
+                background-color: #f8f9fc;
+                border-top: 2px solid #e9ecef;
+            }
+
+            .table-wrapper {
+                border: 1px solid #e9ecef;
+                border-radius: 0.75rem;
+                overflow: hidden;
+            }
+        </style>
+    </div>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <div class="container py-5" th:if="${LOGIN.userrole == 'S'}">
+        
+        <div class="card border-0 modern-card profile-welcome-card mb-5">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+                    
+                    <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-4">
+                        <div class="profile-avatar-wrapper">
+                            <th:block th:if="${profilepic != null}">
+                                <img id="previewfile1" class="profile-avatar-img" th:src="'data:image/jpg;base64,' + ${profilepic}" alt="Profile Picture"/>
+                            </th:block>
+                            <th:block th:unless="${profilepic != null}">
+                                <img th:src="@{/tempscripts/images/defaultprofile.jpg}" id="previewfile1" class="profile-avatar-img" alt="Default Profile Picture"/>
+                            </th:block>
+                        </div>
+                        
+                        <div>
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <h3 class="fw-bold text-dark mb-0" th:text="'Welcome, ' + ${LOGIN.username}">Welcome, User</h3>
+                                <div th:switch="${LOGIN.userrole}">
+                                    <div th:case="'S'">
+                                        <span class="role-badge" th:if="${LOGIN.isfaculty == '0'}">SUPER ADMIN</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <div title="Click to copy Email" class="contact-pill btn-mail" th:if="${LOGIN.emailid}">
+                                    <i class="fas fa-envelope text-primary"></i>
+                                    <span th:text="${LOGIN.emailid}">email@example.com</span>
+                                </div>
+                                <div title="Click to copy Mobile" class="contact-pill btn-phone" th:if="${LOGIN.usermobile}">
+                                    <i class="fas fa-phone-alt text-success"></i>
+                                    <span th:text="${LOGIN.usermobile}">1234567890</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="server-info-container text-md-end bg-white p-3 rounded-3 border shadow-sm">
+                        <div layout:replace="~{fragments/server-info :: date-time}"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 modern-card">
+            <div class="card-body p-4 p-md-5">
+                
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="fas fa-chart-pie text-primary me-2"></i> Programs Conducted Summary
+                </h5>
+                
+                <div class="table-responsive table-wrapper shadow-sm">
+                    <table class="table modern-table table-hover align-middle mb-0 text-center" id="usertable" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="width: 5%;">#</th>
+                                <th rowspan="2" class="text-start" style="width: 35%;">Office Name</th>
+                                <th colspan="3" class="border-bottom-0 pb-1">No. Of Programs</th>
+                            </tr>
+                            <tr>
+                                <th class="text-primary border-top-0 pt-1"><i class="fas fa-spinner fa-spin me-1"></i> Ongoing</th>
+                                <th class="text-danger border-top-0 pt-1"><i class="far fa-calendar-alt me-1"></i> Upcoming</th>
+                                <th class="text-success border-top-0 pt-1"><i class="fas fa-check-circle me-1"></i> Completed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="a, i : ${OfficeWiseCountProgramList}">
+                                <td class="fw-semibold text-muted" th:text="${i.count}"></td>
+                                <td class="text-start fw-bold text-dark" th:text="${a[0]}"></td>
+                                <td>
+                                    <span class="text-primary rounded-pill fw-bold px-3 py-1" th:text="${a[1]}"></span>
+                                </td>
+                                <td>
+                                    <span class="text-danger rounded-pill fw-bold px-3 py-1" th:text="${a[2]}"></span>
+                                </td>
+                                <td>
+                                    <span class="text-success rounded-pill fw-bold px-3 py-1" th:text="${a[3]}"></span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(OfficeWiseCountProgramList)}">
+                                <td colspan="5" class="text-center p-5 text-muted">
+                                    <i class="fas fa-folder-open fs-2 mb-3 d-block"></i> No program data available.
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot th:if="${not #lists.isEmpty(OfficeWiseCountProgramList)}">
+                            <tr>
+                                <td colspan="2" class="text-end text-uppercase pe-4">Grand Total</td>
+                                <td><span class="badge bg-primary fs-6 px-3" th:text="${#aggregates.sum(OfficeWiseCountProgramList.![[1]])}"></span></td>
+                                <td><span class="badge bg-danger text-white fs-6 px-3" th:text="${#aggregates.sum(OfficeWiseCountProgramList.![[2]])}"></span></td>
+                                <td><span class="badge bg-success fs-6 px-3" th:text="${#aggregates.sum(OfficeWiseCountProgramList.![[3]])}"></span></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/home.js}"></script>
+    <script th:src="@{/static/lily/js/dashboard.js}"></script>
+    <script th:src="@{/js/serverDateTime.js}"></script>
+</th:block>
+
+</body>
+</html>

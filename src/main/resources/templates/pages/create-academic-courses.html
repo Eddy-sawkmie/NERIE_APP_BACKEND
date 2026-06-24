@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+  <title layout:fragment="title">Add Courses</title>
+  <div layout:fragment="static-files">
+  </div>
+</head>
+<body>
+
+<div id="loader">
+  <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container py-5">
+    <div class="card border-0 modern-card mb-4">
+
+      <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+        <h4 class="mb-0 fw-bold d-flex align-items-center">
+          <i class="fas fa-graduation-cap me-3 fs-5"></i> Courses
+        </h4>
+        <button type="button" id="clearCourseBtn" class="btn btn-light btn-modern text-primary fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#course-modal">
+          <i class="fas fa-plus me-2"></i> Add New
+        </button>
+      </div>
+
+      <div class="card-body p-4 p-md-5">
+        <div class="row mb-4">
+          <div class="col-md-4">
+            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+              <span class="input-group-text bg-light border-end-0 text-muted" title="Filter by Department"><i class="fas fa-filter"></i></span>
+              <select id="departmentcode" class="form-select modern-input border-start-0 ps-2" required>
+                <option value="" selected disabled>Select Department to Filter</option>
+                <th:block th:each="o : ${mdepartmentList}">
+                  <option th:value="${o.departmentcode}" th:text="${o.departmentname}"></option>
+                </th:block>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive table-wrapper mt-2">
+          <table class="table modern-table align-middle mb-0 w-100" id="c-table">
+            <thead>
+            <tr>
+              <th style="width: 5%;" class="text-center">Sl. No</th>
+              <th style="width: 30%;">Course Name</th>
+              <th style="width: 25%;">Department</th>
+              <th style="width: 15%;">Duration</th>
+              <th style="width: 15%;">Course Type</th>
+              <th style="width: 10%;" class="text-center noExport">Action</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+
+  <div class="modal fade" id="course-modal" tabindex="-1" aria-labelledby="courseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light border-0 px-4 py-3">
+          <h5 class="modal-title fw-bold text-dark" id="courseModalLabel">
+            <i class="fas fa-plus-circle me-2 text-primary"></i> Add New Course
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4 p-md-5">
+          <form id="newcourseform" novalidate>
+            <input id="coursecode" name="coursecode" type="hidden" />
+
+            <div class="row mb-4 align-items-center">
+              <label for="departmentcode2" class="col-md-3 col-form-label form-label-modern text-md-end">Department <span class="text-danger">*</span></label>
+              <div class="col-md-8">
+                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-building"></i></span>
+                  <select name="departmentcode" id="departmentcode2" class="form-select modern-input border-start-0 ps-2" required="true" >
+                    <option value="" selected disabled>Select Department</option>
+                    <th:block th:each="o : ${mdepartmentList}">
+                      <option th:value="${o.departmentcode}" th:text="${o.departmentname}"></option>
+                    </th:block>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4 align-items-center">
+              <label for="courseid" class="col-md-3 col-form-label form-label-modern text-md-end">
+                Course ID <span class="text-danger">*</span>
+                <small class="d-block text-muted fw-normal mt-1" style="font-size: 0.75rem;">Three letters only</small>
+              </label>
+              <div class="col-md-8">
+                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-id-badge"></i></span>
+                  <input name="courseid" id="courseid" class="form-control modern-input border-start-0 ps-2 text-uppercase onlyletters" required="true" maxlength="3" placeholder="e.g. BED" />
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4 align-items-center">
+              <label for="coursename" class="col-md-3 col-form-label form-label-modern text-md-end">Course Name <span class="text-danger">*</span></label>
+              <div class="col-md-8">
+                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book-open"></i></span>
+                  <input name="coursename" id="coursename" class="form-control modern-input border-start-0 ps-2 coursename" required="true" placeholder="e.g. Bachelor of Education" maxlength="300"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4 align-items-center">
+              <label for="courseduration" class="col-md-3 col-form-label form-label-modern text-md-end">Duration (Years) <span class="text-danger">*</span></label>
+              <div class="col-md-8">
+                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-clock"></i></span>
+                  <input name="courseduration" id="courseduration" class="form-control modern-input border-start-0 ps-2 courseduration" required="true" placeholder="e.g. 2" maxlength="2"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4 align-items-center">
+              <label class="col-md-3 col-form-label form-label-modern text-md-end">Is Short Term? <span class="text-danger">*</span></label>
+              <div class="col-md-8">
+                <div class="btn-group shadow-sm" role="group">
+                  <input type="radio" class="btn-check" name="isshortterm" id="isshortterm_yes_add" value="1" autocomplete="off">
+                  <label class="btn btn-outline-success px-4" for="isshortterm_yes_add">Yes</label>
+
+                  <input type="radio" class="btn-check" name="isshortterm" id="isshortterm_no_add" value="0" autocomplete="off" checked>
+                  <label class="btn btn-outline-danger px-4" for="isshortterm_no_add">No</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
+              <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">
+                <i class="fas fa-times me-2"></i> Cancel
+              </button>
+              <button type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                <i class="fas fa-save me-2"></i> Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="edit-course-modal" tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light border-0 px-4 py-3">
+          <h5 class="modal-title fw-bold text-dark" id="editCourseModalLabel">
+            <i class="fas fa-edit me-2 text-primary"></i> Edit Course
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4 p-md-5">
+          <form id="editcourseform" novalidate>
+            <input id="edit_coursecode" name="coursecode" type="hidden" />
+
+            <div class="row mb-4 align-items-center">
+              <label for="edit_departmentcode" class="col-md-3 col-form-label form-label-modern text-md-end">Department <span class="text-danger">*</span></label>
+              <div class="col-md-8">
+                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-building"></i></span>
+                  <select name="departmentcode" id="edit_departmentcode" class="form-select modern-input border-start-0 ps-2" required="true" >
+                    <option value="" selected disabled>Select Department</option>
+                    <th:block th:each="o : ${mdepartmentList}">
+                      <option th:value="${o.departmentcode}" th:text="${o.departmentname}"></option>
+                    </th:block>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4 align-items-center">
+              <label for="edit_courseid" class="col-md-3 col-form-label form-label-modern text-md-end">
+                Course ID <span class="text-danger">*</span>
+                <small class="d-block text-muted fw-normal mt-1" style="font-size: 0.75rem;">Three letters only</small>
+              </label>
+              <div class="col-md-8">
+                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-id-badge"></i></span>
+                  <input name="courseid" id="edit_courseid" class="form-control modern-input border-start-0 ps-2 text-uppercase onlyletters" required="true" maxlength="3" placeholder="e.g. BED" />
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4 align-items-center">
+              <label for="edit_coursename" class="col-md-3 col-form-label form-label-modern text-md-end">Course Name <span class="text-danger">*</span></label>
+              <div class="col-md-8">
+                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book-open"></i></span>
+                  <input name="coursename" id="edit_coursename" class="form-control modern-input border-start-0 ps-2 coursename" required="true" placeholder="e.g. Bachelor of Education" maxlength="300"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4 align-items-center">
+              <label for="edit_courseduration" class="col-md-3 col-form-label form-label-modern text-md-end">Duration (Years) <span class="text-danger">*</span></label>
+              <div class="col-md-8">
+                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-clock"></i></span>
+                  <input name="courseduration" id="edit_courseduration" class="form-control modern-input border-start-0 ps-2 courseduration" required="true" placeholder="e.g. 2" maxlength="2"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4 align-items-center">
+              <label class="col-md-3 col-form-label form-label-modern text-md-end">Is Short Term? <span class="text-danger">*</span></label>
+              <div class="col-md-8">
+                <div class="btn-group shadow-sm" role="group">
+                  <input type="radio" class="btn-check" name="isshortterm" id="isshortterm_yes_edit" value="1" autocomplete="off">
+                  <label class="btn btn-outline-success px-4" for="isshortterm_yes_edit">Yes</label>
+
+                  <input type="radio" class="btn-check" name="isshortterm" id="isshortterm_no_edit" value="0" autocomplete="off">
+                  <label class="btn btn-outline-danger px-4" for="isshortterm_no_edit">No</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
+              <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">
+                <i class="fas fa-times me-2"></i> Cancel
+              </button>
+              <button type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                <i class="fas fa-save me-2"></i> Update
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light border-0 px-4 py-3">
+          <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+        </div>
+        <div class="modal-footer border-top-0 pt-0">
+          <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<th:block layout:fragment="scripts">
+  <script th:inline="javascript">
+    const API = {
+        saveMapDepartmentCourse: [[@{/course-academics/saveMapDepartmentCourse}]],
+        updateDepartmentCourse: [[@{/course-academics/updateDepartmentCourse}]],
+        getListOfCourses: [[@{/course-academics/getListOfCourses}]]
+    };
+  </script>
+  <script th:src="@{/js/createAcademicCourses.js}"></script>
+</th:block>
+</body>
+</html>

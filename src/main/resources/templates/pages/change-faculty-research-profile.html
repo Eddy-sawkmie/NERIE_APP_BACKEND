@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{${layoutPath}}">
+<head>
+    <title>Edit Faculty Research Profile</title>
+    <th:block layout:fragment="static-files">
+        </th:block>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container py-4">
+        
+        <div class="card border-0 shadow-sm mb-5 rounded-3">
+            <div class="card-header bg-primary text-white py-3 px-4 border-0 d-flex justify-content-between align-items-center rounded-top">
+                <h4 class="mb-0 fw-bold d-flex align-items-center fs-5">
+                    <i class="fas fa-list-check me-2"></i> Edit Faculty Research Profile
+                </h4>
+            </div>
+            
+            <div class="card-body p-4 p-md-5 bg-light">
+                <form method="POST" name="faculty" id="faculty" role="form" autocomplete="off">
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label for="gscholarlink" class="form-label fw-bold text-secondary">Google Scholar Link:</label>
+                            <input type="url" class="form-control" id="gscholarlink" placeholder="https://..." th:value="${profile?.gscholarlink}" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <label for="orcid" class="form-label fw-bold text-secondary mb-0">
+                                    <img th:src="@{/lily/images/faculty/orcid-logo.svg}" alt="ORCID" style="height: 18px;" class="mr-2"> 
+                                </label>
+                            </div>
+                            <input type="text" class="form-control" id="orcid" th:value="${profile?.orcid}" placeholder="0000-0000-0000-0000" />
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <label for="academicqualification" class="form-label fw-bold text-secondary">Academic Qualification: <span class="text-danger">*</span></label>
+                            <textarea id="academicqualification" name="academicqualification" maxlength="500" rows="3" class="form-control" required="true" th:text="${profile?.academicqualification}"></textarea>
+                            <div class="form-text text-end"><span id="charactercountdesc" class="fw-bold"></span></div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label for="areaofspecialization" class="form-label fw-bold text-secondary">Area of Specialization: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="areaofspecialization" th:value="${profile?.areaofspecialization}" required="true"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="areaofinterest" class="form-label fw-bold text-secondary">Area of Interest: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="areaofinterest" th:value="${profile?.areaofinterest}" required="true" />
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label for="briefprofile" class="form-label fw-bold text-secondary">Brief Profile: <span class="text-danger">*</span></label>
+                            <textarea id="briefprofile" name="briefprofile" maxlength="500" rows="4" class="form-control" required="true" th:text="${profile?.briefprofile}"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="researchprojects" class="form-label fw-bold text-secondary">Research Projects: <span class="text-danger">*</span></label>
+                            <textarea id="researchprojects" name="researchprojects" maxlength="500" rows="4" class="form-control" required="true" th:text="${profile?.researchprojects}"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-12 text-end">
+                            <button id="subbtn" type="submit" class="btn btn-success px-4 fw-bold shadow-sm">
+                                <i class="fas fa-save me-1"></i> Update Faculty Profile
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div th:if="${profile != null and profile.facultyprofileid != null}">
+            
+            <div class="accordion shadow-sm mb-5" id="accordionResearchPaper">
+                <div class="accordion-item border-0 rounded">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed fw-bold text-primary bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" id="ResearchPaperAccText">
+                            <i class="fas fa-file-circle-plus me-2 fs-5"></i> Add New Research Paper
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionResearchPaper">
+                        <div class="accordion-body bg-light">
+                            <form id="researchPaperForm" method="POST" autocomplete="off">
+                                <input type="hidden" id="researchpaperid" name="researchpaperid" value="">
+                                
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="title" class="form-label fw-bold text-secondary">Title: <span class="text-danger">*</span></label>
+                                        <input type="text" id="title" name="title" class="form-control" required/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="journal" class="form-label fw-bold text-secondary">Journal: <span class="text-danger">*</span></label>
+                                        <input type="text" id="journal" name="journal" class="form-control" required/>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="year" class="form-label fw-bold text-secondary">Year: <span class="text-danger">*</span></label>
+                                        <input type="number" id="year" name="year" class="form-control" min="1900" max="2100" required/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="category" class="form-label fw-bold text-secondary">Category:</label>
+                                        <input type="text" id="category" name="category" class="form-control" />
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label for="publisher" class="form-label fw-bold text-secondary">Publisher:</label>
+                                        <input type="text" id="publisher" name="publisher" class="form-control" />
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="authors" class="form-label fw-bold text-secondary">Authors: <span class="text-danger">*</span></label>
+                                        <input type="text" id="authors" name="authors" class="form-control" required/>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="link" class="form-label fw-bold text-secondary">Link:</label>
+                                        <input type="url" id="link" name="link" class="form-control" placeholder="https://..." />
+                                    </div>
+                                </div>
+                                <div class="text-end mt-3">
+                                    <button type="button" id="submitResearchPaper" class="btn btn-primary px-4 fw-bold">
+                                        <i class="fas fa-plus me-1"></i> Add Research Paper
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-5 text-muted" />
+
+            <h4 class="text-center fw-bold mb-4 text-secondary">
+                <i class="fas fa-book-open me-2"></i> Your Research Papers
+            </h4>
+
+            <div th:if="${profile == null or #lists.isEmpty(profile.researchpapers)}" class="alert alert-secondary text-center mx-auto" style="max-width: 600px;" role="alert">
+                <i class="fas fa-info-circle me-2"></i> No research papers added yet.
+            </div>
+
+            <div th:if="${profile != null and not #lists.isEmpty(profile.researchpapers)}" class="card border-0 shadow-sm mb-5">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered table-striped align-middle mb-0 text-center" id="leavelist">
+                            <thead class="table-light text-secondary align-middle">
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Journal</th>
+                                    <th>Year</th>
+                                    <th>Authors</th>
+                                    <th>Publisher</th>
+                                    <th>Category</th>
+                                    <th>Link</th>
+                                    <th style="min-width: 150px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="rp : ${profile.researchpapers}">
+                                    <td th:text="${rp.title}" class="fw-medium text-start"></td>
+                                    <td th:text="${rp.journal}"></td>
+                                    <td th:text="${rp.year}"></td>
+                                    <td th:text="${rp.authors}"></td>
+                                    <td th:text="${rp.publisher}"></td>
+                                    <td th:text="${rp.category}"></td>
+                                    <td>
+                                        <a th:if="${!#strings.isEmpty(rp.link)}" th:href="${rp.link}" target="_blank" class="btn btn-sm btn-info" title="View Link">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <button type="button" 
+                                                class="btn btn-sm btn-warning editPaperBtn fw-bold"
+                                                th:data-id="${rp.researchpaperid}"
+                                                th:data-title="${rp.title}"
+                                                th:data-journal="${rp.journal}"
+                                                th:data-year="${rp.year}"
+                                                th:data-authors="${rp.authors}"
+                                                th:data-publisher="${rp.publisher}"
+                                                th:data-category="${rp.category}"
+                                                th:data-link="${rp.link}">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <button class="btn btn-sm btn-danger deletePaperBtn fw-bold" th:data-id="${rp.researchpaperid}">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4 fs-5 text-center" id="feedbackModalBody">
+                    </div>
+                <div class="modal-footer border-top-0 pt-0 justify-content-center">
+                    <button type="button" id="modalOkButton" class="btn btn-primary px-5 fw-bold" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            postFacultyResearchProfile: [[@{/faculty-research-profile/post}]],
+            deleteResearchPaper: [[@{/research-paper/delete}]],
+            updateResearchPaper: [[@{/research-paper/update}]],
+            addResearchPaper: [[@{/research-paper/add}]]
+        };
+    </script>
+    <script th:src="@{/js/changeFacultyResearchProfile.js}"></script>
+</th:block>
+</body>
+</html>

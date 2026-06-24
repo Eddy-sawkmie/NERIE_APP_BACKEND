@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://thymeleaf.org"
+      layout:decorate="~{${layoutPath}}">
+
+<head>
+    <div layout:fragment="static-files">
+        <!-- select2 -->
+        <link th:href="@{/lily/js/select2/select2.min.css}" rel="stylesheet" type="text/css"/>
+        <script th:src="@{/lily/js/select2/select2.min.js}" type="text/javascript"></script>
+
+        <!-- dual list box -->
+        <link th:href="@{/tempscripts/duallistbox/bootstrap-duallistbox.css}" rel="stylesheet" type="text/css"/>
+        <script th:src="@{/tempscripts/duallistbox/jquery.bootstrap-duallistbox.js}" type="text/javascript"></script>
+
+        <!--Bootstrap Select-->
+        <link th:href="@{/tempscripts/bootstrap-select/bootstrap-select.min.css}" rel="stylesheet" type="text/css"/>
+        <script th:src="@{/tempscripts/bootstrap-select/bootstrap-select.min.js}" type="text/javascript"></script>
+
+        <script th:inline="javascript">
+            const API = {
+                listApproveProgram: [[@{/program/approved-program/list}]],
+                listParticipantOverallFeedback: [[@{/participant/feedback/overall-feedback/list}]],
+                listParticipantDailyFeedback: [[@{/participant/feedback/daily-feedback/list}]],
+                viewApproval: [[@{/program-details/view-approval}]],
+                listRejectedPrograms: [[@{/program/rejected-program/list}]],
+                viewRejectionPrograms: [[@{/program-details/view-rejection}]],
+                updateProgramDetails: [[@{/program-details/update}]],
+                saveBatchPrograms: [[@{/program/batch/save}]],
+                listAcceptedPrograms: [[@{/program/financial-year/accepted-list}]],
+                listPhases: [[@{/phases/list}]],
+                programToPopulate: [[@{/program/to-populate}]],
+                getProgramMembers: [[@{/program-members/get-program-members}]],
+                saveProgramDetails: [[@{/program-details/save}]],
+                listFinancialYear: [[@{/program/financial-year/list}]],
+                saveActivities: [[@{/activities/save}]],
+                listOngoingPrograms: [[@{/program/ongoing/list}]],
+                getProgramDetails: [[@{/program/details}]],
+                saveProgramPhases: [[@{/program/phases/save}]],
+                checkProgramExistByProgramID: [[@{/program/exists-by-programid}]],
+                getActivitiesList: [[@{/activities/getActivityBasedOnPhaseId}]]
+            };
+        </script>
+        <script th:src="@{/js/programDetails.js}"></script>
+
+        <style>
+            /* Dual List Box for modern look */
+            .bootstrap-duallistbox-container .box1, .bootstrap-duallistbox-container .box2 {
+                border: 1px solid #ced4da;
+                border-radius: 0.5rem;
+            }
+            .select2-container--open {
+                z-index: 9999 !important;
+            }
+        </style>
+    </div>
+
+    <title layout:fragment="title">Programs</title>
+</head>
+
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+
+            <!-- Modern Header -->
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-tasks me-3 fs-5"></i> Program Details
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+
+                <!-- Navigation Tabs -->
+                <ul class="nav nav-pills mb-4 p-2 rounded" id="pills-tab" role="tablist">
+
+                    <!-- Add Batch Programs: Active if Role is 'A' -->
+                    <li th:if="${userRole == 'A'}" class="nav-item">
+                        <a class="nav-link" th:classappend="${userRole == 'A' ? 'active' : ''}"
+                           id="programdetADD-tab" data-bs-toggle="pill" href="#programdetADD" role="tab"
+                           aria-controls="programdetadd" th:aria-selected="${userRole == 'A'}">
+                            <i class="fas fa-plus-circle me-1"></i> Add Batch
+                        </a>
+                    </li>
+
+                    <!-- Add Program Details: Active if Role is 'U' -->
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${userRole == 'U' ? 'active' : ''}"
+                           id="programdetNEW-tab" data-bs-toggle="pill" href="#programdetNEW" role="tab"
+                           aria-controls="programdetnew" th:aria-selected="${userRole == 'U'}">
+                            <i class="fas fa-file-alt me-1"></i> Add Details
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" id="programdetNEWACTIVITY-tab" data-bs-toggle="pill" href="#programdetNEWACTIVITY" role="tab" aria-controls="programdetnewactivity" aria-selected="false">
+                            <i class="fas fa-calendar-check me-1"></i> Add Activity
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" id="newphase-tab" data-bs-toggle="pill" href="#newphase" role="tab" aria-controls="newphase" aria-selected="false">
+                            <i class="fas fa-project-diagram me-1"></i> New Phase
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="submitprogram-tab" data-bs-toggle="tab" href="#submitprogram" role="tab" aria-controls="submitprogram" aria-selected="false">
+                            <i class="fas fa-paper-plane me-1"></i> Submitted
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="acceptedprogram-tab" data-bs-toggle="tab" href="#acceptedprogram" role="tab" aria-controls="acceptedprogram" aria-selected="false">
+                            <i class="fas fa-check-circle me-1"></i> Approved
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="rejectedprogram-tab" data-bs-toggle="tab" href="#rejectedprogram" role="tab" aria-controls="rejectedprogram" aria-selected="false">
+                            <i class="fas fa-times-circle me-1"></i> Rejected
+                        </a>
+                    </li>
+                </ul>
+
+                <hr class="text-muted mb-4" />
+
+                <input type="hidden" name="userrole" id="userrole" th:value="${userRole}" />
+                <input th:if="${userRole != 'A'}" type="hidden" name="usercode" id="usercode" th:value="${userCode}" />
+
+                <div class="tab-content" id="pills-tabContent">
+
+                    <!-- ==========================
+                         TAB 1: Add Batch Programs
+                         ========================== -->
+                    <div class="tab-pane fade" th:classappend="${userRole == 'A' ? 'show active' : ''}"
+                         id="programdetADD" role="tabpanel" aria-labelledby="programdetadd-tab">
+
+                        <div id="formsContainer">
+                            <!-- Styled Form Container -->
+                            <div class="form-container position-relative p-4 mb-4 border rounded shadow-sm bg-white">
+                                <!-- Close Button (hidden by default) -->
+                                <button type="button" class="close-batch-btn btn btn-danger btn-sm rounded-circle shadow-sm"
+                                        style="position: absolute; top: -10px; right: -10px; display: none; width: 30px; height: 30px; padding: 0;"
+                                        title="Remove this program">
+                                    <i class="fas fa-times"></i>
+                                </button>
+
+                                <form name="mprograms" id="programdetADDFORM" role="form" autocomplete="off">
+                                    <h5 class="text-primary fw-bold mb-3">Program Information</h5>
+
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="programname" class="form-label-modern">Program Title <span class="text-danger">*</span></label>
+                                            <div class="input-group shadow-sm">
+                                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book-reader"></i></span>
+                                                <input name="programcode" id="programcode" type="hidden" />
+                                                <textarea name="programname" id="programname" class="form-control modern-input border-start-0" required rows="1"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="programid" class="form-label-modern">Program ID <span class="text-danger">*</span></label>
+                                            <div class="input-group shadow-sm">
+                                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-key"></i></span>
+                                                <input name="programid" id="programid" class="form-control modern-input border-start-0" required/>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label for="programdescription" class="form-label-modern">Program Description <span class="text-danger">*</span></label>
+                                            <textarea name="programdescription" id="programdescription" class="form-control modern-input shadow-sm" required maxlength="500" rows="3"></textarea>
+                                            <small class="text-muted float-end" id="charactercount"></small>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="phases" class="form-label-modern">Have Phases? <span class="text-danger">*</span></label>
+                                            <div class="input-group shadow-sm">
+                                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-question-circle"></i></span>
+                                                <select class="phases-select form-select modern-input border-start-0" id="phases" name="phases" required>
+                                                    <option value="">Select</option>
+                                                    <option value="Yes">Yes</option>
+                                                    <option value="No">No</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 phasedis-container" style="display: none;">
+                                            <label for="phasedescription" class="form-label-modern">Phase Description <span class="text-danger">*</span></label>
+                                            <div class="input-group shadow-sm">
+                                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-info"></i></span>
+                                                <input class="phasedescription-input form-control modern-input border-start-0" id="phasedescription" name="phasedescription" required maxlength="300" />
+                                            </div>
+                                            <small class="text-muted float-end charactercount-phase"></small>
+                                        </div>
+
+                                        <div class="col-md-12 mt-4">
+                                            <label class="form-label-modern">Program Coordinators <span class="text-danger">*</span></label>
+                                            <select id="coorsTEST1" multiple="multiple" size="10" name="coordinatorsBatch" style="width: 100%;" class="coordinatorSelect">
+                                                <option th:each="v : ${mcoordinatorlist}" th:value="${v[0]}" th:text="${v[1]}"></option>
+                                            </select>
+                                            <p id="selectionOrderDisplay1" class="mt-2 fw-bold text-primary"></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-end mt-3">
+                                        <button type="reset" class="btn btn-light border btn-modern">
+                                            <i class="fas fa-undo me-1"></i> Reset
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Buttons -->
+                        <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+                            <button id="addFormButton" type="button" class="btn btn-primary btn-modern px-4">
+                                <i class="fas fa-plus me-2"></i> Add Another Program
+                            </button>
+                            <button id="submitAllForms" type="button" class="btn btn-success btn-modern px-5 shadow-sm">
+                                <i class="fas fa-save me-2"></i> Submit All
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ==========================
+                         TAB 2: Add Program Details
+                         ========================== -->
+                    <div class="tab-pane fade" th:classappend="${userRole == 'U' ? 'show active' : ''}"
+                         id="programdetNEW" role="tabpanel" aria-labelledby="programdetNEW-tab">
+
+                        <div class="row g-3 mb-4">
+
+                            <!-- Financial Year -->
+                            <div class="col-md-4">
+                                <label class="form-label-modern">
+                                    Financial Year <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group shadow-sm" style="border-radius:0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </span>
+                                    <select name="financialyear" id="financialyear-details"
+                                            class="form-select modern-input border-start-0" required>
+                                        <option value="">Select</option>
+                                        <option th:each="o : ${fylist}" th:value="${o[4]}" th:text="${o[1]}"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Program Name -->
+                            <div class="col-md-4">
+                                <label class="form-label-modern">
+                                    Program Name <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group shadow-sm" style="border-radius:0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </span>
+                                    <select name="programcode" id="programs"
+                                            class="form-select modern-input border-start-0 select2-search" required>
+                                        <option value="">Select</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Phase No -->
+                            <div class="col-md-4">
+                                <label class="form-label-modern">
+                                    Phase No.
+                                </label>
+                                <div class="input-group shadow-sm" style="border-radius:0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+                                        <i class="fas fa-layer-group"></i>
+                                    </span>
+                                    <select id="phaseno" name="phaseid"
+                                            class="form-select modern-input border-start-0" required>
+                                        <option value="">Select</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div id="newFormContainer" style="display: none;" class="p-4 border rounded shadow-sm bg-white">
+                            <form id="DetailsForm" method="POST">
+                                <input type="hidden" id="programDetailProgcode" name="programDetailProgcode"/>
+                                <input type="hidden" id="programDetailPhaseID" name="programDetailPhaseID"/>
+
+                                <h5 class="text-primary fw-bold mb-4 border-bottom pb-2">Program Details Form</h5>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Program Category <span class="text-danger">*</span></label>
+                                        <select required name="programcattwo" class="form-select modern-input shadow-sm">
+                                            <option value="">Select Program Category</option>
+                                            <option value="New Program">New Program</option>
+                                            <option value="New Regular Program">New Regular Program</option>
+                                            <option value="Carriedover Program">Carriedover Program</option>
+                                            <option value="Ongoing Program">Ongoing Program</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Program Type <span class="text-danger">*</span></label>
+                                        <select id="ecoursecategorycode" class="form-select modern-input shadow-sm" required name="programcategory">
+                                            <option value="">Select</option>
+                                            <option th:each="category : ${mcoursecategoryList}"
+                                                    th:if="${category.coursecategorycode != '2' and category.coursecategorycode != '4' and category.coursecategorycode != '5'}"
+                                                    th:value="${category.coursecategorycode}" th:text="${category.coursecategoryname}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Program Description <span class="text-danger">*</span></label>
+                                        <input id="programdescriptiondisplayDET" class="form-control modern-input shadow-sm bg-light" disabled/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Program ID <span class="text-danger">*</span></label>
+                                        <input id="programiddisplayDET" class="form-control modern-input shadow-sm bg-light" disabled/>
+                                    </div>
+
+                                    <!-- Dates -->
+                                    <div class="col-md-4">
+                                        <label class="form-label-modern">Start Date <span class="text-danger">*</span></label>
+                                        <div class="input-group shadow-sm">
+                                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-calendar-alt"></i></span>
+                                            <input id="startdateDET" name="startdateDET" class="form-control modern-input border-start-0 datepicker" autocomplete="off" type="text" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label-modern">End Date <span class="text-danger">*</span></label>
+                                        <div class="input-group shadow-sm">
+                                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-calendar-alt"></i></span>
+                                            <input id="enddateDET" name="enddateDET" class="form-control modern-input border-start-0 datepicker" type="text" autocomplete="off" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label-modern">Last Date to Apply <span class="text-danger">*</span></label>
+                                        <div class="input-group shadow-sm">
+                                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-calendar-check"></i></span>
+                                            <input id="lastdateDET" name="lastdateDET" class="form-control modern-input border-start-0 datepicker" autocomplete="off" type="text" required />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Venues <span class="text-danger">*</span></label>
+                                        <select id="venuesDET" name="venuesDET" class="form-control modern-input shadow-sm" multiple="multiple" required>
+                                            <option th:each="v : ${mvenueList}" th:value="${v.venuecode}" th:text="${v.venuename}"></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Program Close Date <span class="text-danger">*</span></label>
+                                        <div class="input-group shadow-sm">
+                                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-calendar-times"></i></span>
+                                            <input id="courseclosedateDET" name="courseclosedateDET" class="form-control modern-input border-start-0 datepicker" autocomplete="off" type="text" required />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label-modern">Local Coordinator (if applicable)</label>
+                                        <select id="programMembers" class="form-control shadow-sm" name="localcoordinator" multiple>
+                                            <option value="">-- Select Local Coordinator --</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Focus Areas & Budget -->
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Focus Area <span class="text-danger">*</span></label>
+                                        <select id="focusTEST" multiple="multiple" name="focusareas" class="form-control modern-input shadow-sm w-100">
+                                            <option value="Research">Research</option>
+                                            <option value="Training">Training</option>
+                                            <option value="Conference">Conference</option>
+                                            <option value="Seminar">Seminar</option>
+                                            <option value="Science">Science</option>
+                                            <option value="Social Science">Social Science</option>
+                                            <option value="Examination reforms">Examination reforms</option>
+                                            <option value="Evaluation">Evaluation</option>
+                                            <option value="Text Books">Text Books</option>
+                                            <option value="Gender/Girls">Gender/Girls</option>
+                                            <option value="Higher order thinking analysis">Higher order thinking analysis</option>
+                                            <option value="ECCE–Foundational Literacy and Numeracy">ECCE – Foundational Literacy and Numeracy</option>
+                                            <option value="ICT">ICT</option>
+                                            <option value="Teacher Education">Teacher Education</option>
+                                            <option value="Curriculum">Curriculum</option>
+                                            <option value="Audio–Video">Audio–Video</option>
+                                            <option value="E-Content">E-Content</option>
+                                            <option value="Vocational">Vocational</option>
+                                            <option value="Adult Education">Adult Education</option>
+                                            <option value="Mathematics">Mathematics</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Other Focus Area</label>
+                                        <input type="text" name="otherfocusarea" class="form-control modern-input shadow-sm">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Budget Proposed <span class="text-danger">*</span></label>
+                                        <div class="input-group shadow-sm">
+                                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-rupee-sign"></i></span>
+                                            <input id="budget" name="budget" class="form-control modern-input border-start-0" autocomplete="off" type="text" pattern="[0-9]+" required />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Target Group <span class="text-danger">*</span></label>
+                                        <select id="targetTEST" multiple="multiple" name="targetgroup" class="form-control modern-input shadow-sm w-100">
+                                            <option value="SC">SC</option>
+                                            <option value="ST">ST</option>
+                                            <option value="Minorities">Minorities</option>
+                                            <option value="Special needs">Special needs</option>
+                                            <option value="Transgender">Transgender</option>
+                                            <option value="Girls & Women">Girls & Women</option>
+                                            <option value="Children Out of school children/School dropouts">Children Out of school children/School dropouts</option>
+                                            <option value="General">General</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Other Target Group</label>
+                                        <input type="text" name="othertargetgroup" class="form-control modern-input shadow-sm">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Stages <span class="text-danger">*</span></label>
+                                        <select id="stageTEST" multiple="multiple" name="stages" class="form-control modern-input shadow-sm w-100">
+                                            <option value="Foundational stage">Foundational stage</option>
+                                            <option value="Preparatory Stage">Preparatory Stage</option>
+                                            <option value="Middle Stage">Middle Stage</option>
+                                            <option value="Secondary(Classes 9-10)">Secondary (Classes 9-10)</option>
+                                            <option value="Secondary(Classes 11-12)">Secondary (Classes 11-12)</option>
+                                            <option value="All Stages">All Stages</option>
+                                            <option value="Not Applicable">Not Applicable</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label-modern">Other Stages</label>
+                                        <input type="text" name="otherstages" class="form-control modern-input shadow-sm">
+                                    </div>
+
+                                    <!-- Text Areas -->
+                                    <div class="col-12">
+                                        <label class="form-label-modern">Objectives/Research Questions <span class="text-danger">*</span></label>
+                                        <textarea name="objectives" class="form-control modern-input shadow-sm" rows="3"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label-modern">Methodology <span class="text-danger">*</span></label>
+                                        <textarea name="methodology" class="form-control modern-input shadow-sm" rows="3"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label-modern">Tools</label>
+                                        <textarea name="tools" class="form-control modern-input shadow-sm" rows="3"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label-modern">Key Performance Indicators <span class="text-danger">*</span></label>
+                                        <textarea name="kpindicators" class="form-control modern-input shadow-sm" rows="3"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label-modern">Dissemination of Outcomes <span class="text-danger">*</span></label>
+                                        <textarea name="outcomes" class="form-control modern-input shadow-sm" rows="3"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+                                    <button type="reset" class="btn btn-light border btn-modern">Reset</button>
+                                    <button type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">Save Program Details</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- ==========================
+                         TAB 3: Add Program Activity
+                         ========================== -->
+                    <div class="tab-pane fade" id="programdetNEWACTIVITY" role="tabpanel" aria-labelledby="programdetNEWACTIVITY-tab">
+                        <div class="row g-3 mb-4">
+
+                            <!-- Financial Year -->
+                            <div class="col-md-4">
+                                <label class="form-label-modern">
+                                    Financial Year <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group shadow-sm" style="border-radius:0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </span>
+                                    <select name="financialyear" id="activityfinancialyear"
+                                            class="form-select modern-input border-start-0" required>
+                                        <option value="">Select</option>
+                                        <option th:each="o : ${fylist}" th:value="${o[4]}" th:text="${o[1]}"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Program Name -->
+                            <div class="col-md-4">
+                                <label class="form-label-modern">
+                                    Program Name <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group shadow-sm" style="border-radius:0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </span>
+                                    <select name="programcode" id="activityprograms"
+                                            class="form-select modern-input border-start-0 select2-search" required>
+                                        <option value="">Select</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Phase No -->
+                            <div class="col-md-4">
+                                <label class="form-label-modern">
+                                    Phase No.
+                                </label>
+                                <div class="input-group shadow-sm" style="border-radius:0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+                                        <i class="fas fa-layer-group"></i>
+                                    </span>
+                                    <select id="activityphaseno" name="phaseid"
+                                            class="form-select modern-input border-start-0" required>
+                                        <option value="">Select</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div id="activityListDetails" class="mb-4"></div>
+
+                        <div id="activityContainer" style="display: none;" class="p-4 border rounded shadow-sm bg-white">
+                            <form id="activityForm" method="POST">
+                                <input type="hidden" id="activityProgcode" name="activityProgcode" />
+                                <input type="hidden" id="activityPhaseID" name="activityPhaseID" />
+
+                                <h5 class="text-primary fw-bold mb-3">Add New Activity</h5>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Program Description <span class="text-danger">*</span></label>
+                                        <input id="activityprogramdescriptiondisplayDET" class="form-control modern-input shadow-sm bg-light" disabled />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label-modern">Program ID <span class="text-danger">*</span></label>
+                                        <input id="activityprogramiddisplayDET" class="form-control modern-input shadow-sm bg-light" disabled />
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label-modern">Activity Name <span class="text-danger">*</span></label>
+                                        <input type="text" id="activityname" name="activityname" class="form-control modern-input shadow-sm" required />
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label-modern">Activity Description <span class="text-danger">*</span></label>
+                                        <textarea name="activitydescription" class="form-control modern-input shadow-sm" rows="3"></textarea>
+                                    </div>
+                                    <!-- Start Date -->
+                                    <div class="col-md-4">
+                                        <label class="form-label-modern">Start Date<span class="text-danger">*</span></label>
+                                        <div class="input-group shadow-sm">
+                                            <span class="input-group-text bg-light border-end-0">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </span>
+                                            <input id="activitystartdate" name="activitystartdate" class="form-control modern-input border-start-0 datepicker" type="text" required />
+                                        </div>
+                                    </div>
+
+                                    <!-- End Date -->
+                                    <div class="col-md-4">
+                                        <label class="form-label-modern">End Date<span class="text-danger">*</span></label>
+                                        <div class="input-group shadow-sm">
+                                            <span class="input-group-text bg-light border-end-0">
+                                                <i class="fas fa-calendar-check"></i>
+                                            </span>
+                                            <input id="activityenddate" name="activityenddate" class="form-control modern-input border-start-0 datepicker" type="text" required />
+                                        </div>
+                                    </div>
+
+                                    <!-- Expenditure -->
+                                    <div class="col-md-4">
+                                        <label class="form-label-modern">Expenditure</label>
+                                        <div class="input-group shadow-sm">
+                                            <span class="input-group-text bg-light border-end-0">
+                                                <i class="fas fa-rupee-sign"></i>
+                                            </span>
+                                            <input type="text" id="expenditure" name="expenditure" class="form-control modern-input border-start-0" pattern="[0-9]+" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-center gap-3 mt-4 pt-3 border-top">
+                                    <button type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">Save Activity</button>
+                                    <button type="reset" class="btn btn-light border btn-modern">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- ==========================
+                         TAB 4: Add New Phase
+                         ========================== -->
+                    <div class="tab-pane fade" id="newphase" role="tabpanel" aria-labelledby="newphase-tab">
+                        <div id="ongoingprogramdiv" class="p-3">
+                            <form id="ongoingform">
+
+                                <!-- Select Program -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mx-auto">
+                                        <label class="form-label-modern">
+                                            Select Program <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group shadow-sm" style="border-radius:0.5rem;">
+                                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                                <i class="fas fa-graduation-cap"></i>
+                                            </span>
+                                            <select id="ongoingprograms" name="ongoingprograms"
+                                                    class="form-select modern-input border-start-0"
+                                                    style="width: 100%;" required>
+                                                <option value="" selected>Select</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="addphasediv" class="display-none p-4 border rounded shadow-sm bg-white">
+                                    <h5 class="text-primary fw-bold mb-3">Phase Information</h5>
+
+                                    <div class="row g-3">
+                                        <div class="col-md-12 mb-2">
+                                            <label class="form-label-modern me-3">Program Type: <span class="text-danger">*</span></label>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" id="rongoing" name="programtypeco" value="Ongoing Program" checked required>
+                                                <label class="form-check-label" for="rongoing">Ongoing</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" id="rcarriedover" name="programtypeco" value="Carried Over Program" required>
+                                                <label class="form-check-label" for="rcarriedover">Carried Over</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label-modern">Program Description</label>
+                                            <input id="programdescriptiondisplay" class="form-control modern-input shadow-sm bg-light" disabled/>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-modern">Program ID</label>
+                                            <input id="programiddisplay" class="form-control modern-input shadow-sm bg-light" disabled/>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-modern">Category Type</label>
+                                            <input id="categorytypedisplay" class="form-control modern-input shadow-sm bg-light" disabled/>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label class="form-label-modern">Next Phase No: <span class="text-danger">*</span></label>
+                                            <input id="nextphase" class="form-control modern-input shadow-sm bg-light fw-bold text-primary" disabled style="width: 100px;"/>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label class="form-label-modern">Phase Description <span class="text-danger">*</span></label>
+                                            <input id="newphasedescription" class="form-control modern-input shadow-sm" name="newphasedescription" required maxlength="500" autocomplete="off"/>
+                                            <small id="charactercountnewphase" class="text-muted"></small>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label-modern">Start Date <span class="text-danger">*</span></label>
+                                            <input id="newstartdate" name="newstartdate" class="form-control modern-input shadow-sm datepicker" type="text" required autocomplete="off"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label-modern">End Date <span class="text-danger">*</span></label>
+                                            <input id="newenddate" name="newenddate" class="form-control modern-input shadow-sm datepicker" type="text" required autocomplete="off"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label-modern">Last Date to apply <span class="text-danger">*</span></label>
+                                            <input id="newlastdate" name="newlastdate" class="form-control modern-input shadow-sm datepicker" type="text" required autocomplete="off"/>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label-modern">Venues <span class="text-danger">*</span></label>
+                                            <select id="venues" name="newvenues"
+                                                    class="form-select select2-search"
+                                                    multiple="multiple" required style="width: 100%;">
+                                                <option></option>
+                                                <option th:each="v : ${mvenueList}"
+                                                        th:value="${v.venuecode}"
+                                                        th:text="${v.venuename}">
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label-modern">Program Close Date <span class="text-danger">*</span></label>
+                                            <input id="newcourseclosedate" name="newcourseclosedate" class="form-control modern-input shadow-sm datepicker" type="text" required autocomplete="off" />
+                                        </div>
+
+                                        <div class="col-md-12 mt-3">
+                                            <label class="form-label-modern">Program Coordinators <span class="text-danger">*</span></label>
+                                            <select id="coors2" class="coordinatorSelect" multiple="multiple" size="10" name="newcoordinators" style="width: 100%;">
+                                                <option th:each="v : ${mcoordinatorlist}" th:value="${v[0]}" th:text="${v[1]}"></option>
+                                            </select>
+                                            <p id="selectionOrderDisplay2" class="mt-2 fw-bold text-primary"></p>
+                                        </div>
+
+                                        <div class="col-md-12 mt-4 text-center">
+                                            <button type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">Add New Phase</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- ==========================
+                         TAB 5: Submitted Programs
+                         ========================== -->
+                    <div class="tab-pane fade show" id="submitprogram" role="tabpanel" aria-labelledby="submitprogram-tab">
+                        <div class="table-responsive table-wrapper">
+                            <table class="table modern-table align-middle mb-0 w-100" id="usertable">
+                                <thead>
+                                <tr>
+                                    <th class="w-1">Sl No.</th>
+                                    <th>Category</th>
+                                    <th>Name</th>
+                                    <th>ID</th>
+                                    <th>Description</th>
+                                    <th>Phase No.</th>
+                                    <th>Phase Desc.</th>
+                                    <th>Last Date</th>
+                                    <th>Venues</th>
+                                    <th>Coordinators</th>
+                                    <th>Status</th>
+                                    <th class="noExport text-center">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody class="text-center s-12 fs-12">
+                                <tr th:each="v, s : ${mprogramList}">
+                                    <td class="text-center" th:text="${s.count}"></td>
+                                    <td th:text="${v[3]}"></td>
+                                    <td>
+                                        <span class="fw-bold text-dark" th:if="${#strings.length(v[0]) > 17}">
+                                            <span class="less" th:text="${#strings.substring(v[0], 0, 17)} + '...'"></span>
+                                            <span class="more display-none" th:text="${v[0]}"></span>
+                                            <br />
+                                            <a href="#more" class="showmore text-primary small text-decoration-none">show more</a>
+                                        </span>
+                                        <span class="fw-bold text-dark" th:unless="${#strings.length(v[0]) > 17}" th:text="${v[0]}"></span>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar-alt me-1"></i>
+                                            <span th:text="${#dates.format(v[4], 'dd-MM-yyyy')}"></span> -
+                                            <span th:text="${#dates.format(v[5], 'dd/MM/yyyy')}"></span>
+                                        </small>
+                                    </td>
+                                    <td th:text="${v[2]}"></td>
+                                    <td>
+                                        <span th:if="${#strings.length(v[1]) > 20}">
+                                            <span class="less" th:text="${#strings.substring(v[1], 0, 20)} + '...'"></span>
+                                            <span class="more display-none" th:text="${v[1]}"></span>
+                                            <br/><a href="#more" class="showmore text-primary small text-decoration-none">show more</a>
+                                        </span>
+                                        <span th:unless="${#strings.length(v[1]) > 20}" th:text="${v[1]}"></span>
+                                    </td>
+                                    <td class="text-center" th:text="${v[8]}"></td>
+                                    <td th:text="${v[9]}"></td>
+                                    <td class="text-nowrap" th:text="${#dates.format(v[6], 'dd-MM-yyyy')}"></td>
+                                    <td th:text="${v[10]}"></td>
+                                    <td th:text="${v[11]}"></td>
+                                    <td><span class="badge bg-secondary bg-opacity-25 text-dark p-2">Not Finalized</span></td>
+                                    <td class="text-center text-nowrap">
+                                        <button class="clickme editfuncsubmitted-btn btn btn-sm btn-primary btn-modern text-white shadow-sm"
+                                                th:data-param1="${v[0]}"
+                                                th:data-param2="${v[1]}"
+                                                th:data-param3="${v[2]}"
+                                                th:data-param4="${#dates.format(v[4], 'dd-MM-yyyy')}"
+                                                th:data-param5="${#dates.format(v[5], 'dd-MM-yyyy')}"
+                                                th:data-param6="${#dates.format(v[6], 'dd-MM-yyyy')}"
+                                                th:data-param7="${v[7]}"
+                                                th:data-param8="${v[9]}"
+                                                th:data-param9="${v[12]}"
+                                                th:data-param10="${#dates.format(v[13], 'dd-MM-yyyy')}"
+                                                th:data-param11="${v[16]}"
+                                                th:data-param12="${v[17]}"
+                                                th:data-param13="${v[18]}">
+                                            <i class="fas fa-edit me-1"></i> Edit
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ==========================
+                         TAB 6: Approved Program
+                         ========================== -->
+                    <div class="tab-pane fade show" id="acceptedprogram" role="tabpanel" aria-labelledby="acceptedprogram-tab">
+                        <div class="row mb-4">
+                            <input id="rolecode" th:value='${userRole}' hidden />
+                            <div class="col-md-6 mx-auto">
+                                <label class="form-label-modern">
+                                    Financial Year <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group shadow-sm" style="border-radius:0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </span>
+                                    <select name="approvefinancialyear"
+                                            id="approvefinancialyear"
+                                            class="form-select modern-input border-start-0"
+                                            required
+                                            onchange="getApproveProgramList()">
+                                        <option value="">Select</option>
+                                        <option th:each="o : ${fylist}" th:value="${o[4]}" th:text="${o[1]}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="approvelistdiv" class="display-none">
+                            <div class="table-responsive table-wrapper">
+                                <table class="table modern-table align-middle mb-0 w-100" id="approveTableList">
+                                    <thead>
+                                    <tr>
+                                        <th class="w-1">Sl No.</th>
+                                        <th>Category</th>
+                                        <th>Program Name</th>
+                                        <!-- <th>Program ID</th> -->
+                                        <th>Description</th>
+                                        <!-- <th>Phase No.</th> -->
+                                        <th>Phase Desc.</th>
+                                        <th>Last Date</th>
+                                        <th>Venues</th>
+                                        <th>Coordinators</th>
+                                        <th th:if="${userRole == 'U'}">Feedbacks</th>
+                                        <th>Details</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="atttablebody" class="text-center fs-12"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==========================
+                         TAB 7: Rejected Program
+                         ========================== -->
+                    <div class="tab-pane fade show" id="rejectedprogram" role="tabpanel" aria-labelledby="rejectedprogram-tab">
+                        <div class="row mb-4">
+                            <div class="col-md-6 mx-auto">
+                                <label class="form-label-modern">
+                                    Financial Year <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group shadow-sm" style="border-radius:0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </span>
+                                    <select name="rejectfinancialyear"
+                                            id="rejectfinancialyear"
+                                            class="form-select modern-input border-start-0"
+                                            required
+                                            onchange="getRejectProgramList()">
+                                        <option value="">Select</option>
+                                        <option th:each="o : ${fylist}" th:value="${o[4]}" th:text="${o[1]}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="rejectlistdiv" class="display-none">
+                            <div class="table-responsive table-wrapper">
+                                <table class="table modern-table align-middle mb-0 w-100" id="rejectTableList">
+                                    <thead>
+                                    <tr>
+                                        <th class="w-1">Sl No.</th>
+                                        <th>Category</th>
+                                        <th>Name</th>
+                                        <th>ID</th>
+                                        <th>Description</th>
+                                        <th>Phase No.</th>
+                                        <th>Phase Desc.</th>
+                                        <th>Last Date</th>
+                                        <th>Venues</th>
+                                        <th>Coordinators</th>
+                                        <th>Rejection Details</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="rtttablebody" class="text-center fs-12"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==========================
+                         MODALS
+                         ========================== -->
+                    <!-- Edit Program Modal (Submitted) -->
+                    <div class="modal fade" id="programEditModalSubmitted" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header bg-light border-0 px-4 py-3">
+                                    <h5 class="modal-title fw-bold text-dark"><i class="fas fa-edit me-2 text-primary"></i> Edit Submitted Program</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <form name="emprograms" id="editprogramformsubmitted" role="form" autocomplete="off">
+                                        <div class="row g-3">
+                                            <div class="col-md-12">
+                                                <label class="form-label-modern">Program Name <span class="text-danger">*</span></label>
+                                                <!-- Updated IDs to match the specific function -->
+                                                <input name="programcode" id="eprogramcodesubmitted" type="hidden" />
+                                                <input name="ephaseid" id="ephaseidsubmitted" type="hidden" />
+                                                <textarea name="programname" id="eprogramnamesubmitted" class="form-control modern-input shadow-sm" required rows="2"></textarea>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label-modern">Program ID</label>
+                                                <input name="programid" id="eprogramidsubmitted" class="form-control modern-input shadow-sm" />
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <label class="form-label-modern">Program Description <span class="text-danger">*</span></label>
+                                                <textarea name="programdescription" id="eprogramdescriptionsubmitted" class="form-control modern-input shadow-sm" required rows="3"></textarea>
+                                            </div>
+
+                                            <div class="col-md-12" id="ephasedescdivsubmitted" style="display:none;">
+                                                <label class="form-label-modern">Phase Description <span class="text-danger">*</span></label>
+                                                <textarea name="ephasedescription" id="ephasedescriptionsubmitted" class="form-control modern-input shadow-sm" rows="2"></textarea>
+                                            </div>
+
+                                            <div class="col-md-12 mt-4">
+                                                <label class="form-label-modern">Program Coordinators <span class="text-danger">*</span></label>
+                                                <!-- Note: Name changed to ecoordinators111 to match your old code requirement, or you can use coordinatorsList -->
+                                                <select id="coorsSubmitted" multiple="multiple" name="ecoordinators111" style="width: 100%;" class="form-control">
+                                                    <option th:each="v : ${mcoordinatorlist}" th:value="${v[0]}" th:text="${v[1]}"></option>
+                                                </select>
+                                                <p id="selectionOrderDisplaySubmitted" class="mt-2 fw-bold text-primary"></p>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer border-top-0 pt-0">
+                                    <button type="button" class="btn btn-light border btn-modern" data-bs-dismiss="modal">Cancel</button>
+                                    <button class="btn btn-success btn-modern px-4" form="editprogramformsubmitted" type="submit">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feedback/Alert Modal -->
+                    <div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header bg-light border-0">
+                                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body p-4 text-secondary" id="feedbackModalBody">
+                                    <!-- Content -->
+                                </div>
+                                <div class="modal-footer border-top-0 pt-0">
+                                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

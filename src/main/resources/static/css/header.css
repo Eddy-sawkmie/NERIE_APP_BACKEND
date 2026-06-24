@@ -1,0 +1,362 @@
+/* ============================================================
+   header.css
+   Before-Login styles  (nd-* prefix)
+   After-Login styles   (.new-header, .header-logo-*, etc.)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+/* ---- CSS Variables ---- */
+:root {
+    /* Before Login */
+    --color-primary:        #1e3a8a;
+    --color-primary-hover:  #1e3382;
+    --color-secondary:      #3b82f6;
+    --color-primary-light:  #dbeafe;
+    --color-primary-medium: #93c5fd;
+    --color-primary-dark:   #1e3a8a;
+    --color-accent:         #0f172a;
+    --color-text-dark:      #1e293b;
+    --color-text-light:     #ffffff;
+    --color-header-text:    #1e3a8a;
+    --color-bg-dark:        #0f172a;
+    --color-bg-light-gray:  #f8fafc;
+    --shadow-sm:            0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-md:            0 4px 20px rgba(0, 0, 0, 0.12);
+
+    /* After Login */
+    --header-bg-color:           #ffffff;
+    --header-secondary-text:     #808080;
+    --header-border-color:       #EEEEEE;
+    --header-gov-title-hi-ncert: #1a237e;
+    --header-separator-color:    #cccccc;
+}
+
+html { scroll-behavior: smooth; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    color: var(--color-text-dark);
+    background-color: var(--color-bg-light-gray);
+    font-family: 'Inter', sans-serif;
+}
+
+.container       { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.header-container{ max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+.hero-container  { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
+
+
+/* ============================================================
+   BEFORE LOGIN HEADER
+   ============================================================ */
+
+.landing-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* ---- Top Bar ---- */
+.header-top {
+    background-color: #0f172a;
+    color: #cbd5e1;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.header-top .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-top span,
+.header-top a   { margin: 0 8px; color: #cbd5e1; transition: color 0.2s; }
+.header-top a:hover { color: #ffffff; }
+.header-top i   { margin-right: 4px; }
+
+/* ---- Navigation Bar ---- */
+.landing-header .navigation {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 0 #e2e8f0, var(--shadow-sm);
+    transition: box-shadow 0.3s ease;
+}
+
+/* ---- Brand ---- */
+.nd-navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.6rem 0;
+    text-decoration: none;
+}
+
+.nd-navbar-brand:hover { text-decoration: none; }
+
+.nd-navbar-logo {
+    width: 52px;
+    height: 70px;
+    object-fit: contain;
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+}
+
+.nd-navbar-brand:hover .nd-navbar-logo { transform: scale(1.04); }
+
+.nd-navbar-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.nd-navbar-title-en {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.25;
+}
+
+.nd-navbar-title-hi {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: #64748b;
+    line-height: 1.25;
+}
+
+/* ---- Nav Links ---- */
+.nd-nav-link {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 0.55rem 0.7rem;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+
+.nd-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0.7rem;
+    right: 0.7rem;
+    height: 2px;
+    background-color: var(--color-primary);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+}
+
+.nd-nav-link:hover                       { color: var(--color-primary); text-decoration: none; }
+.nd-nav-link:hover::after                { transform: scaleX(1); }
+.nav-item.nd-active .nd-nav-link         { color: var(--color-primary); }
+.nav-item.nd-active .nd-nav-link::after  { transform: scaleX(1); }
+
+/* ---- Divider ---- */
+.nd-nav-divider {
+    width: 1px;
+    height: 22px;
+    background-color: #e2e8f0;
+    margin: 0 0.5rem;
+    align-self: center;
+}
+
+/* ---- Login Button ---- */
+.nd-login-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background-color: var(--color-primary);
+    color: #ffffff !important;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 0.48rem 1.1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-left: 0.4rem;
+    box-shadow: 0 2px 10px rgba(30, 58, 138, 0.28);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.nd-login-btn:hover {
+    background-color: var(--color-primary-hover);
+    box-shadow: 0 4px 16px rgba(30, 58, 138, 0.4);
+    transform: translateY(-1px);
+    color: #ffffff !important;
+    text-decoration: none;
+}
+
+/* ---- Toggler ---- */
+.custom-toggler {
+    background-color: var(--color-primary) !important;
+    border: none;
+    border-radius: 8px;
+    padding: 0.45rem 0.85rem;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.custom-toggler .fa-bars { color: #fff; font-size: 1.25rem; vertical-align: middle; }
+.custom-toggler:hover    { opacity: 0.88; transform: translateY(-1px); }
+.custom-toggler:focus    { outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35); }
+
+/* ---- Misc ---- */
+.modal-backdrop { z-index: -1; }
+.header-main    { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
+
+/* ---- Responsive: Mobile top bar ---- */
+@media (max-width: 767.98px) {
+    .header-top .top-left,
+    .header-top .top-right { display: none !important; }
+    .header-top .container { justify-content: center; text-align: center; }
+}
+
+/* ---- Responsive: Collapsed mobile menu ---- */
+@media (max-width: 991.98px) {
+    .nd-navbar-title-en { font-size: 0.8rem; }
+    .nd-navbar-title-hi { font-size: 0.75rem; }
+    .nd-navbar-logo     { width: 44px; height: 60px; }
+
+    .nd-navbar-brand {
+        max-width: calc(100% - 70px);
+    }
+
+    .nd-navbar-titles {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .nd-navbar-title-en,
+    .nd-navbar-title-hi {
+        white-space: normal;
+        word-wrap: break-word;
+        line-height: 1.2;
+    }
+
+    #ndNavLinks {
+        background-color: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        border-radius: 0 0 12px 12px;
+        box-shadow: var(--shadow-md);
+        padding: 0.5rem 0.5rem 0.75rem;
+    }
+
+    .nd-nav-link { padding: 0.65rem 1rem; border-radius: 6px; }
+    .nd-nav-link::after { display: none; }
+
+    .nav-item.nd-active,
+    .nav-item:hover {
+        background-color: var(--color-primary-light);
+        border-radius: 6px;
+    }
+
+    .nav-item.nd-active .nd-nav-link,
+    .nav-item:hover .nd-nav-link { color: var(--color-primary); }
+
+    .nd-nav-divider { display: none; }
+
+    .nd-login-btn {
+        margin: 0.4rem 1rem;
+        justify-content: center;
+        width: calc(100% - 2rem);
+    }
+}
+
+
+/* ============================================================
+   AFTER LOGIN HEADER  — unchanged
+   ============================================================ */
+.new-header {
+    background-color: var(--header-bg-color);
+    padding: 13px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--header-border-color);
+    width: 100%;
+    position: relative;
+}
+
+.header-logo-section { display: flex; align-items: center; }
+
+.header-logo-img {
+    height: 61px;
+    width: 61px;
+    object-fit: contain;
+    margin-right: 15px;
+    transition: transform 0.3s ease;
+}
+
+.header-logo-img:hover { transform: scale(1.05); }
+
+.logo-text .main-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--header-gov-title-hi-ncert);
+    line-height: 1.2;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.logo-text .sub-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #455a64;
+    margin: 0;
+}
+
+.header-center-text {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.header-center-text .text-block { line-height: 1.4; }
+.header-center-text .text-block:first-of-type { text-align: right; }
+.header-center-text .text-block:last-of-type  { text-align: left; }
+
+.text-block .gov-title-hi { font-size: 0.8rem; font-weight: 500; color: #455a64; }
+.text-block .gov-title-en { font-size: 0.8rem; color: var(--header-secondary-text); }
+
+.header-center-text .separator {
+    height: 40px;
+    width: 1px;
+    background-color: var(--header-separator-color);
+}
+
+.header-right-section {}
+
+@media (max-width: 1440px) {
+    .logo-text .main-title  { white-space: normal; }
+    .header-center-text     { display: none; }
+    .new-header             { justify-content: center; }
+}
+
+@media (max-width: 768px) {
+    .new-header             { justify-content: flex-start; }
+    .header-logo-img        { height: 60px; width: 60px; }
+    .logo-text .main-title  { font-size: 0.8rem; }
+    .logo-text .sub-title   { font-size: 0.75rem; }
+}

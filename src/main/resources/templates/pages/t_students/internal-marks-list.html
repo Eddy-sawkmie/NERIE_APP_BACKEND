@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layouts/student-layout}"
+        xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+  <title>My Internal Marks</title>
+  <div layout:fragment="static-files">
+    <script th:inline="javascript">
+      const API = {
+          internalEvaluationMarks: [[@{/internal-evaluation-marks/my-internal-marks}]]
+      };
+    </script>
+    <script th:src="@{/js/internalMarksList.js}"></script>
+  </div>
+</head>
+<body>
+
+<div id="loader">
+  <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container py-5">
+      
+    <div class="card border-0 modern-card mb-4">
+      <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+        <h4 class="mb-0 fw-bold d-flex align-items-center">
+            <i class="fas fa-clipboard-check me-3 fs-5"></i>
+            My Internal Evaluation Marks
+        </h4>
+      </div>
+      
+      <div class="card-body p-4 p-md-5">
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-5">
+                <label for="subjectcode" class="form-label fw-semibold text-secondary small text-uppercase mb-2" style="letter-spacing: 0.5px;">
+                    Select Subject to View Marks
+                </label>
+                <select id="subjectcode" class="form-select modern-select bg-light">
+                    <option value="-1">-- Select Subject --</option>
+                    <option th:if="${subs != null}" th:each="s : ${subs}" th:value="${s[1]}" th:text="${s[0]}"></option>
+                </select>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 modern-card" id="marks-table-card" style="display: none;">
+      <div class="card-body p-4 p-md-5">
+          
+        <h5 class="fw-bold text-dark mb-4" id="tabletitle">
+            <i class="fas fa-list text-primary me-2"></i> Marks Details
+        </h5>
+        
+        <div class="table-responsive table-wrapper">
+          <table class="table modern-table align-middle mb-0" id="internalmarkstable" style="width: 100%;">
+            <thead>
+            <tr>
+              <th style="width: 50%;">Test Name</th>
+              <th style="width: 25%;" class="text-center">Full Marks</th>
+              <th style="width: 25%;" class="text-center">Marks Obtained</th>
+            </tr>
+            </thead>
+            <tbody id="markslist">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-light">
+          <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-secondary" id="feedbackModalBody">
+          </div>
+        <div class="modal-footer border-top-0 pt-0">
+          <button type="button" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<th:block layout:fragment="scripts"></th:block>
+
+</body>
+</html>

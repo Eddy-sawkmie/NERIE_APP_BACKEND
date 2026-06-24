@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title layout:fragment="title">Course Categories</title>
+
+    <div layout:fragment="static-files">
+        <script th:inline="javascript">
+            const API = {
+                saveCourseCategory: [[@{/course-categories/save}]]
+            };
+        </script>
+        <script th:src="@{/js/programCategories.js}"></script>
+    </div>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container py-5">
+
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-list me-3 fs-5"></i> Program Categories
+                </h4>
+                <button type="button" class="btn btn-light btn-modern text-primary fw-bold shadow-sm" id="addft" data-bs-toggle="modal" data-bs-target="#category-modal">
+                    <i class="fas fa-plus me-2"></i> Add New
+                </button>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <div class="table-responsive table-wrapper mt-2">
+                    <table id="categorytable" class="table modern-table align-middle mb-0 w-100">
+                        <thead>
+                        <tr>
+                            <th style="width: 10%;" class="text-center">Sl No.</th>
+                            <th style="width: 45%;">Program Category Name</th>
+                            <th style="width: 30%;">Program Type</th>
+                            <th style="width: 15%;" class="text-center noExport">Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="v, s : ${mcoursecategoryList}">
+                            <td class="text-center fw-semibold text-muted" th:text="${s.index + 1}"></td>
+                            <td><span class="fw-bold text-dark d-block" th:text="${v.coursecategoryname}"></span></td>
+                            <td>
+                                <span class="badge bg-primary bg-opacity-25 text-primary p-2" th:if="${v.coursetype == 'S'}">Short Term</span>
+                                <span class="badge bg-secondary bg-opacity-25 text-dark p-2" th:if="${v.coursetype == 'L'}">Long Term</span>
+                            </td>
+                            <td class="text-center white-space-nowrap">
+                                <button class="editbtn btn btn-sm btn-primary btn-modern"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#category-modal"
+                                        th:attr="data-coursecategorycode=${v.coursecategorycode},
+                                                 data-coursecategoryname=${v.coursecategoryname},
+                                                 data-coursetype=${v.coursetype}">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="category-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0 px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark"><i class="fas fa-tags me-2 text-primary"></i> Add/Edit Program Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    <form name="mcoursecategoriesfn" id="mcoursecategoriesfid" role="form" autocomplete="off">
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="coursetype" class="form-label-modern">Program Type <span class="text-danger">*</span></label>
+                                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-layer-group"></i></span>
+                                    <select name="coursetype" id="coursetype" class="form-select modern-input border-start-0 ps-2" required="true">
+                                        <option value="">Select Type</option>
+                                        <option value="S">Short Term</option>
+                                        <option value="L">Long Term</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="coursecategoryname" class="form-label-modern">Program Category Name <span class="text-danger">*</span></label>
+                                <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-heading"></i></span>
+                                    <input name="coursecategorycode" id="coursecategorycode" hidden="true" />
+                                    <input name="coursecategoryname" id="coursecategoryname" class="form-control modern-input border-start-0 ps-2 alphabets" required="true" maxlength="50" placeholder="e.g., Software Engineering" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-4 pt-4 border-top">
+                            <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </button>
+                            <button id="submit" type="submit" name="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                                <i class="fas fa-save me-2"></i> Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

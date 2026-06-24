@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/participant-layout}">
+
+<head>
+  <title layout:fragment="title">Apply for Programs</title>
+  <th:block layout:fragment="static-files">
+    <link th:href="@{/css/participantPrograms.css}" rel="stylesheet">
+  </th:block>
+</head>
+
+<body>
+<main layout:fragment="content">
+  <div class="container py-5">
+
+    <div class="card border-0 modern-card mb-5">
+      <div class="card-header modern-card-header text-white py-4 px-4 border-0">
+        <h4 class="mb-0 fw-bold d-flex align-items-center">
+            <i class="fas fa-calendar-plus me-3 fs-5"></i> Apply for Program
+        </h4>
+      </div>
+
+      <div class="card-body p-4 p-md-5">
+
+        <div id="upcomingEmptyMsg" style="display: none;">
+          <div class="text-center pb-4 text-muted">
+            <i class="fas fa-calendar-times fs-2 mb-3 d-block opacity-50"></i>
+            <h5 class="fw-bold mb-1">No Upcoming Programs</h5>
+            <p class="text-muted mb-0 small">New programs will appear here once they are scheduled.</p>
+          </div>
+        </div>
+
+        <div class="table-responsive table-wrapper">
+          <table class="table modern-table align-middle mb-0 w-100" id="upcomingProgramsTable">
+            <thead>
+            <tr>
+              <th style="width: 5%;" class="text-center">#</th>
+              <th style="width: 20%;">Program Name</th>
+              <th style="width: 25%;">Description</th>
+              <th style="width: 15%;">Timeline</th>
+              <th style="width: 15%;">Venues</th>
+              <th style="width: 10%;">Coordinators</th>
+              <th style="width: 10%;" class="text-center noExport">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="v, s : ${mcourselist}">
+              <td class="text-center fw-semibold text-muted" th:text="${s.count}"></td>
+              <td class="fw-bold text-dark" th:text="${v[1]}"></td>
+              <td><span class="d-block text-secondary small" th:text="${v[2]} + ': ' + ${v[3]}"></span></td>
+              <td>
+                <span class="date-block d-block text-success fw-semibold text-nowrap">
+                    <i class="far fa-calendar-check me-1"></i> Start: <th:block th:text="${v[4] != null ? #temporals.format(v[4], 'dd-MMM-yyyy') : '-'}"></th:block>
+                </span>
+                            <span class="date-block d-block text-danger fw-semibold mt-1 text-nowrap">
+                    <i class="far fa-calendar-times me-1"></i> End: <th:block th:text="${v[5] != null ? #temporals.format(v[5], 'dd-MMM-yyyy') : '-'}"></th:block>
+                </span>
+              </td>
+              <td><span class="d-block small fw-medium text-dark"><i class="fas fa-map-marker-alt text-muted me-1"></i> <th:block th:text="${v[10]}"></th:block></span></td>
+              <td class="small fw-medium" th:text="${v[11]}"></td>
+              <td class="text-center">
+                <button class="apply-program-btn btn btn-sm btn-success btn-modern px-3"
+                   th:attr="data-phaseid=${v[12]}, data-programname=${v[1]}"
+                   data-bs-toggle="modal"
+                   data-bs-target="#modalapply-modal">
+                  <i class="fas fa-paper-plane me-1"></i> Apply
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 modern-card">
+      <div class="card-header bg-light py-4 px-4 border-bottom d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-hourglass-half text-warning me-2"></i> Applied Pending Programs</h5>
+        <a th:href="@{/program/my-programs}" class="btn btn-outline-primary btn-sm btn-modern">
+            View My Programs <i class="ms-1 fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="card-body p-4 p-md-5">
+
+        <div id="appliedEmptyMsg" style="display: none;">
+          <div class="text-center pb-4 text-muted">
+            <i class="fas fa-folder-open fs-2 mb-3 d-block opacity-50"></i>
+            <h5 class="fw-bold mb-1">No Pending Applications</h5>
+            <p class="text-muted mb-0 small">You do not have any pending program applications right now.</p>
+          </div>
+        </div>
+
+        <div class="table-responsive table-wrapper">
+          <table class="table modern-table align-middle mb-0 w-100" id="appliedProgramsTable">
+            <thead>
+            <tr>
+              <th style="width: 5%;" class="text-center">#</th>
+              <th style="width: 20%;">Program Name</th>
+              <th style="width: 25%;">Description</th>
+              <th style="width: 15%;">Timeline</th>
+              <th style="width: 15%;">Venues</th>
+              <th style="width: 10%;">Coordinators</th>
+              <th style="width: 10%;" class="text-center">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="v, s : ${appliedprograms}">
+              <td class="text-center fw-semibold text-muted" th:text="${s.count}"></td>
+              <td class="fw-bold text-dark" th:text="${v[1]}"></td>
+              <td><span class="d-block text-secondary small" th:text="${v[2]} + ': ' + ${v[3]}"></span></td>
+              <td>
+                  <span class="date-block text-success fw-semibold"><i class="far fa-calendar-check me-1"></i> Start: <th:block th:text="${v[4] != null ? #temporals.format(v[4], 'dd-MMM-yyyy') : '-'}"></th:block></span>
+                  <span class="date-block text-danger fw-semibold mt-1"><i class="far fa-calendar-times me-1"></i> End: <th:block th:text="${v[5] != null ? #temporals.format(v[5], 'dd-MMM-yyyy') : '-'}"></th:block></span>
+              </td>
+              <td><span class="d-block small fw-medium text-dark"><i class="fas fa-map-marker-alt text-muted me-1"></i> <th:block th:text="${v[10]}"></th:block></span></td>
+              <td class="small fw-medium" th:text="${v[11]}"></td>
+              <td class="text-center">
+                  <span class="status-pill pill-warning"><i class="fas fa-clock me-1"></i> Pending</span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalapply-modal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light border-0 px-4 py-3">
+          <h5 class="modal-title fw-bold text-dark" id="applyModalLabel"><i class="fas fa-paper-plane text-primary me-2"></i> Submit Application</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4 p-md-5">
+          <form method="POST" th:action="@{/program/apply-program-by-participant}" id="applyProgramForm" role="form" autocomplete="off">
+            <input id="acceptprogramcode" name="phaseid" type="hidden"/>
+
+            <div class="mb-4">
+                <label class="form-label-modern">Selected Program</label>
+                <div class="p-3 bg-light rounded border text-dark fw-bold" id="acceptprogramname"></div>
+            </div>
+
+            <div class="mb-4">
+                <label for="acceptremarks" class="form-label-modern">Expectations of the Program (Optional)</label>
+                <textarea name="remarks" id="acceptremarks" class="form-control modern-input" maxlength="100" rows="3" placeholder="Briefly share what you expect to learn..."></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+              <button type="button" class="btn btn-light border btn-modern px-4" data-bs-dismiss="modal">Cancel</button>
+              <button id="submitApply" type="submit" class="btn btn-primary btn-modern px-5"><i class="fas fa-check me-2"></i> Confirm Application</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light border-0">
+          <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+          </div>
+        <div class="modal-footer border-top-0 pt-0">
+          <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+<th:block layout:fragment="scripts">
+  <script th:src="@{/js/applyPrograms.js}"></script>
+</th:block>
+</body>
+</html>

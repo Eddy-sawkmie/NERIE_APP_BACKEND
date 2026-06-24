@@ -1,0 +1,460 @@
+@media screen and (min-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: 0;
+    }
+
+    #page-content-wrapper {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -15rem;
+    }
+
+    #b-accessibility {
+      height: 43px;
+    }
+}
+
+@media screen and (max-width: 767.9px) {
+    #b-accessibility {
+        display: block!important;
+    }
+
+    #b-accessibility .b-ministryname {
+        text-align: center!important;
+    }
+    .b-acc-ministry {
+        text-align: left!important;
+    }
+    .b-acc-icons {
+        text-align: center;
+        display: block!important;
+    }
+    .b-emblem-image {
+        width: 40px;
+    }
+    .b-footer-icons {
+
+    }
+    #sortable-cards {
+      padding-left: 0px!important;
+    }
+    .b-latest-data {
+      text-align: left!important;
+    }
+}
+
+@media screen and (min-width: 576px) {
+    .b-nav-mobile {
+        display: none!important;
+    }
+
+}
+
+@media screen and (max-width: 575.9px) {
+    .b-acc-goi {
+        padding-right: 0.25rem!important;
+    }
+    .b-navdropdown.hide {
+        display: none!important;
+    }
+    .b-nav-mobile {
+        height: 51px;
+    }
+    .b-nav-mobile button{
+        height: 40px;
+    }
+    .b-loginbut {
+        margin-left: 0px!important;
+    }
+    /* .main-menu li a {
+        margin-right: 0px!important;
+        text-align: center!important;
+        margin-bottom: 20px;
+    }
+    .main-menu {
+        padding: 5px 0px;
+    } */
+    .navbar-dark .navbar-toggler {
+        color: rgba(255,255,255,1);
+        border: none;
+    }
+    .b-btn-toggler:focus {
+        outline: none!important;
+    }
+    .b-btn-login {
+        border: none;
+    }
+    .b-btn-login.focus, .b-btn-login:focus {
+        box-shadow: 0 0 0 0.2rem rgba(248,249,250,0);
+    }
+
+    .main-menu li a:hover, .main-menu li a.active {
+        border-bottom: none!important; 
+        text-decoration: none;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: #212529!important;
+    }
+    
+    /* .main-menu li a {
+        padding: 5px 1px;
+        border-bottom: none!important;
+    } */
+
+}
+
+
+@media screen and (max-width: 400px) {
+    .b-acc-icons .d-inline-block {
+        padding: 0px 12px!important;
+    }
+
+    .b-appname {
+        font-size: 23px;
+    }
+    .b-appfullname {
+      font-size: 12.5px;
+    }
+
+    .b-login-w {
+      padding-left: 10px!important;
+      padding-right: 10px!important;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ----------------
+Responsive
+ ---------------------*/
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1210px;
+  }
+}
+
+/* Medium screen : 992px. */
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .section-title h2,
+  .about-text h2 {
+    font-size: 65px;
+  }
+  /* .main-menu li a {
+    margin-right: 40px;
+  } */
+  .about-widget {
+    margin-right: 15px;
+  }
+  .search-result-map {
+    height: 600px;
+  }
+  .search-results {
+    padding: 55px 30px 90px;
+  }
+  .offer-btn {
+    min-width: 205px;
+  }
+  .contact-text {
+    padding-right: 40px;
+  }
+  .blog-item.feature-blog .blog-text {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  .blog-item.feature-blog h4 {
+    margin-bottom: 15px;
+  }
+}
+
+/* Tablet :768px. */
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .header-section {
+    padding: 0 15px;
+  }
+  /* .main-menu {
+    padding-right: 15px;
+  }
+  .main-menu li a {
+    margin-right: 45px;
+  } */
+  .header-right .register {
+    min-width: 110px;
+    margin-left: 10px;
+  }
+  .about-text {
+    margin-top: 40px;
+  }
+  .hero-warp {
+    padding: 25px 30px 29px;
+  }
+  .search-type label {
+    margin-right: 5px;
+  }
+  .search-type .st-item input:checked+label {
+    padding: 11px 15px;
+  }
+  .section-title h2,
+  .about-text h2 {
+    font-size: 55px;
+  }
+  .loan-form {
+    display: block;
+    text-align: center;
+    padding: 0 50px;
+  }
+  .loan-form input {
+    margin-bottom: 30px;
+  }
+  .about-widget {
+    border-right: none;
+  }
+  .about-widget .aw-text {
+    max-width: 100%;
+  }
+  .footer-widger h2 {
+    padding-top: 0;
+  }
+  .page-top-section {
+    height: auto;
+    padding-bottom: 80px;
+  }
+  .sell-section {
+    padding: 0 20px;
+  }
+  .search-result-map {
+    height: 600px;
+  }
+  .sidebar {
+    padding-top: 50px;
+  }
+  .contact-text {
+    padding-right: 0;
+  }
+}
+
+
+
+/* Large Mobile :480px. */
+
+@media only screen and (max-width: 767px) {
+  .header-section {
+    padding: 0 15px;
+  }
+  .site-logo {
+    padding: 26px 0;
+  }
+  .header-nav {
+    display: none;
+  }
+  .slicknav_menu {
+    padding: 0;
+    display: block;
+    background: transparent;
+  }
+  .slicknav_menu .header-right-warp {
+    padding: 10px 0;
+    padding-right: 10px;
+    border-bottom: 1px solid #111;
+    text-align: right;
+  }
+  .slicknav_menu .header-right .login {
+    border-bottom: none;
+  }
+  .slicknav_menu .header-right .register {
+    margin-left: 0;
+  }
+  .slicknav_menu .header-right a:hover {
+    background: transparent;
+    color: #fff;
+  }
+  .slicknav_btn {
+    background: #616161;
+    margin-top: 29px;
+  }
+  .slicknav_nav {
+    background: #22242b;
+    margin-bottom: 30px;
+  }
+  .slicknav_nav a {
+    margin: 0;
+    padding: 10px 20px;
+    border-bottom: 1px solid #111;
+  }
+  .slicknav_nav a:hover {
+    color: #ff000a;
+    border-radius: 0;
+    background: #0b0e25;
+  }
+  .slicknav_nav .slicknav_row {
+    padding: 10px 20px;
+    margin: 0;
+  }
+  .slicknav_row a {
+    border-bottom: none;
+  }
+  .slicknav_nav .slicknav_row:hover {
+    border-radius: 0;
+    background: #0b0e25;
+  }
+  .slicknav_parent.slicknav_open {
+    background: #0b0e25;
+    color: #ff000a;
+  }
+  .hero-section {
+    height: auto;
+    padding-top: 250px;
+    padding-bottom: 100px;
+  }
+  .hero-warp {
+    padding: 25px 20px 29px;
+  }
+  .about-text {
+    margin-top: 40px;
+  }
+  .search-type label {
+    margin-right: 5px;
+  }
+  .search-type .st-item input:checked+label {
+    padding: 11px;
+  }
+  .search-input {
+    display: block;
+  }
+  .search-input input,
+  .search-input.si-v-2 input {
+    width: 100%;
+    padding: 0 20px;
+    margin-bottom: 20px;
+  }
+  .section-title h2,
+  .about-text h2 {
+    font-size: 45px;
+  }
+  .loan-section {
+    padding: 0 15px;
+  }
+  .loan-form {
+    display: block;
+    text-align: center;
+    padding: 0 15px;
+  }
+  .loan-form input {
+    margin-bottom: 30px;
+  }
+  .about-widget {
+    border-right: none;
+  }
+  .about-widget .aw-text {
+    max-width: 100%;
+  }
+  .footer-widger h2 {
+    padding-top: 0;
+  }
+  .copyright {
+    text-align: center;
+  }
+  .page-top-section {
+    height: auto;
+    padding-bottom: 80px;
+  }
+  .search-input.si-v-2 {
+    margin-bottom: 0;
+  }
+  .search-input.si-v-2 .site-btn {
+    margin: 0 25px 25px 0;
+  }
+  .search-results {
+    padding: 55px 30px 90px;
+  }
+  .search-results .filter-btn li {
+    margin-right: 10px;
+  }
+  .search-result-map {
+    height: 500px;
+  }
+  .sidebar {
+    padding-top: 50px;
+  }
+  .contact-text {
+    padding-right: 0;
+  }
+  .sell-section {
+    padding: 0 15px;
+  }
+
+
+  .navbar-expand-sm .navbar-nav .nav-link {
+    padding-right: 0rem!important;
+    padding-left: 0rem!important;
+  }
+
+  /* .main-menu li a {
+    margin-right: 40px!important;
+  } */
+}
+
+/* Small Mobile :320px. */
+
+@media only screen and (max-width: 479px) {
+  .section-title h2,
+  .about-text h2 {
+    font-size: 38px;
+  }
+  .search-type label:after {
+    display: none;
+  }
+  .section-title p {
+    padding: 25px 0 10px;
+  }
+  .about-widget {
+    margin-right: 0;
+  }
+  .site-btn.sb-big {
+    padding: 21px 25px;
+  }
+  .search-results {
+    padding: 55px 15px 90px;
+  }
+  .search-results .filter-btn li {
+    margin-right: 0;
+  }
+  .property-info-bar {
+    padding: 11px 15px 13px;
+  }
+  .loan-calculator {
+    padding: 30px 15px 25px;
+  }
+  .contact-form {
+    padding: 50px 20px;
+  }
+  .contact-form .site-btn {
+    min-width: auto;
+  }
+}
+
+@media only screen and (max-width: 575.9px) {
+  /* .main-menu li a {
+    margin-right: 0px!important;
+  } */
+}

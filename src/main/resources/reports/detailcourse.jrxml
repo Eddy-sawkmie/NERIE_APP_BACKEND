@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="detailcourse" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2ed6ffae-59b3-4c19-b209-400559f1317f">
+	<property name="ireport.zoom" value="1.1000000000000028"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="48"/>
+	<parameter name="phaseid" class="java.lang.String"/>
+	<parameter name="dynamicpath" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT C.coursecategorycode,C.coursecategoryname,P.programcode,P.programname,P.programdescription,ph.phaseno,ph.phasedescription,pd.phaseid,
+                   TO_CHAR(pd.startdate,'dd/MM/yyyy') AS startdate,TO_CHAR(pd.enddate,'dd/MM/yyyy') AS enddate,
+                   P.officecode,pd.finalized,P.programid,TO_CHAR(pd.lastdate,'dd/MM/yyyy') AS lastdate,pd.closed,
+                   F.officename,TO_CHAR(pd.courseclosedate,'dd/MM/yyyy') AS courseclosedate,
+                   array_to_string
+                   (
+                   ARRAY(
+                   SELECT V.venuename FROM nerie.mt_programvenues P
+                              INNER JOIN nerie.m_venues V ON V.venuecode=P.venuecode
+                   WHERE P.phaseid=pd.phaseid
+                   ), ','
+                   ) AS venues,
+                   array_to_string
+                   (
+                   ARRAY(
+                   SELECT  U.username FROM nerie.mt_program_members m
+                              INNER JOIN nerie.mt_userlogin U ON U.usercode=m.usercode
+                   WHERE m.phaseid=pd.phaseid
+                   ), E'\n'
+                   ) AS coursecoordinators,
+		   array_to_string
+                   (
+                   ARRAY(
+                   SELECT  P.rpname || ', ' || D.designationname || '(' || P.rpspecialization || ')' FROM nerie.mt_resourcepersons P
+                              INNER JOIN nerie.mt_resourcepersoncoursemap U ON U.rpslno=P.rpslno
+                              INNER JOIN nerie.m_designations D ON D.designationcode=P.designationcode
+                   WHERE U.phaseid=pd.phaseid
+                   ), E'\n'
+                   ) AS rp, pd.enddate-pd.startdate+1 || ' days ' AS duration
+                   FROM nerie.mt_programdetails pd
+                   INNER JOIN nerie.m_programs P ON pd.programcode=P.programcode
+                   INNER JOIN nerie.m_coursecategories C ON C.coursecategorycode=P.coursecodecategory
+                   INNER JOIN nerie.m_offices F ON P.officecode=F.officecode
+                   INNER JOIN nerie.m_phases ph ON pd.phaseid=ph.phaseid
+WHERE pd.phaseid=$P{phaseid}
+ORDER BY P.programname]]>
+	</queryString>
+	<field name="coursecategorycode" class="java.lang.String"/>
+	<field name="coursecategoryname" class="java.lang.String"/>
+	<field name="programcode" class="java.lang.String"/>
+	<field name="programname" class="java.lang.String"/>
+	<field name="programdescription" class="java.lang.String"/>
+	<field name="phaseno" class="java.lang.String">
+		<fieldDescription><![CDATA[This will be the phase number of a program. it will be 1 by default for all programs and will be incremented for each phase of a program by a valur of 1 if that program has multiple phases]]></fieldDescription>
+	</field>
+	<field name="phasedescription" class="java.lang.String"/>
+	<field name="phaseid" class="java.lang.String"/>
+	<field name="startdate" class="java.lang.String"/>
+	<field name="enddate" class="java.lang.String"/>
+	<field name="officecode" class="java.lang.String"/>
+	<field name="finalized" class="java.lang.String"/>
+	<field name="programid" class="java.lang.String"/>
+	<field name="lastdate" class="java.lang.String"/>
+	<field name="closed" class="java.lang.String"/>
+	<field name="officename" class="java.lang.String"/>
+	<field name="courseclosedate" class="java.lang.String"/>
+	<field name="venues" class="java.lang.String"/>
+	<field name="coursecoordinators" class="java.lang.String"/>
+	<field name="rp" class="java.lang.String"/>
+	<field name="duration" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="94" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="9f082f0e-0162-4ce1-8c4f-052b476c7262" positionType="Float" x="0" y="44" width="555" height="24" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{officename}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="07103d29-e115-4ff4-b744-39a630d9b384" positionType="Float" x="0" y="68" width="555" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[A Unit of NCERT]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement uuid="22a72cad-ad3c-4a7f-986d-88d6aab328bf" x="233" y="0" width="95" height="44"/>
+				<imageExpression><![CDATA[$P{dynamicpath} + "/ncertlogo.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="339" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5b8a9d3f-befb-441a-b806-8a0673b824c0" positionType="Float" x="23" y="85" width="510" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{programdescription}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="6c2b1788-025a-4403-8e3a-e0ab25d58417" positionType="Float" x="23" y="140" width="510" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[($F{phaseno}.length() > 0 ? "( Phase No.: " + $F{phaseno} +")\n"+$F{phasedescription} : "")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="58019f07-0bcd-444b-b2d6-855de8d4d970" positionType="Float" x="23" y="195" width="253" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{lastdate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="21827e97-ac5b-4429-99ad-c8c785f2939e" positionType="Float" x="277" y="195" width="256" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{duration}+" ("+$F{startdate}+" to "+$F{enddate} +")"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5686d642-49bc-4520-874c-e197681ab5e2" positionType="Float" x="280" y="250" width="254" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[($F{rp}.length() > 0 ? $F{rp} : " ")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5fb67272-9a8f-4a79-a523-6b2e40749184" positionType="Float" x="23" y="250" width="256" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{coursecoordinators}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="6d5d7d9b-98a7-488d-b10c-0b5251c0570c" positionType="Float" x="23" y="305" width="510" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{venues}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="53f6927c-ca0e-420a-a19a-c31d19dd8fa8" x="22" y="10" width="254" height="20"/>
+				<textElement>
+					<font isBold="true" isItalic="false" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Program Type:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="47c1c94e-02d1-481d-8a83-28d78799de54" x="23" y="30" width="254" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{coursecategoryname}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d7b9cd0b-e7a8-47ed-bd02-3a520871372f" x="277" y="10" width="256" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font isBold="true" isItalic="false" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Program Name:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3b837d0d-057b-4ed6-b02f-47eb2582f648" x="277" y="30" width="256" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{programname}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6bbbddf3-81a5-44de-8c4f-15e70b1a53b9" positionType="Float" x="23" y="65" width="510" height="20"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Description:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="cf52e485-666b-439d-9db3-3fd63bb5f122" positionType="Float" x="22" y="120" width="511" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{phaseno}.length() > 0 ? "Phase Description" : "")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e7c42192-8113-4cab-a0f7-edaf027590a9" positionType="Float" x="23" y="175" width="253" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Last date for receiving applications:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c6a2398c-ae07-4209-892a-cf75908cb1c9" positionType="Float" x="277" y="175" width="256" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Program Duration:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a7e06f80-6261-4d0a-baab-4ae15b74df36" positionType="Float" x="23" y="230" width="256" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Program Coordinator(s): ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e10c4a26-9331-4222-abb6-22565760f523" positionType="Float" x="23" y="285" width="511" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Venue(s):]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="e97edd22-b728-4f3c-a40b-25cb9c83ad87" positionType="Float" x="280" y="230" width="253" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{rp}.length() > 0 ? "Resource Person(s)" : "")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="30" splitType="Stretch"/>
+	</summary>
+</jasperReport>

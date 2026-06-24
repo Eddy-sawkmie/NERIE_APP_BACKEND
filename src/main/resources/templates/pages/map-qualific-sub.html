@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title layout:fragment="title">Map Qualification Subject</title>
+
+    <div layout:fragment="static-files">
+        <script th:inline="javascript">
+            const API = {
+                saveMapQualificationSubject: [[@{/qualification-subjects/map/save}]],
+                getMapQualificationSubject: [[@{/qualification-subjects/get-mp-subjects}]],
+                redirectToQualificationSubjectManageURL: [[@{/qualification-subjects/manage}]],
+                redirectToQualificationsManageURL: [[@{/qualifications/manage}]]
+            };
+        </script>
+        <script th:src="@{/js/mapQualificSub.js}"></script>
+    </div>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <div class="container py-5">
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-link me-3 fs-5"></i> Map Qualification Subject
+                </h4>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-light btn-modern text-primary fw-bold shadow-sm" id="add-new-sub">
+                        <i class="fas fa-plus me-2"></i> New Subject
+                    </button>
+                    <button type="button" class="btn btn-light btn-modern text-primary fw-bold shadow-sm" id="add-new-qualific">
+                        <i class="fas fa-plus me-2"></i> New Qualification
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <form name="mmapqsfn" id="mmapqsfid" role="form" autocomplete="off" novalidate>
+
+                    <div class="row mb-4 justify-content-center">
+                        <div class="col-md-8">
+                            <label for="qualificationcode" class="form-label-modern">Select Qualification <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm has-validation" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-user-graduate"></i></span>
+                                <select name="qualificationcode" id="qualificationcode" class="form-select modern-input border-start-0 ps-2" data-live-search="true" required>
+                                    <option value="">-- Select Qualification --</option>
+                                    <option th:each="o : ${mqualificationList}" th:value="${o.qualificationcode}" th:text="${o.qualificationname}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 justify-content-center">
+                        <div class="col-md-8">
+                            <label class="form-label-modern mb-3 d-block border-bottom pb-2">
+                                <i class="fas fa-book-open me-2 text-primary"></i> Map Subjects <span class="text-danger">*</span>
+                            </label>
+
+                            <div id="subjectdiv" class="p-3 bg-light rounded shadow-sm border" style="min-height: 100px;">
+                                <div class="text-muted text-center mt-3 fst-italic">
+                                    <i class="fas fa-info-circle me-1"></i> Please select a qualification above to load available subjects.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3 mt-5 pt-4 border-top">
+                        <button type="button" id="resetButton" class="btn btn-light border btn-modern px-5">
+                            <i class="fas fa-undo me-2"></i> Reset
+                        </button>
+                        <button id="submit" type="submit" name="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                            <i class="fas fa-save me-2"></i> Submit Mapping
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

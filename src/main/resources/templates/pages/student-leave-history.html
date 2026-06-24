@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{${layoutPath}}"
+>
+<head>
+    <title>Student Leave History</title>
+    <th:block layout:fragment="static-files">
+        <style>
+            /*Toggle Switch - Custom Implementation maintained as per request */
+            .switch {
+              position: relative;
+              display: inline-block;
+              width: 50px;
+              height: 28px;
+            }
+
+            .switch input {
+              opacity: 0;
+              width: 0;
+              height: 0;
+            }
+
+            .slider {
+              position: absolute;
+              cursor: pointer;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background-color: #ccc;
+              -webkit-transition: .4s;
+              transition: .4s;
+            }
+
+            .slider:before {
+              position: absolute;
+              content: "";
+              height: 20px;
+              width: 20px;
+              left: 4px;
+              bottom: 4px;
+              background-color: white;
+              -webkit-transition: .4s;
+              transition: .4s;
+            }
+
+            input:checked + .slider {
+              background-color: #0d6efd; /* Matched modern primary blue */
+            }
+
+            input:focus + .slider {
+              box-shadow: 0 0 1px #0d6efd;
+            }
+
+            input:checked + .slider:before {
+              -webkit-transform: translateX(22px);
+              -ms-transform: translateX(22px);
+              transform: translateX(22px);
+            }
+
+            .slider.round {
+              border-radius: 34px;
+            }
+
+            .slider.round:before {
+              border-radius: 50%;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container py-5">
+
+        <div class="card border-0 modern-card mb-4">
+
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-history me-3 fs-5"></i> <span th:text="${name}"></span> Leave History
+                </h4>
+
+                <div class="d-flex align-items-center bg-white bg-opacity-10 rounded px-3 py-2">
+                    <span class="me-2 fw-semibold text-dark">Show All Leaves</span>
+                    <label class="switch mb-0">
+                        <input type="checkbox" id="toggleLeaveView"/>
+                        <span class="slider round shadow-sm"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+
+                <div class="bg-light p-4 rounded-3 shadow-sm border mb-5">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <span class="text-muted small d-block text-uppercase fw-bold"><i class="fas fa-user me-1"></i> Name</span>
+                            <span class="fw-bold fs-5 text-dark"><span th:text="${student.fname}"></span> <span th:text="${student.lname}"></span></span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted small d-block text-uppercase fw-bold"><i class="fas fa-id-card me-1"></i> Roll Number</span>
+                            <span class="fw-semibold text-dark" th:text="${student.rollno}"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted small d-block text-uppercase fw-bold"><i class="fas fa-graduation-cap me-1"></i> Course</span>
+                            <span class="fw-semibold text-dark" th:text="${student.coursecode.coursename}"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted small d-block text-uppercase fw-bold"><i class="fas fa-envelope me-1"></i> Email</span>
+                            <span class="fw-semibold text-dark" th:text="${student.email}"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted small d-block text-uppercase fw-bold"><i class="fas fa-phone-alt me-1"></i> Mobile No</span>
+                            <span class="fw-semibold text-dark" th:text="${student.mobileno}"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted small d-block text-uppercase fw-bold"><i class="fas fa-venus-mars me-1"></i> Gender</span>
+                            <span class="fw-semibold text-dark" th:if="${student.gender == 'M'}">Male</span>
+                            <span class="fw-semibold text-dark" th:if="${student.gender == 'F'}">Female</span>
+                            <span class="fw-semibold text-dark" th:if="${student.gender != 'M' && student.gender != 'F'}">Not Specified</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-content-wrapper">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-calendar-week me-2 text-primary"></i> Leave Applications This Semester</h5>
+                        <span class="badge bg-primary px-3 py-2 shadow-sm rounded-pill fs-6">
+                            Total Leaves: <span th:text="${leavecount}"></span>
+                        </span>
+                    </div>
+
+                    <div class="table-responsive table-wrapper border-top pt-3">
+                        <table class="table modern-table align-middle mb-0 w-100" id="leavelist">
+                            <thead>
+                            <tr>
+                                <th>Approval Status</th>
+                                <th>Student Information</th>
+                                <th>Applied On</th>
+                                <th>Leave Station</th>
+                                <th>Leave From</th>
+                                <th>Leave To</th>
+                                <th>Reason for Leave</th>
+                                <th class="noExport text-center" style="width: 1%; white-space: nowrap;">Application</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="v : ${leavelist}">
+                                <td>
+                                    <span th:if="${v.isapproved == null and (v.iswardenapproved == null or v.iswardenapproved == '1' or v.iswardenapproved == '2') and (v.isdeanapproved == null or v.isdeanapproved == '1')}"
+                                          class="text-warning fw-bold"><i class="fas fa-clock me-1"></i> Pending Action</span>
+                                    <div th:if="${v.isapproved == '0' or v.isdeanapproved == '0' or v.iswardenapproved == '0'}">
+                                        <span class="text-danger fw-bold"><i class="fas fa-times-circle me-1"></i> Not Approved</span><br>
+                                        <small class="text-muted">Reason: <span th:text="${v.rejectionreason}"></span></small>
+                                    </div>
+                                    <span th:if="${v.isapproved == '1'}" class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i> Approved</span>
+                                </td>
+
+                                <td>
+                                    <span class="fw-bold text-dark" th:text="${v.studentid.fname + ' ' + v.studentid.mname + ' ' + v.studentid.lname}"></span><br>
+                                    <small class="text-muted fw-semibold">(<span th:text="${v.studentid.rollno}"></span>)</small>
+                                </td>
+
+                                <td class="text-muted fw-semibold" th:text="${v.applicationdate != null ? #dates.format(v.applicationdate, 'dd-MM-yyyy') : ''}"></td>
+                                <td th:text="${v.leavestation}"></td>
+                                <td class="text-dark fw-semibold" th:text="${v.requestedfrom != null ? #dates.format(v.requestedfrom, 'dd-MM-yyyy') : ''}"></td>
+                                <td class="text-dark fw-semibold" th:text="${v.requestedto != null ? #dates.format(v.requestedto, 'dd-MM-yyyy') : ''}"></td>
+                                <td class="text-muted small" th:text="${v.reasonforleave}"></td>
+
+                                <td class="text-center" style="white-space: nowrap;">
+                                    <a th:href="@{/student-leaves/view-leave-application-details(aid=${v.studentleaveid}, origin='history')}"
+                                       class="btn btn-sm btn-primary btn-modern shadow-sm w-100">
+                                        <i class="fas fa-eye me-1"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="page-content-wrapper-all" style="display: none;">
+                    <h5 class="mb-3 fw-bold text-dark"><i class="fas fa-layer-group me-2 text-primary"></i> All Leave Applications</h5>
+
+                    <div class="table-responsive table-wrapper border-top pt-3">
+                        <table class="table modern-table align-middle mb-0 w-100" id="leavelist-all">
+                            <thead>
+                            <tr>
+                                <th>Approval Status</th>
+                                <th>Student Information</th>
+                                <th>Applied On</th>
+                                <th>Leave Station</th>
+                                <th>Leave From</th>
+                                <th>Leave To</th>
+                                <th>Reason for Leave</th>
+                                <th class="noExport text-center" style="width: 1%; white-space: nowrap;">Application</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="v : ${allleaves}">
+                                <td>
+                                    <span th:if="${v.isapproved == null and (v.iswardenapproved == null or v.iswardenapproved == '1' or v.iswardenapproved == '2') and (v.isdeanapproved == null or v.isdeanapproved == '1')}"
+                                          class="text-warning fw-bold"><i class="fas fa-clock me-1"></i> Pending Action</span>
+                                    <div th:if="${v.isapproved == '0' or v.isdeanapproved == '0' or v.iswardenapproved == '0'}">
+                                        <span class="text-danger fw-bold"><i class="fas fa-times-circle me-1"></i> Not Approved</span><br>
+                                        <small class="text-muted">Reason: <span th:text="${v.rejectionreason}"></span></small>
+                                    </div>
+                                    <span th:if="${v.isapproved == '1'}" class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i> Approved</span>
+                                </td>
+
+                                <td>
+                                    <span class="fw-bold text-dark" th:text="${v.studentid.fname + ' ' + v.studentid.mname + ' ' + v.studentid.lname}"></span><br>
+                                    <small class="text-muted fw-semibold">(<span th:text="${v.studentid.rollno}"></span>)</small>
+                                </td>
+
+                                <td class="text-muted fw-semibold" th:text="${v.applicationdate != null ? #dates.format(v.applicationdate, 'dd-MM-yyyy') : ''}"></td>
+                                <td th:text="${v.leavestation}"></td>
+                                <td class="text-dark fw-semibold" th:text="${v.requestedfrom != null ? #dates.format(v.requestedfrom, 'dd-MM-yyyy') : ''}"></td>
+                                <td class="text-dark fw-semibold" th:text="${v.requestedto != null ? #dates.format(v.requestedto, 'dd-MM-yyyy') : ''}"></td>
+                                <td class="text-muted small" th:text="${v.reasonforleave}"></td>
+
+                                <td class="text-center" style="white-space: nowrap;">
+                                    <a th:href="@{/student-leaves/view-leave-application-details(aid=${v.studentleaveid}, origin='history')}"
+                                       class="btn btn-sm btn-primary btn-modern shadow-sm w-100">
+                                        <i class="fas fa-eye me-1"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/studentLeaveHistory.js}"></script>
+</th:block>
+</body>
+</html>

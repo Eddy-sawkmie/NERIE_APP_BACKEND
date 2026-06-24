@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/landing-layout}"
+>
+<head>
+    <title>RIE Bhopal</title>
+    <th:block layout:fragment="styles">
+        <link rel="stylesheet" th:href="@{/css/blogs.css}">
+    </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+    <div layout:replace="~{fragments/lilypreloader :: preloader}"></div>
+    
+    <section class="bl-hero">
+        <img th:src="@{/lily/images/aboutus/ncert_building.jpg}"
+             alt="NCERT Building" class="bl-hero__bg">
+        <div class="bl-hero__overlay"></div>
+        <div class="container bl-hero__content">
+            <nav class="bl-breadcrumb" aria-label="breadcrumb">
+                <a th:href="@{/about}" class="bl-breadcrumb__home">NCERT Constituent Units</a>
+                <span class="bl-breadcrumb__sep">/</span>
+                <span class="bl-breadcrumb__current">RIE Bhopal</span>
+            </nav>
+            <h1 class="bl-hero__title">RIE Bhopal</h1>
+            <p class="bl-hero__sub">Regional Institute of Education, Bhopal (NCERT), Madhya Pradesh 462013</p>
+        </div>
+    </section>
+
+    <div class="bl-page">
+        <div class="container">
+            <div class="bl-layout">
+                <article class="bl-article">
+                    <div class="bl-article__img-wrap">
+                        <img th:src="@{/lily/images/aboutus/RIE Bhopal.jpg}"
+                             alt="RIE Bhopal" class="bl-article__img">
+                    </div>
+                    <div class="bl-article__body">
+                        <h2 class="bl-article__title">About RIE Bhopal</h2>
+                        <div class="bl-title-rule"></div>
+                        <p class="bl-article__text">
+                            Regional Institute of Education (RIE), Bhopal is a constituent unit of NCERT, New Delhi. The Institute looks after teacher education and other educational requirements of the States of Chhattisgarh, Goa, Gujarat, Madhya Pradesh, Maharashtra and UTs of Dadra and Nagar Haveli and Daman and Diu. The Institute is located at Shyamla Hills and is 7 Kms away from both Bhopal and Habibganj railway station and about 20 Kms from Raja Bhoj Airport, Bhopal.
+                        </p>
+                        <p class="bl-article__text">
+                            Our mission is to strengthen pupil's learning through advocacy and teaching initiatives. To develop competency and create an aura of imparting quality and finesse education to students and teach and train them innovatively with proper attention, focusing on their brighter career in teaching profession.
+                        </p>
+                    </div>
+                </article>
+
+                <aside class="bl-sidebar">
+                    <div class="bl-info-card">
+                        <h3 class="bl-info-card__heading">Institute Details</h3>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-user-tie"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Principal</span>
+                                <span class="bl-info-row__value">Prof. Nityanand Pradhan</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-university"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Institute</span>
+                                <span class="bl-info-row__value">Regional Institute of Education, Bhopal (NCERT)</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-sitemap"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Parent Organisation</span>
+                                <span class="bl-info-row__value">National Council of Educational Research and Training</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-map-marker-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Address</span>
+                                <span class="bl-info-row__value">Jahanuma Palace Road, near Hotel Jehenuma Palace, Madhya Pradesh 462013</span>
+                            </div>
+                        </div>
+                        <div class="bl-info-row">
+                            <span class="bl-info-row__icon"><i class="fas fa-external-link-alt"></i></span>
+                            <div>
+                                <span class="bl-info-row__label">Website</span>
+                                <a href="https://riebhopal.nic.in/" target="_blank" class="bl-info-row__link">
+                                    riebhopal.nic.in
+                                </a>
+                            </div>
+                        </div>
+                        <a th:href="@{/about}" class="bl-back-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Units
+                        </a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

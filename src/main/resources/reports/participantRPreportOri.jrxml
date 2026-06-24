@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="participantRPreportOri" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="phaseid" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select p.programname,p.programid,p.programcode,p.programdescription,ph.phaseno,ph.phasedescription,pd.startdate,pd.enddate,o.officename ||','||o.officeaddress||'-'||o.officepincode as office,
+string_agg(distinct u.username||','||d.designationname||','||o.officeshortname,',') as coordinator,string_agg(distinct v.venuename,',') as venuname
+from nerie.mt_programdetails pd
+inner join nerie.m_programs p on p.programcode=pd.programcode
+inner join nerie.m_offices o on p.officecode=o.officecode
+inner join nerie.mt_program_members cc on pd.phaseid=cc.phaseid
+inner join nerie.mt_userlogin u on u.usercode=cc.usercode and o.officecode=u.officecode
+inner join nerie.m_designations d on d.designationcode=u.designationcode
+inner join nerie.mt_programvenues vc on vc.phaseid=pd.phaseid
+inner join nerie.m_venues v on v.venuecode=vc.venuecode
+inner join nerie.m_phases ph on ph.phaseid=pd.phaseid
+where pd.phaseid='10'
+group by p.programname,p.programid,pd.startdate,pd.enddate,o.officename,o.officeaddress,o.officepincode, p.programcode,ph.phaseno,ph.phasedescription]]>
+	</queryString>
+	<field name="programname" class="java.lang.String"/>
+	<field name="programid" class="java.lang.String"/>
+	<field name="programcode" class="java.lang.String"/>
+	<field name="programdescription" class="java.lang.String"/>
+	<field name="phaseno" class="java.lang.String"/>
+	<field name="phasedescription" class="java.lang.String"/>
+	<field name="startdate" class="java.sql.Date"/>
+	<field name="enddate" class="java.sql.Date"/>
+	<field name="office" class="java.lang.String"/>
+	<field name="coordinator" class="java.lang.String"/>
+	<field name="venuname" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="67" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="53"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[North East Regional Institute of Education (NERIE)
+National Council of Educational Research and Training (NCERT)
+Umiam,Shillong, Meghalaya - 793103]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[List of Resource Persons & Participants]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="203" splitType="Stretch">
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="97" width="87" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Organized By:]]></text>
+			</staticText>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="88" y="97" width="172" height="45"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{office}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="260" y="97" width="132" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Program Coordinator:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="392" y="97" width="163" height="45"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{coordinator}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="2" y="147" width="50" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Venue:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="52" y="148" width="208" height="42"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{venuname}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="260" y="148" width="60" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Duration:]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
+				<reportElement x="320" y="150" width="90" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{startdate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="411" y="150" width="12" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
+				<reportElement x="424" y="150" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{enddate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="40" width="133" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Program Description:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="88" y="68" width="468" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Phase no: "+ $F{phaseno}+" , "+$F{phasedescription}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="135" y="40" width="421" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{programdescription}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="119" y="10" width="437" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{programid}+": "+$F{programname}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="10" width="118" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Title of the program:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="68" width="86" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Phase Details: ]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+</jasperReport>

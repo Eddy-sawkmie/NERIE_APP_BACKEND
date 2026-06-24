@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layouts/coordinator-faculty-layout}"
+        xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Attendance</title>
+    <th:block layout:fragment="static-files">
+        <script th:src="@{/tempscripts/vendor/charts/moment.min.js}" type="text/javascript"></script>
+        <script th:src="@{/lily/js/datepicker1/bootstrap-datetimepicker.min.js}" type="text/javascript"></script>
+        <link th:href="@{/lily/js/datepicker1/bootstrap-datetimepicker.min.css}" type="text/css" media="screen" rel="stylesheet" />
+    </th:block>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container py-5">
+
+        <div class="card border-0 modern-card mb-4">
+            <div class="card-header modern-card-header text-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold d-flex align-items-center">
+                    <i class="fas fa-list-check me-3 fs-5"></i> Upload Attendance
+                </h4>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <form role="form" method="POST" id="attendanceform" autocomplete="off">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="alert alert-info border-0 shadow-sm rounded-3 text-center py-3 px-4 mb-2">
+                                <h6 class="mb-0 fw-semibold text-dark">
+                                    <i class="fas fa-info-circle me-2 text-primary"></i>
+                                    When marking attendance, all students are marked <strong class="text-success">present</strong> by default. Kindly <strong class="text-danger">uncheck</strong> the students who are absent.
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="sem" id="semphaselabel" class="form-label-modern">
+                                Semester/Phase
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group shadow-sm" style="border-radius:0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="fas fa-layer-group"></i>
+                                </span>
+                                <select id="sem" name="semphase" class="form-select modern-inputborder-start-0 ps-2">
+                                    <option value="-1">
+                                        Select Sem/Phase
+                                    </option>
+                                    <th:block th:each="item : ${semphases}">
+                                        <option
+                                            th:value="${item.value}"
+                                            th:text="${item.label}">
+                                        </option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- <div class="col-md-6">
+                            <label for="subject" class="form-label-modern">Subject <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book"></i></span>
+                                <select id="subject" name="subjectcode" class="form-select modern-input border-start-0 ps-2" required="required">
+                                    <option value="">-- Select Subject --</option>
+                                    <th:block th:each="item : ${subs}">
+                                        <option th:value="${item[0]}" th:text="${item[1]}"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div> -->
+
+                        <div class="col-md-6">
+                            <label for="subject" class="form-label-modern">Subject <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-book"></i></span>
+                                <select id="subject" name="subjectcode" class="form-select modern-input border-start-0 ps-2" required>
+                                    <option value="">-- Select Subject --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        
+
+                        <div class="col-md-4">
+                            <label for="dateselect" class="form-label-modern">Attendance Date <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-calendar-alt"></i></span>
+                                <input type="text" id="dateselect" class="form-control modern-input border-start-0 ps-2" name="dateselect" required="required" placeholder="Select Date"/>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="starttime" class="form-label-modern">Class Start Time <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-clock"></i></span>
+                                <input type="text" id="starttime" class="form-control modern-input border-start-0 ps-2" name="starttime" required="required" placeholder="Start Time"/>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="endtime" class="form-label-modern">Class End Time <span class="text-danger">*</span></label>
+                            <div class="input-group shadow-sm" style="border-radius: 0.5rem;">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-hourglass-end"></i></span>
+                                <input type="text" id="endtime" class="form-control modern-input border-start-0 ps-2" name="endtime" required="required" placeholder="End Time"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-5 d-none" id="dlist">
+                        <div class="col-12">
+                            <div class="table-responsive table-wrapper">
+                                <table id="studentlist" class="table modern-table align-middle mb-0 w-100">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 20%;">Student Id</th>
+                                        <th style="width: 50%;">Student Name</th>
+                                        <th style="width: 30%;" class="attendance-header noExport text-center">
+                                            Absent/Present (Mark)
+                                            <button type="button" id="selectAllBtn" class="btn btn-sm btn-light btn-modern text-primary fw-bold shadow-sm ms-3">
+                                                <i class="far fa-square me-1"></i> De-Select All
+                                            </button>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="studentlistbody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4 pt-4 border-top">
+                        <button type="submit" class="btn btn-primary btn-modern px-5 shadow-sm">
+                            <i class="fas fa-upload me-2"></i> Submit Attendance
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-dark" id="feedbackModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-secondary p-4" id="feedbackModalBody">
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" id="modalOkButton" class="btn btn-primary btn-modern px-4" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const API = {
+            getStudentsListBasedOnSubjectCode: [[@{/attendance/getStudentsListBasedOnSubjectCode}]],
+            uploadStudentAttendance: [[@{/attendance/upload-attendance}]]
+        };
+    </script>
+    <script th:src="@{/lily/js/notiflix/notiflix.js}"></script>
+    <script th:src="@{/js/uploadAttendance.js}"></script>
+</th:block>
+</body>
+</html>
